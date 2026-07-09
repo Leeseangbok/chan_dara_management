@@ -11,7 +11,7 @@ import { CartPanel } from "@/components/pos/CartPanel";
 import { CheckoutModal } from "@/components/pos/CheckoutModal";
 import { AxiosError } from "axios";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { Search, Tag, AlertCircle, ArrowLeft, Globe, LogOut } from "lucide-react";
+import { Search, Tag, AlertCircle, ArrowLeft, Globe, LogOut, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { formatCurrency } from "@/lib/utils/currency";
@@ -188,23 +188,32 @@ export default function PosPage() {
                                 <ArrowLeft className="w-5 h-5" />
                             </Link>
                         )}
-                        <div className="relative w-full max-w-md">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <div className="relative w-full max-w-md group">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
                             <input
                                 type="text"
                                 placeholder={t.searchPlaceholder}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2.5 bg-gray-100 text-gray-700 border-transparent focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 rounded-xl transition-all"
+                                className="w-full pl-11 pr-10 py-3 bg-gray-100/80 hover:bg-gray-100 text-gray-700 border-2 border-transparent focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 rounded-2xl transition-all outline-none font-medium"
                             />
+                            {searchQuery && (
+                                <button
+                                    onClick={() => setSearchQuery("")}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                                    title="Clear search"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            )}
                         </div>
-                        <div className="flex-1 overflow-x-auto pb-2 sm:pb-0 hide-scrollbar">
+                        <div className="flex-1 overflow-x-auto pb-2 sm:pb-0 hide-scrollbar flex items-center">
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => setSelectedCategoryId(null)}
-                                    className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedCategoryId === null
-                                        ? "bg-indigo-600 text-white shadow-md"
-                                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                    className={`whitespace-nowrap px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${selectedCategoryId === null
+                                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
+                                        : "bg-white border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
                                         }`}
                                 >
                                     {t.allItems}
@@ -213,12 +222,12 @@ export default function PosPage() {
                                     <button
                                         key={cat.id}
                                         onClick={() => setSelectedCategoryId(cat.id)}
-                                        className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-1.5 ${selectedCategoryId === cat.id
-                                            ? "bg-indigo-600 text-white shadow-md"
-                                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                        className={`whitespace-nowrap px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${selectedCategoryId === cat.id
+                                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
+                                            : "bg-white border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
                                             }`}
                                     >
-                                        <Tag className="w-3.5 h-3.5" />
+                                        <Tag className="w-4 h-4" />
                                         {language === "km" && cat.nameKh ? cat.nameKh : cat.name}
                                     </button>
                                 ))}

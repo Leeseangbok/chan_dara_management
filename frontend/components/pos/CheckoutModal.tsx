@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Loader2, DollarSign, X, Search } from "lucide-react";
+import { Loader2, DollarSign, X, Search, UserPlus, User, Phone, Check, ChevronDown, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { formatCurrency } from "@/lib/utils/currency";
 import { Customer } from "@/lib/api/types";
@@ -185,45 +185,79 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                         </div>
                         
                         {customerType === "EXISTING" && (
-                            <div className="space-y-2 p-3 bg-gray-50 rounded-xl border border-gray-200">
+                            <div className="mt-3 flex flex-col gap-2">
                                 <div className="relative">
-                                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                     <input
                                         type="text"
                                         placeholder={t.searchByNamePhone}
                                         value={searchCustomerQuery}
                                         onChange={(e) => setSearchCustomerQuery(e.target.value)}
-                                        className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-700 text-sm"
+                                        className={`w-full pl-10 pr-10 py-3 bg-white border-2 ${isCustomerRequired && !customerId ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-200'} rounded-xl focus:ring-4 transition-all outline-none text-gray-700`}
                                     />
+                                    {searchCustomerQuery && (
+                                        <button 
+                                            onClick={() => setSearchCustomerQuery("")} 
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    )}
                                 </div>
-                                <select
-                                    value={customerId || ""}
-                                    onChange={(e) => {
-                                        if (e.target.value === "CREATE_NEW") {
-                                            setIsCreatingCustomer(true);
-                                            setCustomerId(null);
-                                        } else {
-                                            setCustomerId(e.target.value || null);
-                                        }
-                                    }}
-                                    className={`w-full px-4 py-2.5 bg-white border ${isCustomerRequired ? 'border-red-300' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-700 text-sm`}
-                                >
-                                    <option value="" disabled>{t.selectCustomer}</option>
-                                    {customers
-                                        .filter(c => 
-                                            c.name.toLowerCase().includes(searchCustomerQuery.toLowerCase()) || 
-                                            (c.phone && c.phone.includes(searchCustomerQuery))
-                                        )
-                                        .map(c => (
-                                        <option key={c.id} value={c.id}>
-                                            {c.name} {c.address ? `- ${c.address}` : ''} {c.phone ? `| ${c.phone}` : ''}
-                                        </option>
-                                    ))}
-                                    <option value="CREATE_NEW" className="font-bold text-indigo-600">{t.plusCreateNewCustomer}</option>
-                                </select>
+                                
+                                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
+                                    <div className="max-h-48 overflow-y-auto p-1.5 space-y-1">
+                                        {customers
+                                            .filter(c => 
+                                                c.name.toLowerCase().includes(searchCustomerQuery.toLowerCase()) || 
+                                                (c.phone && c.phone.includes(searchCustomerQuery))
+                                            )
+                                            .map(c => (
+                                                <button
+                                                    key={c.id}
+                                                    onClick={() => setCustomerId(c.id)}
+                                                    className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between transition-colors ${customerId === c.id ? 'bg-indigo-50 ring-1 ring-indigo-500/50' : 'hover:bg-gray-50'}`}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${customerId === c.id ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-500'}`}>
+                                                            <User className="w-4 h-4" />
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <span className={`text-sm font-semibold ${customerId === c.id ? 'text-indigo-900' : 'text-gray-900'}`}>{c.name}</span>
+                                                            {c.phone && <span className="text-xs text-gray-500 flex items-center gap-1.5 mt-0.5"><Phone className="w-3 h-3" />{c.phone}</span>}
+                                                        </div>
+                                                    </div>
+                                                    {customerId === c.id && <Check className="w-5 h-5 text-indigo-600" />}
+                                                </button>
+                                            ))}
+                                            {customers.filter(c => 
+                                                c.name.toLowerCase().includes(searchCustomerQuery.toLowerCase()) || 
+                                                (c.phone && c.phone.includes(searchCustomerQuery))
+                                            ).length === 0 && (
+                                                <div className="py-6 text-center flex flex-col items-center justify-center gap-2">
+                                                    <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
+                                                        <Search className="w-5 h-5 text-gray-400" />
+                                                    </div>
+                                                    <span className="text-sm font-medium text-gray-500">No customers found</span>
+                                                </div>
+                                            )}
+                                    </div>
+                                    <div className="p-2 border-t border-gray-100 bg-gray-50/50">
+                                        <button
+                                            onClick={() => {
+                                                setIsCreatingCustomer(true);
+                                                setCustomerId(null);
+                                            }}
+                                            className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100/50 rounded-lg transition-colors"
+                                        >
+                                            <UserPlus className="w-4 h-4" />
+                                            {t.plusCreateNewCustomer}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         )}
-                        {isCustomerRequired && !customerId && <p className="text-red-500 text-xs mt-1">{t.pleaseSelectExisting}</p>}
+                        {isCustomerRequired && !customerId && <p className="text-red-500 text-xs mt-1.5 ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {t.pleaseSelectExisting}</p>}
                     </div>
 
                     {/* Payment Status */}

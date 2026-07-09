@@ -27,6 +27,17 @@ export const km: Translations = {
   noRecentTransactions: "មិនមានប្រតិបត្តិការថ្មីៗទេ។",
   walkInCustomer: "អតិថិជនទូទៅ",
 
+  today: "ថ្ងៃនេះ",
+  thisMonth: "ខែនេះ",
+  thisYear: "ឆ្នាំនេះ",
+  revenue: "ចំណូល",
+  profit: "ប្រាក់ចំណេញសុទ្ធ",
+  inventoryValue: "តម្លៃស្តុកសរុប",
+  purchasesCogs: "ការបញ្ជាទិញ (COGS)",
+  newCustomers: "អតិថិជនថ្មី",
+  unpaidPurchases: "ការបញ្ជាទិញមិនទាន់ទូទាត់",
+  totalProductsLabel: "ទំនិញសរុប",
+
   customersOverview: "អតិថិជន",
   customersSub: "គ្រប់គ្រងអតិថិជនរបស់អ្នកនិងមើលប្រវត្តិរបស់ពួកគេ។",
   addCustomer: "បន្ថែមអតិថិជន",
