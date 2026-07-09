@@ -45,8 +45,10 @@ export interface SaleLineItemRequest {
 export interface CreateTransactionRequest {
   items: SaleLineItemRequest[];
   paymentMethod: "CASH" | "QR_CODE";
-  paymentStatus: "PAID" | "UNPAID";
-  customerId?: string | null;
+  paymentStatus?: "PAID" | "UNPAID" | "PARTIAL";
+  customerId?: string;
+  deliveryStatus?: "NONE" | "PENDING" | "PREPARING" | "READY" | "IN_TRANSIT" | "DELIVERED" | "CANCELLED";
+  deliveryLocation?: string;
 }
 
 export interface TransactionItemResponse {
@@ -63,12 +65,16 @@ export interface TransactionResponse {
   id: string;
   cashierId: string;
   totalAmount: number;
+  paidAmount: number;
   transactionDate: string;
   items: TransactionItemResponse[];
   paymentMethod: "CASH" | "QR_CODE";
   paymentStatus: "PAID" | "UNPAID";
-  customerId?: string | null;
-  customerName?: string | null;
+  customerId: string | null;
+  customerName: string | null;
+  customerAddress: string | null;
+  deliveryStatus: "NONE" | "PENDING" | "PREPARING" | "READY" | "IN_TRANSIT" | "DELIVERED" | "CANCELLED";
+  deliveryLocation?: string | null;
 }
 
 export interface UnpaidAnalyticsResponse {
@@ -212,4 +218,14 @@ export interface ApiErrorBody {
   message: string;
   fieldErrors?: Record<string, string>;
   path: string;
+}
+
+export interface ActivityLogResponse {
+  id: string;
+  username: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  details: string;
+  createdAt: string;
 }

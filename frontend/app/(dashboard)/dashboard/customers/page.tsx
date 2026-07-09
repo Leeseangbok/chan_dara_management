@@ -307,7 +307,22 @@ export default function CustomersPage() {
                           <p className="text-xs text-gray-500 font-mono mt-0.5">#{tx.id.substring(0, 8).toUpperCase()}</p>
                         </div>
                         <div className="text-left sm:text-right flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 w-full sm:w-auto justify-between">
-                          <p className="font-bold text-lg text-indigo-700">{formatCurrency(tx.totalAmount)}</p>
+                          <div className="flex items-center gap-4">
+                            <div className="flex flex-col items-end">
+                              <p className="font-bold text-lg text-indigo-700">{formatCurrency(tx.totalAmount)}</p>
+                              {tx.paymentStatus === 'UNPAID' && (tx.paidAmount || 0) > 0 && (
+                                <p className="text-xs text-red-500 font-medium mt-0.5">
+                                  Due: {formatCurrency(Math.max(0, tx.totalAmount - (tx.paidAmount || 0)))}
+                                </p>
+                              )}
+                            </div>
+                            <button 
+                              onClick={() => window.location.href = `/dashboard/sales/${tx.id}`}
+                              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg transition-colors"
+                            >
+                              View Details / Pay
+                            </button>
+                          </div>
                           <div className="flex items-center gap-2">
                             <span className={`px-2 py-1 rounded text-xs font-bold ${tx.paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                               {tx.paymentStatus}
@@ -320,7 +335,7 @@ export default function CustomersPage() {
                       </div>
 
                       {/* Transaction Items */}
-                      <div className="p-4">
+                      <div className="p-4 overflow-x-auto">
                         <table className="w-full text-sm text-left">
                           <thead className="text-xs text-gray-500 uppercase bg-gray-50/50">
                             <tr>

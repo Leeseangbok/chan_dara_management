@@ -198,7 +198,7 @@ export default function PurchasesPage() {
                                 <span className="font-medium text-gray-900 mr-2">Notes:</span> {po.notes}
                               </p>
                             )}
-                            <div className="overflow-hidden rounded-lg border border-gray-100">
+                            <div className="overflow-x-auto rounded-lg border border-gray-100">
                               <table className="w-full text-left text-sm">
                                 <thead>
                                   <tr className="bg-gray-50 text-gray-500 font-medium">

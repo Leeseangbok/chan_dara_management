@@ -251,8 +251,13 @@ export default function DashboardOverview() {
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex flex-col items-end">
                       <p className="font-bold text-gray-900">{formatCurrency(tx.totalAmount)}</p>
+                      {tx.paymentStatus === 'UNPAID' && (tx.paidAmount || 0) > 0 && (
+                        <p className="text-xs text-red-500 font-medium">
+                          Due: {formatCurrency(Math.max(0, tx.totalAmount - (tx.paidAmount || 0)))}
+                        </p>
+                      )}
                       <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mt-1 ${tx.paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                         {tx.paymentStatus}
                       </span>

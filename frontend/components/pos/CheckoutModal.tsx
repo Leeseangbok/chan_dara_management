@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Loader2, DollarSign, X, Search, UserPlus, User, Phone, Check, ChevronDown, AlertCircle } from "lucide-react";
+import { Loader2, DollarSign, X, Search, UserPlus, User, Phone, Check, ChevronDown, AlertCircle, MapPin } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { formatCurrency } from "@/lib/utils/currency";
 import { Customer } from "@/lib/api/types";
@@ -13,7 +13,7 @@ interface CheckoutModalProps {
     totalAmount: number;
     isSubmitting: boolean;
     onClose: () => void;
-    onConfirm: (payload: { paymentMethod: "CASH"|"QR_CODE", paymentStatus: "PAID"|"UNPAID", customerId: string | null }) => void;
+    onConfirm: (payload: { paymentMethod: "CASH"|"QR_CODE", paymentStatus: "PAID"|"UNPAID", customerId: string | null, deliveryStatus: "NONE"|"PENDING", deliveryLocation: string }) => void;
 }
 
 export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onConfirm }: CheckoutModalProps) {
@@ -26,6 +26,9 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
     const [paymentMethod, setPaymentMethod] = useState<"CASH" | "QR_CODE">("CASH");
     const [paymentStatus, setPaymentStatus] = useState<"PAID" | "UNPAID">("PAID");
     const [customerId, setCustomerId] = useState<string | null>(null);
+
+    const [requiresDelivery, setRequiresDelivery] = useState(false);
+    const [deliveryLocation, setDeliveryLocation] = useState("");
 
     const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
     const [newCustomerForm, setNewCustomerForm] = useState({ name: "", phone: "", address: "", notes: "" });
@@ -48,10 +51,21 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
             setCustomerId(null);
             setIsCreatingCustomer(false);
             setNewCustomerForm({ name: "", phone: "", address: "", notes: "" });
+            setRequiresDelivery(false);
+            setDeliveryLocation("");
             
             loadCustomers();
         }
     }, [isOpen, totalAmount]);
+
+    useEffect(() => {
+        if (customerId) {
+            const customer = customers.find(c => c.id === customerId);
+            if (customer && customer.address) {
+                setDeliveryLocation(customer.address);
+            }
+        }
+    }, [customerId, customers]);
 
     if (!isOpen) return null;
 
@@ -60,8 +74,9 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
     
     // If unpaid, we force customer selection
     const isCustomerRequired = paymentStatus === "UNPAID" && !customerId;
+    const isDeliveryValid = !requiresDelivery || (requiresDelivery && deliveryLocation.trim().length > 0);
     const isCashValid = paymentStatus === "UNPAID" || paymentMethod === "QR_CODE" || received >= totalAmount;
-    const isValid = isCashValid && !isCustomerRequired;
+    const isValid = isCashValid && !isCustomerRequired && isDeliveryValid;
 
     const handleCreateCustomer = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -225,6 +240,7 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                                                         <div className="flex flex-col">
                                                             <span className={`text-sm font-semibold ${customerId === c.id ? 'text-indigo-900' : 'text-gray-900'}`}>{c.name}</span>
                                                             {c.phone && <span className="text-xs text-gray-500 flex items-center gap-1.5 mt-0.5"><Phone className="w-3 h-3" />{c.phone}</span>}
+                                                            {c.address && <span className="text-xs text-gray-400 flex items-center gap-1.5 mt-0.5 truncate max-w-[200px]"><MapPin className="w-3 h-3 shrink-0" />{c.address}</span>}
                                                         </div>
                                                     </div>
                                                     {customerId === c.id && <Check className="w-5 h-5 text-indigo-600" />}
@@ -300,6 +316,32 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                         </div>
                     )}
 
+                    {/* Delivery Options */}
+                    <div className="pt-2 border-t border-gray-100">
+                        <label className="flex items-center gap-2 cursor-pointer mb-3">
+                            <input
+                                type="checkbox"
+                                checked={requiresDelivery}
+                                onChange={(e) => setRequiresDelivery(e.target.checked)}
+                                className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
+                            />
+                            <span className="text-sm font-semibold text-gray-700">Requires Delivery</span>
+                        </label>
+
+                        {requiresDelivery && (
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Location / Notes <span className="text-red-500">*</span></label>
+                                <textarea
+                                    rows={2}
+                                    placeholder="Enter address, maps link, or instructions"
+                                    value={deliveryLocation}
+                                    onChange={(e) => setDeliveryLocation(e.target.value)}
+                                    className="w-full px-4 py-2 bg-gray-50 text-gray-700 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none"
+                                />
+                            </div>
+                        )}
+                    </div>
+
                     {/* Cash Received Input */}
                     {paymentStatus === "PAID" && paymentMethod === "CASH" && (
                         <>
@@ -337,7 +379,13 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                         {t.cancel}
                     </button>
                     <button
-                        onClick={() => onConfirm({ paymentMethod, paymentStatus, customerId })}
+                        onClick={() => onConfirm({ 
+                            paymentMethod, 
+                            paymentStatus, 
+                            customerId,
+                            deliveryStatus: requiresDelivery ? "PENDING" : "NONE",
+                            deliveryLocation
+                        })}
                         disabled={isSubmitting || !isValid}
                         className="flex-[2] py-3 px-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed"
                     >

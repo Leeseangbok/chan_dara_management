@@ -5,6 +5,7 @@ import com.app.customer.dto.CustomerResponse;
 import com.app.domain.entity.Customer;
 import com.app.exception.ResourceNotFoundException;
 import com.app.repository.CustomerRepository;
+import com.app.service.ActivityLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final ActivityLogService activityLogService;
 
     @Transactional(readOnly = true)
     public List<CustomerResponse> findAll() {
@@ -38,7 +40,14 @@ public class CustomerService {
                 .address(req.address())
                 .notes(req.notes())
                 .build();
-        return toResponse(customerRepository.save(c));
+        Customer saved = customerRepository.save(c);
+
+        // We'll log it as a System action if user isn't passed, or we can just pass
+        // null and let it be "System"
+        activityLogService.logActivity(null, "CREATE", "CUSTOMER", saved.getId().toString(),
+                "Created customer: " + saved.getName());
+
+        return toResponse(saved);
     }
 
     @Transactional
@@ -49,7 +58,12 @@ public class CustomerService {
         c.setPhone(req.phone());
         c.setAddress(req.address());
         c.setNotes(req.notes());
-        return toResponse(customerRepository.save(c));
+        Customer saved = customerRepository.save(c);
+
+        activityLogService.logActivity(null, "UPDATE", "CUSTOMER", saved.getId().toString(),
+                "Updated customer: " + saved.getName());
+
+        return toResponse(saved);
     }
 
     @Transactional
@@ -58,6 +72,8 @@ public class CustomerService {
             throw new ResourceNotFoundException("Customer not found: " + id);
         }
         customerRepository.deleteById(id);
+
+        activityLogService.logActivity(null, "DELETE", "CUSTOMER", id.toString(), "Deleted customer");
     }
 
     private CustomerResponse toResponse(Customer c) {
@@ -68,7 +84,6 @@ public class CustomerService {
                 c.getAddress(),
                 c.getNotes(),
                 c.getTotalUnpaid(),
-                c.getCreatedAt()
-        );
+                c.getCreatedAt());
     }
 }

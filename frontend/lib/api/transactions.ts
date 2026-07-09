@@ -43,5 +43,40 @@ export const transactionsApi = {
       `/api/v1/transactions/customer/${customerId}`
     );
     return data;
+  },
+
+  async addPayment(id: string, payload: { amount: number; paymentMethod: "CASH" | "QR_CODE" }): Promise<TransactionResponse> {
+    const { data } = await apiClient.post<TransactionResponse>(
+      `/api/v1/transactions/${id}/payments`,
+      payload
+    );
+    return data;
+  },
+
+  async updateItems(id: string, request: CreateTransactionRequest): Promise<TransactionResponse> {
+    const { data } = await apiClient.put<TransactionResponse>(
+      `/api/v1/transactions/${id}/items`,
+      request
+    );
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    await apiClient.delete(`/api/v1/transactions/${id}`);
+  },
+
+  async getPendingDeliveries(): Promise<TransactionResponse[]> {
+    const { data } = await apiClient.get<TransactionResponse[]>(
+      `/api/v1/transactions/deliveries/pending`
+    );
+    return data;
+  },
+
+  async updateDeliveryStatus(id: string, status: string): Promise<TransactionResponse> {
+    const { data } = await apiClient.patch<TransactionResponse>(
+      `/api/v1/transactions/${id}/delivery-status`,
+      { status }
+    );
+    return data;
   }
 };

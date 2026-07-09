@@ -8,10 +8,14 @@ import com.app.domain.enums.MovementType;
 import com.app.domain.entity.Customer;
 import com.app.domain.entity.PaymentMethod;
 import com.app.domain.entity.PaymentStatus;
+import com.app.domain.entity.DeliveryStatus;
 import com.app.exception.ResourceNotFoundException;
 import com.app.repository.CustomerRepository;
 import com.app.repository.ProductRepository;
 import com.app.repository.TransactionRepository;
+import com.app.repository.TransactionPaymentRepository;
+import com.app.service.dto.AddPaymentRequest;
+import com.app.domain.entity.TransactionPayment;
 import com.app.service.dto.CreateTransactionRequest;
 import com.app.service.dto.SaleLineItemRequest;
 import com.app.service.dto.TransactionItemResponse;
@@ -34,7 +38,9 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
+    private final TransactionPaymentRepository transactionPaymentRepository;
     private final InventoryService inventoryService;
+    private final ActivityLogService activityLogService;
 
     @Transactional
     public TransactionResponse processSale(CreateTransactionRequest request, User cashier){
@@ -70,11 +76,28 @@ public class TransactionService {
 
         PaymentMethod method = request.paymentMethod() != null ? request.paymentMethod() : PaymentMethod.CASH;
         PaymentStatus status = request.paymentStatus() != null ? request.paymentStatus() : PaymentStatus.PAID;
+        DeliveryStatus deliveryStatus = request.deliveryStatus() != null ? request.deliveryStatus() : DeliveryStatus.NONE;
+        
+        String deliveryLoc = request.deliveryLocation();
 
-        Transaction transaction = Transaction.createFinalized(cashier, items, Instant.now(), method, status, customer);
+        if (customer != null && deliveryStatus != DeliveryStatus.NONE && deliveryLoc != null && !deliveryLoc.isBlank()) {
+            if (customer.getAddress() == null || customer.getAddress().isBlank()) {
+                customer.setAddress(deliveryLoc);
+                customerRepository.save(customer);
+            }
+        }
+
+        Transaction transaction = Transaction.createFinalized(cashier, items, Instant.now(), method, status, customer, deliveryStatus, deliveryLoc);
         Transaction saved = transactionRepository.save(transaction);
+        
+        activityLogService.logActivity(cashier, "CREATE", "TRANSACTION", saved.getId().toString(), "Created sale of " + formatCurrency(saved.getTotalAmount()) + (deliveryStatus != DeliveryStatus.NONE ? " (Delivery)" : ""));
 
         return toResponse(saved);
+    }
+    
+    private String formatCurrency(java.math.BigDecimal amount) {
+        if (amount == null) return "$0.00";
+        return "$" + String.format("%.2f", amount);
     }
 
     @Transactional(readOnly = true)
@@ -82,6 +105,89 @@ public class TransactionService {
         Transaction tx = transactionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found: " + id));
         return toResponse(tx);
+    }
+
+    @Transactional
+    public TransactionResponse addPayment(UUID transactionId, AddPaymentRequest request, User cashier) {
+        Transaction tx = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found: " + transactionId));
+
+        TransactionPayment payment = TransactionPayment.of(tx, request.amount(), request.paymentMethod(), cashier);
+        transactionPaymentRepository.save(payment);
+
+        java.math.BigDecimal newPaidAmount = tx.getPaidAmount().add(request.amount());
+        tx.setPaidAmount(newPaidAmount);
+
+        if (newPaidAmount.compareTo(tx.getTotalAmount()) >= 0) {
+            tx.setPaymentStatus(PaymentStatus.PAID);
+        }
+
+        transactionRepository.save(tx);
+        
+        activityLogService.logActivity(cashier, "UPDATE", "TRANSACTION_PAYMENT", tx.getId().toString(), "Added payment of " + formatCurrency(request.amount()) + " via " + request.paymentMethod());
+        
+        return toResponse(tx);
+    }
+
+    @Transactional
+    public TransactionResponse updateItems(UUID id, CreateTransactionRequest request, User cashier) {
+        Transaction tx = transactionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found: " + id));
+
+        // Revert old inventory
+        for (TransactionItem oldItem : tx.getItems()) {
+            inventoryService.applyMovement(oldItem.getProduct(), cashier, MovementType.RETURN, oldItem.getQuantity());
+        }
+
+        // Clear existing items
+        tx.getItems().clear();
+
+        List<SaleLineItemRequest> sortedLines = request.items().stream()
+                .sorted(Comparator.comparing(SaleLineItemRequest::productId))
+                .toList();
+
+        java.math.BigDecimal newTotal = java.math.BigDecimal.ZERO;
+
+        for (SaleLineItemRequest line : sortedLines) {
+            Product product = productRepository.findByIdForUpdate(line.productId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + line.productId()));
+
+            java.math.BigDecimal finalPrice = line.unitPrice() != null ? line.unitPrice() : product.getPrice();
+
+            TransactionItem item = TransactionItem.of(product, line.quantity(), finalPrice, product.getCostPrice());
+            item.attachTo(tx);
+            tx.getItems().add(item);
+            newTotal = newTotal.add(item.getSubtotal());
+
+            inventoryService.applyMovement(product, cashier, MovementType.SALE, -line.quantity());
+        }
+
+        tx.setTotalAmount(newTotal);
+        if (tx.getPaidAmount().compareTo(newTotal) >= 0) {
+            tx.setPaymentStatus(PaymentStatus.PAID);
+        } else {
+            tx.setPaymentStatus(PaymentStatus.UNPAID);
+        }
+
+        transactionRepository.save(tx);
+        
+        activityLogService.logActivity(cashier, "UPDATE", "TRANSACTION", tx.getId().toString(), "Updated items, new total " + formatCurrency(tx.getTotalAmount()));
+        
+        return toResponse(tx);
+    }
+
+    @Transactional
+    public void deleteTransaction(UUID id, User cashier) {
+        Transaction tx = transactionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found: " + id));
+
+        for (TransactionItem item : tx.getItems()) {
+            inventoryService.applyMovement(item.getProduct(), cashier, MovementType.RETURN, item.getQuantity());
+        }
+
+        transactionRepository.delete(tx);
+        
+        activityLogService.logActivity(cashier, "DELETE", "TRANSACTION", id.toString(), "Deleted transaction " + formatCurrency(tx.getTotalAmount()));
     }
 
     @Transactional(readOnly = true)
@@ -109,12 +215,16 @@ public class TransactionService {
                 tx.getId(),
                 tx.getUser().getId(),
                 tx.getTotalAmount(),
+                tx.getPaidAmount(),
                 tx.getTransactionDate(),
                 itemResponses,
                 tx.getPaymentMethod(),
                 tx.getPaymentStatus(),
                 tx.getCustomer() != null ? tx.getCustomer().getId() : null,
-                tx.getCustomer() != null ? tx.getCustomer().getName() : null
+                tx.getCustomer() != null ? tx.getCustomer().getName() : null,
+                tx.getCustomer() != null ? tx.getCustomer().getAddress() : null,
+                tx.getDeliveryStatus(),
+                tx.getDeliveryLocation()
         );
     }
 
@@ -132,5 +242,25 @@ public class TransactionService {
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<TransactionResponse> getPendingDeliveries() {
+        return transactionRepository.findByDeliveryStatusInOrderByTransactionDateAsc(
+                List.of(DeliveryStatus.PENDING, DeliveryStatus.PREPARING, DeliveryStatus.READY, DeliveryStatus.IN_TRANSIT)
+        ).stream().map(this::toResponse).toList();
+    }
+
+    @Transactional
+    public TransactionResponse updateDeliveryStatus(UUID id, DeliveryStatus status, User cashier) {
+        Transaction tx = transactionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found: " + id));
+
+        tx.setDeliveryStatus(status);
+        transactionRepository.save(tx);
+
+        activityLogService.logActivity(cashier, "UPDATE", "DELIVERY_STATUS", tx.getId().toString(), "Updated delivery status to " + status.name());
+
+        return toResponse(tx);
     }
 }

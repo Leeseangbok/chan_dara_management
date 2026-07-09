@@ -58,7 +58,7 @@ public class TransactionItem {
         return new TransactionItem(product, quantity, unitPrice, unitCost);
     }
 
-    void attachTo(Transaction transaction) {
+    public void attachTo(Transaction transaction) {
         this.transaction = transaction;
     }
 

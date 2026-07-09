@@ -10,18 +10,24 @@ import {
   Receipt,
   ChevronDown,
   ChevronUp,
-  Undo2
+  Undo2,
+  ArrowDownUp,
+  Calendar
 } from "lucide-react";
 import React from "react";
 
+import { useRouter } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { DateRangeFilter, DateFilterState, applyDateFilter } from "@/components/ui/DateRangeFilter";
 
 export default function SalesHistoryPage() {
   const { t } = useLanguage();
+  const router = useRouter();
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
+  const [dateFilter, setDateFilter] = useState<DateFilterState>({ type: "all" });
 
   useEffect(() => {
     fetchTransactions();
@@ -38,23 +44,21 @@ export default function SalesHistoryPage() {
     }
   };
 
-  const toggleRow = (txId: string) => {
-    setExpandedRows(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(txId)) {
-        newSet.delete(txId);
-      } else {
-        newSet.add(txId);
-      }
-      return newSet;
-    });
-  };
+
 
   const filteredTransactions = transactions.filter(tx => {
     const searchLower = searchQuery.toLowerCase();
     const idMatch = tx.id.toLowerCase().includes(searchLower);
     const customerMatch = tx.customerName?.toLowerCase().includes(searchLower) || false;
-    return idMatch || customerMatch;
+    
+    if (idMatch || customerMatch) return true;
+    return false;
+  }).filter(tx => applyDateFilter(tx.transactionDate, dateFilter));
+
+  const sortedTransactions = [...filteredTransactions].sort((a, b) => {
+    const dateA = new Date(a.transactionDate).getTime();
+    const dateB = new Date(b.transactionDate).getTime();
+    return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
   });
 
   return (
@@ -66,15 +70,30 @@ export default function SalesHistoryPage() {
         </div>
       </div>
 
-      <div className="relative max-w-md text-gray-700">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
-        <input
-          type="text"
-          placeholder={t.searchSales}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm"
-        />
+      <div className="flex flex-col sm:flex-row gap-3 items-center w-full">
+        <div className="relative w-full sm:w-80 text-gray-700">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
+          <input
+            type="text"
+            placeholder={t.searchSales}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm"
+          />
+        </div>
+        
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <DateRangeFilter filter={dateFilter} onChange={setDateFilter} />
+
+          <button
+            onClick={() => setSortOrder(prev => prev === "desc" ? "asc" : "desc")}
+            className="px-4 py-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 flex items-center justify-center gap-2 text-gray-700 transition-colors"
+            title="Toggle sort order"
+          >
+            <ArrowDownUp className="w-4 h-4" />
+            <span className="hidden sm:inline font-medium">{sortOrder === "desc" ? "Newest" : "Oldest"}</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex-1">
@@ -108,85 +127,60 @@ export default function SalesHistoryPage() {
                 </tr>
               ) : (
                 filteredTransactions.map((tx) => {
-                  const isExpanded = expandedRows.has(tx.id);
                   return (
-                    <React.Fragment key={tx.id}>
-                      <tr
-                        className={`hover:bg-gray-50/80 transition-colors cursor-pointer ${isExpanded ? 'bg-indigo-50/30' : ''}`}
-                        onClick={() => toggleRow(tx.id)}
-                      >
-                        <td className="px-6 py-4">
-                          <button className="text-gray-400 hover:text-indigo-600 transition-colors">
-                            {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                          </button>
-                        </td>
-                        <td className="px-6 py-4 font-mono text-sm text-indigo-600 font-medium">
-                          #{tx.id.substring(0, 8).toUpperCase()}
-                        </td>
-                        <td className="px-6 py-4 text-gray-600">
-                          {new Date(tx.transactionDate).toLocaleString()}
-                        </td>
-                        <td className="px-6 py-4 font-medium">
-                          {tx.customerName || <span className="text-gray-400 italic">Walk-in</span>}
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex flex-col items-center gap-1">
-                            <span className="text-xs font-medium bg-gray-100 px-2 py-0.5 rounded text-gray-700">
-                              {tx.paymentMethod}
+                    <tr
+                      key={tx.id}
+                      className="hover:bg-gray-50/80 transition-colors cursor-pointer"
+                      onClick={() => router.push(`/dashboard/sales/${tx.id}`)}
+                    >
+                      <td className="px-6 py-4">
+                        <button className="text-gray-400 hover:text-indigo-600 transition-colors">
+                          <Search className="w-5 h-5" />
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 font-mono text-sm text-indigo-600 font-medium">
+                        #{tx.id.substring(0, 8).toUpperCase()}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {new Date(tx.transactionDate).toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="font-medium text-gray-900">{tx.customerName || <span className="text-gray-400 italic">Walk-in</span>}</span>
+                          {tx.customerAddress && <span className="text-xs text-gray-500 mt-0.5 truncate max-w-[150px]">{tx.customerAddress}</span>}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="text-xs font-medium bg-gray-100 px-2 py-0.5 rounded text-gray-700">
+                            {tx.paymentMethod}
+                          </span>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${tx.paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                            }`}>
+                            {tx.paymentStatus}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex flex-col items-end">
+                          <span className="font-bold text-gray-900">{formatCurrency(tx.totalAmount)}</span>
+                          {tx.paymentStatus === 'UNPAID' && (tx.paidAmount || 0) > 0 && (
+                            <span className="text-xs text-red-500 font-medium">
+                              Due: {formatCurrency(Math.max(0, tx.totalAmount - (tx.paidAmount || 0)))}
                             </span>
-                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${tx.paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                              }`}>
-                              {tx.paymentStatus}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-right font-bold text-gray-900">
-                          {formatCurrency(tx.totalAmount)}
-                        </td>
-                        <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            className="inline-flex items-center justify-center p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors border border-transparent hover:border-orange-200"
-                            title="Return / Void Transaction"
-                            onClick={() => alert("Return / Void feature will be implemented in Phase 2.")}
-                          >
-                            <Undo2 className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                      {/* Expanded Details Row */}
-                      {isExpanded && (
-                        <tr className="bg-gray-50/50">
-                          <td colSpan={7} className="p-0 border-b-2 border-indigo-100">
-                            <div className="px-16 py-6 bg-white shadow-inner">
-                              <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                <Receipt className="w-4 h-4 text-indigo-600" />
-                                Receipt Details
-                              </h4>
-                              <table className="w-full text-sm">
-                                <thead>
-                                  <tr className="text-gray-500 border-b border-gray-100">
-                                    <th className="pb-2 text-left font-medium">Item</th>
-                                    <th className="pb-2 text-right font-medium">Price</th>
-                                    <th className="pb-2 text-right font-medium">Qty</th>
-                                    <th className="pb-2 text-right font-medium">Subtotal</th>
-                                  </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-50">
-                                  {tx.items.map((item, idx) => (
-                                    <tr key={idx}>
-                                      <td className="py-2 text-gray-900">{item.productName}</td>
-                                      <td className="py-2 text-right text-gray-600">{formatCurrency(item.unitPrice)}</td>
-                                      <td className="py-2 text-right font-medium text-gray-900">{item.quantity}</td>
-                                      <td className="py-2 text-right font-medium text-gray-900">{formatCurrency(item.subtotal)}</td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          className="inline-flex items-center justify-center p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-transparent hover:border-indigo-200"
+                          title="View Details"
+                          onClick={() => router.push(`/dashboard/sales/${tx.id}`)}
+                        >
+                          <ChevronDown className="w-4 h-4 -rotate-90" />
+                        </button>
+                      </td>
+                    </tr>
                   );
                 })
               )}

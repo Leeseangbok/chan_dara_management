@@ -13,11 +13,13 @@ public interface TransactionRepository extends CrudRepository<Transaction, UUID>
     @Query("SELECT COUNT(t) FROM Transaction t WHERE t.paymentStatus = :status")
     long countByPaymentStatus(PaymentStatus status);
 
-    @Query("SELECT COALESCE(SUM(t.totalAmount), 0) FROM Transaction t WHERE t.paymentStatus = :status")
+    @Query("SELECT COALESCE(SUM(t.totalAmount - COALESCE(t.paidAmount, 0)), 0) FROM Transaction t WHERE t.paymentStatus = :status")
     BigDecimal sumTotalAmountByPaymentStatus(PaymentStatus status);
 
     @Query("SELECT COALESCE(SUM(i.quantity), 0) FROM Transaction t JOIN t.items i WHERE t.paymentStatus = :status")
     long sumProductQuantityByPaymentStatus(PaymentStatus status);
+
+    List<Transaction> findByDeliveryStatusInOrderByTransactionDateAsc(List<com.app.domain.entity.DeliveryStatus> statuses);
 
     List<Transaction> findByCustomerIdOrderByTransactionDateDesc(UUID customerId);
 

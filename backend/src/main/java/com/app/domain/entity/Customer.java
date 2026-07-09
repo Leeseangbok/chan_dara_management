@@ -32,7 +32,7 @@ public class Customer {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-    @org.hibernate.annotations.Formula("(SELECT COALESCE(SUM(t.total_amount), 0) FROM transactions t WHERE t.customer_id = id AND t.payment_status = 'UNPAID')")
+    @org.hibernate.annotations.Formula("(SELECT COALESCE(SUM(t.total_amount - COALESCE(t.paid_amount, 0)), 0) FROM transactions t WHERE t.customer_id = id AND t.payment_status = 'UNPAID')")
     private java.math.BigDecimal totalUnpaid;
 
     @Column(name = "created_at", nullable = false, updatable = false)

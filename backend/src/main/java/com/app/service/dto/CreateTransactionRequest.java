@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
 
+import com.app.domain.entity.DeliveryStatus;
 import com.app.domain.entity.PaymentMethod;
 import com.app.domain.entity.PaymentStatus;
 import java.util.UUID;
@@ -13,5 +14,7 @@ public record CreateTransactionRequest (
         @NotEmpty @Valid List<SaleLineItemRequest> items,
         PaymentMethod paymentMethod,
         PaymentStatus paymentStatus,
-        UUID customerId
+        UUID customerId,
+        DeliveryStatus deliveryStatus,
+        String deliveryLocation
 ){}

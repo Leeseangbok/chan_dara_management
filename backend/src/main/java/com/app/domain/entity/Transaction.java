@@ -32,6 +32,9 @@ public class Transaction {
     @Column(name = "total_amount", nullable = false, precision = 14, scale = 2)
     private BigDecimal totalAmount;
 
+    @Column(name = "paid_amount", nullable = false, precision = 14, scale = 2)
+    private BigDecimal paidAmount = BigDecimal.ZERO;
+
     @Column(name = "transaction_date", nullable = false, updatable = false)
     private Instant transactionDate;
 
@@ -43,23 +46,33 @@ public class Transaction {
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus = PaymentStatus.PAID;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "delivery_status", nullable = false)
+    private DeliveryStatus deliveryStatus = DeliveryStatus.NONE;
+
+    @Column(name = "delivery_location", columnDefinition = "TEXT")
+    private String deliveryLocation;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @OneToMany(mappedBy = "transaction", cascade = CascadeType.PERSIST, orphanRemoval = false)
+    @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TransactionItem> items = new ArrayList<>();
 
-    private Transaction(User user, BigDecimal totalAmount, Instant transactionDate, PaymentMethod method, PaymentStatus status, Customer customer) {
+    private Transaction(User user, BigDecimal totalAmount, BigDecimal paidAmount, Instant transactionDate, PaymentMethod method, PaymentStatus status, Customer customer, DeliveryStatus deliveryStatus, String deliveryLocation) {
         this.user = user;
         this.totalAmount = totalAmount;
+        this.paidAmount = paidAmount;
         this.transactionDate = transactionDate;
         this.paymentMethod = method;
         this.paymentStatus = status;
         this.customer = customer;
+        this.deliveryStatus = deliveryStatus != null ? deliveryStatus : DeliveryStatus.NONE;
+        this.deliveryLocation = deliveryLocation;
     }
 
-    public static Transaction createFinalized(User user, List<TransactionItem> items, Instant transactionDate, PaymentMethod method, PaymentStatus status, Customer customer) {
+    public static Transaction createFinalized(User user, List<TransactionItem> items, Instant transactionDate, PaymentMethod method, PaymentStatus status, Customer customer, DeliveryStatus deliveryStatus, String deliveryLocation) {
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("A transaction must have at least one item");
         }
@@ -67,7 +80,9 @@ public class Transaction {
                 .map(TransactionItem::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Transaction tx = new Transaction(user, total, transactionDate, method, status, customer);
+        BigDecimal paid = status == PaymentStatus.PAID ? total : BigDecimal.ZERO;
+
+        Transaction tx = new Transaction(user, total, paid, transactionDate, method, status, customer, deliveryStatus, deliveryLocation);
         for (TransactionItem item : items) {
             item.attachTo(tx);
             tx.items.add(item);

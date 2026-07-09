@@ -6,6 +6,7 @@ import com.app.domain.entity.Product;
 import com.app.exception.ResourceNotFoundException;
 import com.app.repository.CategoryRepository;
 import com.app.repository.ProductRepository;
+import com.app.service.ActivityLogService;
 import com.app.service.FileStorageService;
 import com.app.service.dto.CreateProductRequest;
 import com.app.service.dto.ProductResponse;
@@ -26,6 +27,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ActivityLogService activityLogService;
     private final CategoryService categoryService;
     private final FileStorageService fileStorageService;
 
@@ -90,7 +92,12 @@ public class ProductService {
                 .costPrice(req.costPrice())
                 .stockQuantity(req.stockQuantity())
                 .build();
-        return toResponse(productRepository.save(product));
+        
+        Product saved = productRepository.save(product);
+        
+        activityLogService.logActivity(null, "CREATE", "PRODUCT", saved.getId().toString(), "Created product: " + saved.getName());
+        
+        return toResponse(saved);
     }
 
     @Transactional
@@ -104,7 +111,12 @@ public class ProductService {
         product.setPrice(req.price());
         product.setCostPrice(req.costPrice());
         product.setStockQuantity(req.stockQuantity());
-        return toResponse(productRepository.save(product));
+        
+        Product saved = productRepository.save(product);
+        
+        activityLogService.logActivity(null, "UPDATE", "PRODUCT", saved.getId().toString(), "Updated product: " + saved.getName());
+        
+        return toResponse(saved);
     }
 
     @Transactional
@@ -122,6 +134,8 @@ public class ProductService {
             throw new ResourceNotFoundException("Product not found: " + id);
         }
         productRepository.deleteById(id);
+        
+        activityLogService.logActivity(null, "DELETE", "PRODUCT", id.toString(), "Deleted product");
     }
 
     private Category resolveCategory(UUID categoryId) {
