@@ -4,7 +4,10 @@ import com.app.domain.entity.ActivityLog;
 import com.app.domain.entity.User;
 import com.app.repository.ActivityLogRepository;
 import com.app.service.dto.ActivityLogResponse;
+import com.app.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,13 @@ public class ActivityLogService {
 
     @Transactional
     public void logActivity(User user, String action, String entityType, String entityId, String details) {
+        if (user == null) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal principal) {
+                user = principal.getUser();
+            }
+        }
+        
         ActivityLog log = ActivityLog.builder()
                 .user(user)
                 .action(action)
