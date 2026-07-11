@@ -15,5 +15,8 @@ public record PurchaseOrderItemRequest(
         
         @NotNull(message = "Unit cost is required")
         @Min(value = 0, message = "Unit cost cannot be negative")
-        BigDecimal unitCost
+        BigDecimal unitCost,
+
+        @Min(value = 0, message = "Delivery cost cannot be negative")
+        BigDecimal deliveryCost
 ) {}

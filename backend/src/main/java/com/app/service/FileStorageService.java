@@ -31,8 +31,8 @@ public class FileStorageService {
      * path.
      */
     public String storeProductImage(UUID productId, MultipartFile file) throws IOException {
-        String original = StringUtils
-                .cleanPath(file.getOriginalFilename() != null ? file.getOriginalFilename() : "file");
+        String originalFilename = file.getOriginalFilename() != null ? file.getOriginalFilename() : "file";
+        String original = StringUtils.cleanPath(originalFilename);
         String ext = StringUtils.getFilenameExtension(original);
         String filename = productId + (ext != null && !ext.isBlank() ? "." + ext.toLowerCase() : ".jpg");
 

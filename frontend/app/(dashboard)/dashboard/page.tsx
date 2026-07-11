@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { transactionsApi } from "@/lib/api/transactions";
+import { reportApi } from "@/lib/api/reports";
 import { DashboardMetricsResponse } from "@/lib/api/types";
 import { formatCurrency } from "@/lib/utils/currency";
 
@@ -84,26 +85,37 @@ export default function DashboardOverview() {
           <p className="text-sm text-gray-500 mt-1">{t.dashboardSub}</p>
         </div>
 
-        {/* Timeframe Selector (Option A Implementation) */}
-        <div className="flex bg-gray-100 p-1 rounded-lg">
+        <div className="flex items-center gap-3">
+          {/* Export Button */}
           <button
-            onClick={() => setTimeframe('today')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${timeframe === 'today' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            onClick={() => reportApi.exportComprehensiveExcel(timeframe === 'today' ? 'day' : timeframe)}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors shadow-sm"
           >
-            {t.today}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Export Excel
           </button>
-          <button
-            onClick={() => setTimeframe('month')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${timeframe === 'month' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-          >
-            {t.thisMonth}
-          </button>
-          <button
-            onClick={() => setTimeframe('year')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${timeframe === 'year' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-          >
-            {t.thisYear}
-          </button>
+
+          {/* Timeframe Selector (Option A Implementation) */}
+          <div className="flex bg-gray-100 p-1 rounded-lg">
+            <button
+              onClick={() => setTimeframe('today')}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${timeframe === 'today' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              {t.today}
+            </button>
+            <button
+              onClick={() => setTimeframe('month')}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${timeframe === 'month' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              {t.thisMonth}
+            </button>
+            <button
+              onClick={() => setTimeframe('year')}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${timeframe === 'year' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              {t.thisYear}
+            </button>
+          </div>
         </div>
       </div>
 

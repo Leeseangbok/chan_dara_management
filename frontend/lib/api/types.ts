@@ -165,6 +165,7 @@ export interface PurchaseOrderItem {
   productName: string;
   quantity: number;
   unitCost: number;
+  deliveryCost: number;
   subtotal: number;
 }
 
@@ -184,6 +185,7 @@ export interface CreatePurchaseOrderItemPayload {
   productId: string;
   quantity: number;
   unitCost: number;
+  deliveryCost: number;
 }
 
 export interface CreatePurchaseOrderPayload {

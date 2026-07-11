@@ -23,6 +23,8 @@ public interface TransactionRepository extends CrudRepository<Transaction, UUID>
 
     List<Transaction> findByCustomerIdOrderByTransactionDateDesc(UUID customerId);
 
+    List<Transaction> findByTransactionDateBetweenOrderByTransactionDateDesc(java.time.Instant startOfDay, java.time.Instant endOfDay);
+
     @Query("SELECT COUNT(t) FROM Transaction t WHERE t.transactionDate >= :startOfDay AND t.transactionDate <= :endOfDay")
     long countTransactionsByDateRange(java.time.Instant startOfDay, java.time.Instant endOfDay);
 

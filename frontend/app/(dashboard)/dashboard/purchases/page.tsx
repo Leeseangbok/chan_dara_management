@@ -3,9 +3,12 @@
 import { useState, useEffect } from "react";
 import { purchasesApi } from "@/lib/api/purchases";
 import { PurchaseOrder } from "@/lib/api/types";
-import { Plus, Search, Loader2, PackageSearch, ChevronDown, ChevronUp, CheckCircle, XCircle } from "lucide-react";
+import { Plus, Search, Loader2, PackageSearch, ChevronDown, ChevronUp, CheckCircle, XCircle, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/utils/currency";
+import { toPng } from 'html-to-image';
+import { useRef } from "react";
 
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import React from "react";
@@ -17,6 +20,24 @@ export default function PurchasesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedPo, setExpandedPo] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  const poImageRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const handleExportImage = async (po: PurchaseOrder) => {
+    const el = poImageRefs.current[po.id];
+    if (!el) return toast.error("Could not generate image");
+    try {
+      const dataUrl = await toPng(el, { cacheBust: true, backgroundColor: '#ffffff' });
+      const link = document.createElement('a');
+      link.download = `purchase-list-${po.poNumber}.png`;
+      link.href = dataUrl;
+      link.click();
+      toast.success("Purchase list exported!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to export image");
+    }
+  };
 
   useEffect(() => {
     fetchPurchases();
@@ -148,7 +169,7 @@ export default function PurchasesPage() {
                         {new Date(po.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-900">
-                        ${po.totalAmount.toFixed(2)}
+                        {formatCurrency(po.totalAmount)}
                       </td>
                       <td className="px-6 py-4">
                         <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${po.status === 'RECEIVED' ? 'bg-green-100 text-green-700' :
@@ -191,7 +212,16 @@ export default function PurchasesPage() {
                           <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                             <h4 className="font-semibold text-gray-900 mb-3 flex items-center justify-between">
                               <span>Order Details</span>
-                              {po.createdBy && <span className="text-xs font-normal text-gray-500">Created by: {po.createdBy}</span>}
+                              <div className="flex items-center gap-4">
+                                {po.createdBy && <span className="text-xs font-normal text-gray-500">Created by: {po.createdBy}</span>}
+                                <button
+                                  onClick={() => handleExportImage(po)}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                                >
+                                  <ImageIcon className="w-4 h-4" />
+                                  Export List
+                                </button>
+                              </div>
                             </h4>
                             {po.notes && (
                               <p className="text-sm text-gray-600 mb-4 bg-gray-50 p-3 rounded-lg border border-gray-100">
@@ -205,6 +235,7 @@ export default function PurchasesPage() {
                                     <th className="px-4 py-2">Product</th>
                                     <th className="px-4 py-2 text-right">Quantity</th>
                                     <th className="px-4 py-2 text-right">Unit Cost</th>
+                                    <th className="px-4 py-2 text-right">Delivery</th>
                                     <th className="px-4 py-2 text-right">Subtotal</th>
                                   </tr>
                                 </thead>
@@ -213,12 +244,38 @@ export default function PurchasesPage() {
                                     <tr key={idx} className="hover:bg-gray-50">
                                       <td className="px-4 py-2 font-medium text-gray-900">{item.productName}</td>
                                       <td className="px-4 py-2 text-right">{item.quantity}</td>
-                                      <td className="px-4 py-2 text-right">${item.unitCost.toFixed(2)}</td>
-                                      <td className="px-4 py-2 text-right font-medium text-gray-900">${item.subtotal.toFixed(2)}</td>
+                                      <td className="px-4 py-2 text-right">{formatCurrency(item.unitCost)}</td>
+                                      <td className="px-4 py-2 text-right">{formatCurrency(item.deliveryCost || 0)}</td>
+                                      <td className="px-4 py-2 text-right font-medium text-gray-900">{formatCurrency(item.subtotal)}</td>
                                     </tr>
                                   ))}
                                 </tbody>
                               </table>
+                            </div>
+                            {/* Hidden Div for Image Export */}
+                            <div className="absolute -left-[9999px] top-0">
+                              <div ref={(el) => { poImageRefs.current[po.id] = el; }} className="bg-white p-8 w-[600px] border border-gray-100 shadow-sm">
+                                <div className="text-center mb-6">
+                                  <h2 className="text-2xl font-bold text-gray-900">Purchase List</h2>
+                                  <p className="text-gray-500 text-sm">{po.supplier.name} - {new Date(po.createdAt).toLocaleDateString()}</p>
+                                </div>
+                                <table className="w-full text-left text-sm border-collapse">
+                                  <thead>
+                                    <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 font-medium">
+                                      <th className="px-4 py-3">Item Name</th>
+                                      <th className="px-4 py-3 text-right">Quantity</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-gray-100">
+                                    {po.items.map((item, idx) => (
+                                      <tr key={idx}>
+                                        <td className="px-4 py-3 text-gray-900 text-lg">{item.productName}</td>
+                                        <td className="px-4 py-3 text-right text-gray-900 font-bold text-lg">{item.quantity}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
                             </div>
                           </div>
                         </td>

@@ -1,19 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { suppliersApi } from "@/lib/api/suppliers";
 import { purchasesApi } from "@/lib/api/purchases";
 import { productsApi } from "@/lib/api/products";
 import { Supplier, Product } from "@/lib/api/types";
-import { ArrowLeft, Plus, Search, Trash2, Loader2, Save, PackageSearch } from "lucide-react";
+import { ArrowLeft, Plus, Search, Trash2, Loader2, Save, PackageSearch, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { toPng } from 'html-to-image';
+import { formatCurrency } from "@/lib/utils/currency";
 
 interface SelectedItem {
   product: Product;
   quantity: number;
   unitCost: number;
+  deliveryCost: number;
 }
 
 export default function NewPurchaseOrderPage() {
@@ -28,6 +31,8 @@ export default function NewPurchaseOrderPage() {
   const [notes, setNotes] = useState("");
 
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
+
+  const listRef = useRef<HTMLDivElement>(null);
 
   // Product Search State
   const [searchQuery, setSearchQuery] = useState("");
@@ -55,7 +60,7 @@ export default function NewPurchaseOrderPage() {
 
     setSelectedItems([
       ...selectedItems,
-      { product, quantity: 1, unitCost: product.costPrice || 0 }
+      { product, quantity: 1, unitCost: product.costPrice || 0, deliveryCost: 0 }
     ]);
 
     setSearchQuery("");
@@ -66,7 +71,7 @@ export default function NewPurchaseOrderPage() {
     setSelectedItems(selectedItems.filter(i => i.product.id !== productId));
   };
 
-  const updateItem = (productId: string, field: "quantity" | "unitCost", value: number) => {
+  const updateItem = (productId: string, field: "quantity" | "unitCost" | "deliveryCost", value: number) => {
     setSelectedItems(selectedItems.map(item => {
       if (item.product.id === productId) {
         return { ...item, [field]: value };
@@ -75,7 +80,23 @@ export default function NewPurchaseOrderPage() {
     }));
   };
 
-  const totalAmount = selectedItems.reduce((acc, item) => acc + (item.quantity * item.unitCost), 0);
+  const totalAmount = selectedItems.reduce((acc, item) => acc + (item.quantity * (item.unitCost + item.deliveryCost)), 0);
+
+  const handleExportImage = async () => {
+    if (selectedItems.length === 0) return toast.error("Please add products first");
+    if (listRef.current === null) return;
+    try {
+      const dataUrl = await toPng(listRef.current, { cacheBust: true, backgroundColor: '#ffffff' });
+      const link = document.createElement('a');
+      link.download = `purchase-list-${new Date().getTime()}.png`;
+      link.href = dataUrl;
+      link.click();
+      toast.success("Purchase list exported!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to export image");
+    }
+  };
 
   const handleSubmit = async () => {
     if (!selectedSupplierId) return toast.error("Please select a supplier");
@@ -95,7 +116,8 @@ export default function NewPurchaseOrderPage() {
         items: selectedItems.map(item => ({
           productId: item.product.id,
           quantity: item.quantity,
-          unitCost: item.unitCost
+          unitCost: item.unitCost,
+          deliveryCost: item.deliveryCost
         }))
       });
 
@@ -179,17 +201,27 @@ export default function NewPurchaseOrderPage() {
             </div>
             <div className="flex justify-between items-center py-4">
               <span className="text-gray-900 font-semibold text-lg">Total Amount</span>
-              <span className="font-bold text-2xl text-indigo-600">${totalAmount.toFixed(2)}</span>
+              <span className="font-bold text-2xl text-indigo-600">{formatCurrency(totalAmount)}</span>
             </div>
 
-            <button
-              onClick={handleSubmit}
-              disabled={saving || !selectedSupplierId || selectedItems.length === 0}
-              className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white px-6 py-3.5 rounded-xl transition-all font-bold shadow-sm"
-            >
-              {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-              {saving ? "Creating PO..." : "Create Purchase Order"}
-            </button>
+            <div className="space-y-3">
+              <button
+                onClick={handleExportImage}
+                disabled={selectedItems.length === 0}
+                className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 text-gray-700 px-6 py-3.5 rounded-xl transition-all font-semibold shadow-sm"
+              >
+                <ImageIcon className="w-5 h-5" />
+                Export List as Image
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={saving || !selectedSupplierId || selectedItems.length === 0}
+                className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white px-6 py-3.5 rounded-xl transition-all font-bold shadow-sm"
+              >
+                {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                {saving ? "Creating PO..." : "Create Purchase Order"}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -251,7 +283,8 @@ export default function NewPurchaseOrderPage() {
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 font-medium">
                       <th className="px-4 py-3 rounded-tl-xl">Product</th>
-                      <th className="px-4 py-3 w-32">Unit Cost ($)</th>
+                      <th className="px-4 py-3 w-32">Unit Cost (៛)</th>
+                      <th className="px-4 py-3 w-32">Delivery (៛)</th>
                       <th className="px-4 py-3 w-24">Qty</th>
                       <th className="px-4 py-3 w-32 text-right">Subtotal</th>
                       <th className="px-4 py-3 rounded-tr-xl w-12"></th>
@@ -277,6 +310,16 @@ export default function NewPurchaseOrderPage() {
                         <td className="px-4 py-3">
                           <input
                             type="number"
+                            min="0"
+                            step="0.01"
+                            value={item.deliveryCost}
+                            onChange={(e) => updateItem(item.product.id, "deliveryCost", parseFloat(e.target.value) || 0)}
+                            className="w-full px-2 py-1 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                          />
+                        </td>
+                        <td className="px-4 py-3">
+                          <input
+                            type="number"
                             min="1"
                             value={item.quantity}
                             onChange={(e) => updateItem(item.product.id, "quantity", parseInt(e.target.value) || 1)}
@@ -284,7 +327,7 @@ export default function NewPurchaseOrderPage() {
                           />
                         </td>
                         <td className="px-4 py-3 text-right font-medium text-gray-900">
-                          ${(item.quantity * item.unitCost).toFixed(2)}
+                          {formatCurrency((item.unitCost + item.deliveryCost) * item.quantity)}
                         </td>
                         <td className="px-4 py-3 text-right">
                           <button
@@ -301,6 +344,31 @@ export default function NewPurchaseOrderPage() {
               )}
             </div>
           </div>
+        </div>
+      </div>
+      {/* Hidden Div for Image Export */}
+      <div className="absolute -left-[9999px] top-0">
+        <div ref={listRef} className="bg-white p-8 w-[600px] border border-gray-100 shadow-sm">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Purchase List</h2>
+            <p className="text-gray-500 text-sm">{new Date().toLocaleDateString()}</p>
+          </div>
+          <table className="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 font-medium">
+                <th className="px-4 py-3">Item Name</th>
+                <th className="px-4 py-3 text-right">Quantity</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {selectedItems.map((item) => (
+                <tr key={item.product.id}>
+                  <td className="px-4 py-3 text-gray-900 text-lg">{item.product.name}</td>
+                  <td className="px-4 py-3 text-right text-gray-900 font-bold text-lg">{item.quantity}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

@@ -75,13 +75,15 @@ public class PurchaseOrderService {
                                         .orElseThrow(() -> new ResourceNotFoundException(
                                                         "Product not found: " + itemReq.productId()));
 
-                        BigDecimal subtotal = itemReq.unitCost().multiply(BigDecimal.valueOf(itemReq.quantity()));
+                        BigDecimal deliveryCost = itemReq.deliveryCost() != null ? itemReq.deliveryCost() : BigDecimal.ZERO;
+                        BigDecimal subtotal = (itemReq.unitCost().add(deliveryCost)).multiply(BigDecimal.valueOf(itemReq.quantity()));
                         total = total.add(subtotal);
 
                         PurchaseOrderItem item = PurchaseOrderItem.builder()
                                         .product(product)
                                         .quantity(itemReq.quantity())
                                         .unitCost(itemReq.unitCost())
+                                        .deliveryCost(deliveryCost)
                                         .subtotal(subtotal)
                                         .build();
                         po.addItem(item);
@@ -117,7 +119,7 @@ public class PurchaseOrderService {
                         // Calculate new moving average cost
                         // (oldQty * oldCost + newQty * newCost) / totalQty
                         BigDecimal totalOldValue = oldCost.multiply(BigDecimal.valueOf(oldQuantity));
-                        BigDecimal totalNewValue = item.getUnitCost().multiply(BigDecimal.valueOf(item.getQuantity()));
+                        BigDecimal totalNewValue = (item.getUnitCost().add(item.getDeliveryCost())).multiply(BigDecimal.valueOf(item.getQuantity()));
 
                         BigDecimal averageCost = totalOldValue.add(totalNewValue)
                                         .divide(BigDecimal.valueOf(newQuantity), 2, RoundingMode.HALF_UP);
@@ -170,6 +172,7 @@ public class PurchaseOrderService {
                                                 item.getProduct().getName(),
                                                 item.getQuantity(),
                                                 item.getUnitCost(),
+                                                item.getDeliveryCost(),
                                                 item.getSubtotal()))
                                 .collect(Collectors.toList());
 

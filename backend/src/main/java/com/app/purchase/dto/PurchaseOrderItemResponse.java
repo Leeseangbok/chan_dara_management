@@ -8,5 +8,6 @@ public record PurchaseOrderItemResponse(
         String productName,
         Integer quantity,
         BigDecimal unitCost,
+        BigDecimal deliveryCost,
         BigDecimal subtotal
 ) {}

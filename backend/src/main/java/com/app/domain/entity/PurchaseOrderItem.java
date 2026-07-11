@@ -32,6 +32,10 @@ public class PurchaseOrderItem {
     @Column(name = "unit_cost", nullable = false, precision = 12, scale = 2)
     private BigDecimal unitCost;
 
+    @Column(name = "delivery_cost", nullable = false, precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal deliveryCost = BigDecimal.ZERO;
+
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal subtotal;
 
