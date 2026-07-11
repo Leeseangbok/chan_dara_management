@@ -26,19 +26,31 @@ export const metadata = {
   description: "Point of Sale & Inventory Management System",
 };
 
+import { Providers } from "./providers";
+
 export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${notoSansKhmer.variable} h-full antialiased`}
     >
-      <body suppressHydrationWarning className="min-h-full flex flex-col font-sans">
-        <LanguageProvider>
-          <AuthProvider>
-            {children}
-            <Toaster position="top-right" />
-          </AuthProvider>
-        </LanguageProvider>
+      <body suppressHydrationWarning className="min-h-full flex flex-col font-sans text-slate-900 dark:text-slate-50">
+        {/* ── Background design layers ── */}
+        <div className="noise-layer" aria-hidden="true" />
+        <div className="vignette-layer" aria-hidden="true" />
+        <div className="orb orb-1" aria-hidden="true" />
+        <div className="orb orb-2" aria-hidden="true" />
+        <div className="orb orb-3" aria-hidden="true" />
+
+        <Providers>
+          <LanguageProvider>
+            <AuthProvider>
+              {children}
+              <Toaster position="top-right" />
+            </AuthProvider>
+          </LanguageProvider>
+        </Providers>
       </body>
     </html>
   );

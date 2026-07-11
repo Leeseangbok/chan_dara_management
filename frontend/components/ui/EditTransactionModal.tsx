@@ -82,53 +82,53 @@ export function EditTransactionModal({ isOpen, onClose, items, onSave }: EditTra
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
-        <div className="flex justify-between items-center p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900">Edit Transaction Items</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <X className="w-5 h-5 text-gray-500" />
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.12)] w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800/60">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Edit Transaction Items</h2>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:bg-slate-800 rounded-full transition-colors">
+            <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
           </button>
         </div>
         
         <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-2">
           {/* Left: Current Items */}
-          <div className="p-6 border-r border-gray-100 overflow-y-auto">
-            <h3 className="text-sm font-bold text-gray-500 uppercase mb-4">Current Items</h3>
+          <div className="p-6 border-r border-slate-100 dark:border-slate-800/60 overflow-y-auto">
+            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase mb-4">Current Items</h3>
             <div className="space-y-4">
               {currentItems.map(item => (
-                <div key={item.productId} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                <div key={item.productId} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/60">
                   <div className="flex-1">
-                    <p className="font-bold text-gray-900">{item.productName}</p>
-                    <p className="text-sm text-gray-500">{formatCurrency(item.unitPrice)} each</p>
+                    <p className="font-bold text-slate-900 dark:text-white">{item.productName}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{formatCurrency(item.unitPrice)} each</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <input 
                       type="number" 
                       min="1" 
-                      className="w-16 px-2 py-1 border border-gray-200 rounded text-center"
+                      className="w-16 px-2 py-1 border border-slate-100 dark:border-slate-800/60 rounded text-center"
                       value={item.quantity}
                       onChange={(e) => handleUpdateQuantity(item.productId, parseInt(e.target.value) || 1)}
                     />
-                    <button onClick={() => handleRemove(item.productId)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <button onClick={() => handleRemove(item.productId)} className="p-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
               ))}
               {currentItems.length === 0 && (
-                <p className="text-gray-400 text-sm italic">No items in transaction. Add some products.</p>
+                <p className="text-slate-400 text-sm italic">No items in transaction. Add some products.</p>
               )}
             </div>
           </div>
 
           {/* Right: Add Products */}
-          <div className="p-6 bg-gray-50/50 overflow-y-auto">
-             <h3 className="text-sm font-bold text-gray-500 uppercase mb-4">Add Products</h3>
+          <div className="p-6 bg-transparent overflow-y-auto">
+             <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase mb-4">Add Products</h3>
              <div className="relative mb-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input 
                   type="text" 
-                  className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full pl-9 pr-4 py-2 border border-slate-100 dark:border-slate-800/60 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500"
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -136,31 +136,31 @@ export function EditTransactionModal({ isOpen, onClose, items, onSave }: EditTra
              </div>
              <div className="space-y-2">
                {filteredProducts.slice(0, 10).map(product => (
-                 <div key={product.id} className="flex justify-between items-center p-3 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 transition-colors cursor-pointer" onClick={() => handleAdd(product)}>
+                 <div key={product.id} className="flex justify-between items-center p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-2xl hover:border-brand-300 transition-colors cursor-pointer" onClick={() => handleAdd(product)}>
                    <div>
-                     <p className="font-medium text-gray-900 text-sm">{product.name}</p>
-                     <p className="text-xs text-gray-500">{formatCurrency(product.price)} • Stock: {product.stockQuantity}</p>
+                     <p className="font-medium text-slate-900 dark:text-white text-sm">{product.name}</p>
+                     <p className="text-xs text-slate-500 dark:text-slate-400">{formatCurrency(product.price)} • Stock: {product.stockQuantity}</p>
                    </div>
-                   <button className="w-8 h-8 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100">
+                   <button className="w-8 h-8 flex items-center justify-center bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 rounded-xl hover:bg-brand-100 dark:bg-brand-900/50">
                      <Plus className="w-4 h-4" />
                    </button>
                  </div>
                ))}
                {filteredProducts.length === 0 && (
-                 <p className="text-gray-400 text-sm italic">No products found.</p>
+                 <p className="text-slate-400 text-sm italic">No products found.</p>
                )}
              </div>
           </div>
         </div>
 
-        <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
-          <button onClick={onClose} className="px-5 py-2 text-gray-600 font-medium hover:bg-gray-200 rounded-xl transition-colors">
+        <div className="p-6 border-t border-slate-100 dark:border-slate-800/60 bg-slate-50 dark:bg-slate-950 flex justify-end gap-3">
+          <button onClick={onClose} className="px-5 py-2 text-slate-600 dark:text-slate-400 font-medium hover:bg-slate-200 rounded-2xl transition-colors">
             Cancel
           </button>
           <button 
             onClick={handleSave} 
             disabled={isSaving || currentItems.length === 0}
-            className="flex items-center gap-2 px-5 py-2 bg-indigo-600 text-white font-medium hover:bg-indigo-700 rounded-xl transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2 bg-brand-600 dark:bg-brand-500 text-white font-medium hover:bg-brand-700 dark:bg-brand-600 rounded-2xl transition-colors disabled:opacity-50"
           >
             {isSaving ? "Saving..." : <><Save className="w-4 h-4" /> Save Changes</>}
           </button>

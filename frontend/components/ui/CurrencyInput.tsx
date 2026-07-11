@@ -1,40 +1,58 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 interface CurrencyInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
   value: number | string;
-  onChangeValue: (val: number) => void;
-  step?: number;
+  onChangeValue: (val: any) => void;
+  step?: number | string;
 }
 
-export function CurrencyInput({ value, onChangeValue, step = 100, className, ...props }: CurrencyInputProps) {
-  const numericValue = typeof value === 'string' ? (parseInt(value, 10) || 0) : value;
+export function CurrencyInput({ value, onChangeValue, step = "any", className, ...props }: CurrencyInputProps) {
+  const rawValue = value === null || value === undefined ? "" : value.toString();
+
+  const formatValue = (val: string) => {
+    if (!val) return "";
+    const cleaned = val.replace(/[^\d.-]/g, '');
+    const parts = cleaned.split('.');
+    const integerPart = parts[0];
+    const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    
+    if (cleaned === "-") return "-";
+    if (cleaned === "-.") return "-.";
+    if (cleaned === ".") return ".";
+
+    return formattedInteger + decimalPart;
+  };
+
+  const [displayValue, setDisplayValue] = useState(formatValue(rawValue));
+
+  useEffect(() => {
+    const cleanedDisplay = displayValue.replace(/[^\d.-]/g, '');
+    const cleanedValue = rawValue.replace(/[^\d.-]/g, '');
+    if (cleanedDisplay !== cleanedValue || rawValue === "") {
+        setDisplayValue(formatValue(rawValue));
+    }
+  }, [rawValue, displayValue]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/\D/g, "");
-    onChangeValue(raw ? parseInt(raw, 10) : 0);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      onChangeValue(numericValue + step);
-    } else if (e.key === "ArrowDown") {
-      e.preventDefault();
-      onChangeValue(Math.max(0, numericValue - step));
+    const inputValue = e.target.value;
+    let cleaned = inputValue.replace(/[^\d.-]/g, "");
+    
+    const parts = cleaned.split(".");
+    if (parts.length > 2) {
+      cleaned = parts[0] + "." + parts.slice(1).join("");
     }
-  };
 
-  const displayValue = numericValue === 0 && typeof value === 'string' && value === "" 
-    ? "" 
-    : numericValue.toLocaleString("en-US");
+    setDisplayValue(formatValue(inputValue));
+    onChangeValue(cleaned);
+  };
 
   return (
     <input
       type="text"
-      inputMode="numeric"
+      inputMode="decimal"
       value={displayValue}
       onChange={handleChange}
-      onKeyDown={handleKeyDown}
       className={className}
       {...props}
     />

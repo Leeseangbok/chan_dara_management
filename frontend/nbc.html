@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Exchange Rate</title>
+
+<link rel="shortcut icon" href="../../images/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+<link rel="stylesheet" href="../../css/jquery-ui.css" type="text/css" media="screen">
+<script type="text/javascript" language="javascript" src="../../js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" language="javascript" src="../../js/jquery-ui.min.js"></script>
+<script>
+$(document).ready(function(){		 
+$("#sler").addClass("selectitem");
+$( "#datepicker" ).datepicker({dateFormat: 'yy-mm-dd' });
+});
+</script>
+</head>
+<body>
+<div id="wrapper">
+	<div id="subpage-container">
+		<div class="subpage-single">	
+			<div class="subpage-header">
+				<div class="index-header-img">
+					<div class="index-header-nbclogo">
+						<a href="../index.php"><img src="../../images/nbc.png" class="img-logo"/></a>   
+					</div>
+					<div class="index-header-search">	
+						
+	<div class='top-search'>
+		<form class='frm-general' method='POST' action='../search/search.php'>
+		<table border='0' cellpadding='0' cellspacing='0' width='100%'>
+			<tr>
+				<td align='right'>
+					<a href='../../economic_research/exchange_rate.php' title='Cambodia'><img src='../../images/cambodia.gif' border='0'></a>
+					<a href='exchange_rate.php' title='English'><img src='../../images/english.gif' border='0'></a>
+				</td>
+			</tr>
+			<tr>
+				<td align='right'>
+					<input type='text' name='txtsearch' placeholder='Search' style='margin-right:0px;height:20px;width:180px;'/>		
+					<!--
+					<table cellpadding='0' cellspacing='0' border='0'>
+						<tr>
+							<td><input type='text' name='txtsearch' placeholder='Search' style='margin-right:0px;'/></td>
+							 <td><input type='submit' value='Go' style='width:30px;height:30px;'/></td> 
+						</tr>
+					</table>
+					-->					
+				</td>
+			</tr>
+			<tr>						
+				<td style='padding-top:5px;text-align:right;display: flex;align-items: center;justify-content: flex-end;' colspan='2'>
+								
+					<a href='../../english/about_the_bank/hotline.php' style='padding-right: 10px;'><img src='../../images/hotline.png' border='0' height='30'></a>
+					<a href='http://www.facebook.com/nationalbankofcambodiaofficial' target='_blank' style='padding-right: 5px;'><img src='../../images/facebook.png' border='0'></a>
+					<a href='http://www.twitter.com/nbccambodia' target='_blank' style='padding-right: 5px;'><img src='../../images/twitter.png' border='0'></a>
+					<a href='http://www.youtube.com/channel/UC3GoCm_QGSSLjXZXvbcATfA' target='_blank' style='padding-right: 5px;'><img src='../../images/youtube.png' border='0'></a>
+					<a href='../../english/about_the_bank/social_network.php'><img src='../../images/rss.png' border='0'></a>
+				</td>				
+			</tr>
+		</table>
+	</form>
+	</div>
+							
+					</div>
+				</div>
+			</div>				
+			<div class="subpage-top-menu">
+				<script type="text/javascript">
+    var ww;
+
+    // Attach toggle handler
+    function attachToggleHandler() {
+        var $toggleBtn = $(".toggleMenu");
+
+        if ($toggleBtn.length === 0) {
+            return;
+        }
+
+        // Remove any existing handlers
+        $toggleBtn.off('click');
+
+        // jQuery click handler
+        $toggleBtn.on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var $this = $(this);
+            var $nav = $(".nav");
+
+            $this.toggleClass("active");
+            $nav.toggle();
+        });
+    }
+
+    $(document).ready(function() {
+        // Initialize width after DOM is ready
+        ww = document.body.clientWidth || window.innerWidth;
+
+        $(".nav li a").each(function() {
+            if ($(this).next().length > 0 && $(this).next().is('ul')) {
+                $(this).addClass("parent");
+            }
+        });
+
+        // Attach the handler
+        attachToggleHandler();
+
+        adjustMenu();
+
+        // Re-attach after adjustMenu
+        setTimeout(function() {
+            attachToggleHandler();
+        }, 100);
+    });
+
+    $(window).bind("resize orientationchange", function() {
+        ww = document.body.clientWidth || window.innerWidth;
+        adjustMenu();
+
+        // Re-attach handler after resize
+        setTimeout(attachToggleHandler, 50);
+    });
+
+    var adjustMenu = function() {
+        if (ww < 780) {
+            // Show the responsive menu container on mobile
+            $(".responsive-menu").css({
+                "display": "block",
+                "position": "relative",
+                "z-index": "9999",
+                "width": "100%"
+            });
+
+            $(".toggleMenu").css({
+                "display": "inline-block",
+                "position": "relative",
+                "z-index": "10000",
+                "cursor": "pointer"
+            });
+
+            // Ensure nav is properly positioned for mobile
+            $(".nav").css({
+                "position": "relative",
+                "width": "100%",
+                "left": "0",
+                "top": "0",
+                "z-index": "9998",
+                "background": "#D18987",
+                "margin": "0",
+                "padding": "0"
+            });
+
+            // Only set initial state, don't override if user has toggled
+            if (!$(".toggleMenu").hasClass("active")) {
+                $(".nav").hide();
+            } else {
+                $(".nav").show();
+            }
+
+            // remove desktop hover behavior
+            $(".nav li").off('mouseenter mouseleave');
+
+            // Fix submenu positioning for mobile - ensure they're hidden by default
+            $(".nav li ul").css({
+                "position": "static",
+                "left": "auto",
+                "width": "100%",
+                "display": "none"
+            });
+
+            // Ensure nav li elements are full width
+            $(".nav > li").css({
+                "float": "none",
+                "width": "100%",
+                "display": "block"
+            });
+
+            // Ensure nested li elements are also full width
+            $(".nav li li").css({
+                "float": "none",
+                "width": "100%",
+                "display": "block"
+            });
+
+            // Handle ALL levels of dropdowns (even nested ones)
+            $(".nav li a").off('click').on('click', function(e) {
+                const $next = $(this).next('ul');
+                if ($next.length > 0) {
+                    // this link has a submenu
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var $parentLi = $(this).parent("li");
+                    $parentLi.toggleClass("hover");
+
+                    // Show/hide the submenu
+                    var isHover = $parentLi.hasClass("hover");
+                    if (isHover) {
+                        $next.slideDown(200);
+                    } else {
+                        $next.slideUp(200);
+                    }
+                }
+            });
+        } else if (ww >= 780) {
+            // Hide responsive menu on desktop
+            $(".responsive-menu").css("display", "none");
+            $(".toggleMenu").css("display", "none");
+            $(".nav").show();
+            $(".nav li").removeClass("hover");
+            $(".nav li a").off('click');
+
+            // restore hover on desktop
+            $(".nav li").off('mouseenter mouseleave').on('mouseenter mouseleave', function() {
+                $(this).toggleClass('hover');
+            });
+        }
+    }
+</script>
+
+<div class="responsive-menu">
+    <a class="toggleMenu" href="#">
+        <img src="../../images/menu.svg" style="width:60px;height:35px;" border="0"></a>
+    <ul class="nav">
+        <li>
+            <a href="../index.php">
+                <img src="../../images/home.svg" style="width:15px;height:15px;" border="0"></a>
+        </li>
+        <li>
+            <a href="../about_the_bank/overview_of_functions_and_operation.php">About</a>
+            <ul>
+                <li>
+                    <a href="../about_the_bank/overview_of_functions_and_operation.php">Overview</a>
+                </li>
+                <li class='has-sub'>
+                    <a href="../about_the_bank/structure_of_nbc.php">Organization</a>
+                    <ul>
+                        <li><a href="../about_the_bank/structure_of_nbc.php">Structure</a></li>
+                        <li><a href="../about_the_bank/board_of_directors.php">Board of Directors</a></li>
+                        <li><a href="../about_the_bank/nbc_branch.php">Branches</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="../about_the_bank/history_of_nbc.php">History</a>
+                </li>
+                <li class="has-sub">
+                    <a href="../about_the_bank/career_at_the_nbc.php">Careers at the NBC</a>
+                    <ul>
+                        <li><a href="../about_the_bank/working_at_the_nbc.php">Working at the NBC</a></li>
+                        <li><a href="../about_the_bank/staff_data.php">Staff Data</a></li>
+                        <li><a href="../about_the_bank/staff_development.php">Staff Development</a></li>
+                        <li><a href="../about_the_bank/current_vacancies.php">Current Vacancies</a></li>
+                        <li><a href="../about_the_bank/internships.php">Available Internships</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="../about_the_bank/banking_terms.php">Banking Terms</a>
+                </li>
+                <li class="has-sub">
+                    <a href="../about_the_bank/banknotes_in_circulation.php">Currency Gallery</a>
+                    <ul>
+                        <li><a href="../about_the_bank/banknotes_in_circulation.php">Banknotes in Circulation</a></li>
+                        <li><a href="../about_the_bank/previously_used_banknotes.php">Previously Used Banknotes</a></li>
+                        <li><a href="../about_the_bank/indochina_banknotes.php">Indochina Banknotes</a></li>
+                        <li><a href="../about_the_bank/coins_in_circulation.php">Coins in Circulation</a></li>
+                        <li><a href="../about_the_bank/previously_used_coins.php">Previously Used Coins</a></li>
+                        <li><a href="../about_the_bank/commemorative_coins.php">Commemorative Coins</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="../about_the_bank/contact_us.php">Contact Us</a>
+                </li>
+                <li>
+                    <a href="../about_the_bank/privacy_policy.php">Privacy Policy</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="../news_and_events/news.php">News</a>
+            <ul>
+                <li><a href="../news_and_events/news.php">All News</a></li>
+                <li><a href="../news_and_events/announcements.php">Announcements</a></li>
+                <li><a href="../news_and_events/speeches.php">Speeches</a></li>
+                <li><a href="../news_and_events/press_releases.php">Press Releases</a></li>
+                <li><a href="../news_and_events/official_holiday.php">Public Holidays</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="../legislation/laws_applicable_to_banks_and_financial_institutions.php">Legislation</a>
+            <ul>
+                <li><a href="../legislation/laws_applicable_to_banks_and_financial_institutions.php">Laws Applicable to Banks and Financial Institutions</a></li>
+                <li><a href="../legislation/anukret.php">Anukret</a></li>
+                <li><a href="../legislation/prakas_new.php">Prakas & Circulars</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="../monetary_policy/monetary_operations_framework_overview.php">Monetary Policy</a>
+            <ul>
+
+                <li>
+                    <a href="../monetary_policy/monetary_policy_committee.php">Monetary Policy Committee</a>
+                </li>
+                <li>
+                    <a href="../monetary_policy/exchange_rate_policy.php">Exchange Rate Policy</a>
+                </li>
+                <li>
+                    <a href="../monetary_policy/reserve_requirements.php">Reserve Requirements</a>
+                </li>
+                <li class="has-sub">
+                    <a href="/english/">Monetary Policy Implementation</a>
+                    <ul>
+                        <li><a href="../monetary_policy/repurchase_agreement.php">Repurchase Agreement</a></li>
+                        <li><a href="../monetary_policy/procedures.php">Central Bank Bills</a></li>
+                        <li><a href="../monetary_policy/procedures.php">Open Market Operations </a></li>
+                        <li><a href="../monetary_policy/procedures.php">Liquidity Facilities</a></li>
+                        <li class="has-sub">
+                            <a href="#">National Bank of Cambodia Platform</a>
+                            <ul>
+                                <li><a href="../monetary_policy/NBC_platform.php">National Bank of Cambodia Platform (NBC Platform)</a></li>
+                                <li><a href="../monetary_policy/NBCP_Application_Requirements.php">National Bank of Cambodia (NBCP) Application Procedure </a></li>
+                            </ul>
+                        </li>
+                        <li><a href="../monetary_policy/information.php">Auction Information</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="../supervision/overview.php">Supervision</a>
+            <ul>
+                <li>
+                    <a href="../supervision/regulatory_policy_and_risk_assessment.php">Regulatory Policy and Risk Assessment Department</a>
+                </li>
+                <li>
+                    <a href="../supervision/macro_surveillance_supervisory_data_management.php">Macro-surveillance and Supervisory Data Management Department</a>
+                </li>
+                <li>
+                    <a href="../supervision/supervision_department_1.php">Supervision Department 1</a>
+                </li>
+                <li>
+                    <a href="../supervision/supervision_department_2.php">Supervision Department 2</a>
+                </li>
+                <li class='has-sub'>
+                    <a href="../supervision/commercial_banks.php">List of Regulated Entities</a>
+                    <ul>
+                        <li><a href="../supervision/commercial_banks.php">Commercial Banks</a></li>
+                        <li><a href="../supervision/specialized_banks.php">Specialized Banks</a></li>
+                        <li><a href="../supervision/representative_offices.php">Representative Offices</a></li>
+                        <li><a href="../supervision/microfinance_deposit_taking_institutions.php">Microfinance Deposit-Taking Institutions</a></li>
+                        <li><a href="../supervision/microfinance_non_deposit_taking_institutions.php">Microfinance Non Deposit-Taking Institutions</a></li>
+                        <li><a href="../supervision/leasing_companies.php">Financial Leasing Companies</a></li>
+                        <li><a href="../supervision/payment_service.php">Payment Service Institutions</a></li>
+                        <li><a href="../supervision/credit_bureau_companies.php">Credit Bureau Companies</a></li>
+                        <li><a href="../supervision/rural_credit_institutions.php">Rural Credit Institutions</a></li>
+                        <li><a href="../supervision/third_party_processors.php">Third-Party Processors</a></li>
+                        <li><a href="../supervision/audit_firms.php">Audit Firms</a></li>
+                        <li><a href="../supervision/foreign_exchange_business.php">Foreign Exchange Business</a></li>
+                        <li><a href="../supervision/import_export_company.php">Import-Export Metals and Precious Stones Companies</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="../payment_systems/overview_of_payment_systems.php">Payment Systems</a>
+            <ul>
+                <li>
+                    <a href="../payment_systems/background_of_payment_systems.php">Background of Payment Systems
+                    </a>
+                </li>
+                <li>
+                    <a href="../payment_systems/role_of_nbc_in_payment_systems.php">Role of NBC in Payment Systems
+                    </a>
+                </li>
+                <li class="has-sub">
+                    <a href="../payment_systems/overview_national_clearing_house.php">National Clearing House</a>
+                    <ul>
+                        <li><a href="../payment_systems/overview_national_clearing_house.php">Overview</a></li>
+                        <li><a href="../payment_systems/membership_and_process.php">Membership & Process</a></li>
+                    </ul>
+                </li>
+                <li class="has-sub">
+                    <a href="../payment_systems/overview_of_payments_instruments.php">Type of Payment Instruments</a>
+                    <ul>
+                        <li><a href="../payment_systems/overview_of_payments_instruments.php">Overview</a></li>
+                        <li><a href="../payment_systems/cash_and_checks.php">Cash & Checks</a></li>
+                        <li><a href="../payment_systems/electronic_payment_order.php">Electronic Payment Order</a></li>
+                        <li><a href="../payment_systems/payment_cards.php">Payment Card</a></li>
+                    </ul>
+                </li>
+                <li class="has-sub">
+                    <a href="../payment_systems/banking_institutions.php">Service Providers</a>
+                    <ul>
+                        <li><a href="../payment_systems/banking_institutions.php">Banking Institutions</a></li>
+                        <li><a href="../payment_systems/non_bank_institutions.php">Non-Bank Institutions</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="../economic_research/exchange_rate.php">Statistics</a>
+            <ul>
+                <li>
+                    <a href="../economic_research/exchange_rate.php">Exchange Rate</a>
+                </li>
+                <li>
+                    <a href="../economic_research/interest_rate.php">Interest Rate</a>
+                </li>
+                <li>
+                    <a href="../economic_research/monetary_and_financial_statistics_data.php">Monetary and Financial Statistics Data</a>
+                </li>
+                <li>
+                    <a href="../economic_research/balance_of_payment_data.php">Balance of Payment Data</a>
+                </li>
+                <li class="has-sub"><a href="../economic_research/deposit_taking_banks_and_financial_institutions.php">Data on Banks and Financial Institutions</a>
+                    <ul>
+                        <li><a href="../economic_research/deposit_taking_banks_and_financial_institutions.php">Data on Deposit-taking Banks and Financial Institutions</a></li>
+                        <li><a href="../economic_research/non_deposit_taking_banks_and_financial_institutions.php">Data on Non-deposit-taking Banks and Financial Institutions</a></li>
+                        <li class="has-sub"><a href="../economic_research/banks_reports.php">Achieved Data (2010~2023)</a>
+                            <ul>
+                                <li><a href="../economic_research/banks_reports.php">Data on Banking Sector</a></li>
+                                <li><a href="../economic_research/mfis_reports.php">Data on MFI Sector</a></li>
+                                <li><a href="../economic_research/flcs_reports.php">Data on Financial Leasing Sector</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="has-sub">
+                    <a href="../economic_research/NSDP.html" target="_blank">Enhance General Data Dissemination System</a>
+                    <ul>
+                        <li><a href="../economic_research/NSDP.html" target="_blank">National Summary Data Page (NSDP)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="../publications/annual_reports.php">Publications</a>
+            <ul>
+                <li class="has-sub">
+                    <a href="../publications/annual_reports.php">Annual Reports</a>
+                    <ul>
+                        <li><a href="../publications/annual_reports.php">NBC Annual Reports</a></li>
+                        <li><a href="../publications/payment_system_annual_reports.php">Payment System Annual Report</a></li>
+                        <li><a href="../publications/fsr.php">Financial Stability Review</a></li>
+                        <li><a href="../publications/supervision_annual_reports.php">Supervision Annual Reports</a></li>
+                        <li><a href="../publications/commercial_bank_annual_report.php">Commercial Bank's Annual Report</a></li>
+                        <li><a href="../publications/specialized_bank_annual_report.php">Specialized Bank's Annual Report</a></li>
+                        <li><a href="../publications/mdi_annual_report.php">MDI's Annual Report</a></li>
+                        <li><a href="../publications/mfi_annual_report.php">MFI's Annual Report</a></li>
+                        <li><a href="../publications/flc_annual_report.php">Financial Leasing Company's Annual Report</a></li>
+                        <li><a href="../publications/rci_annual_report.php">RCI's Annual Report</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="../publications/guidelines_it_policy.php">Guidelines</a>
+                </li>
+                <li>
+                    <a href="../publications/quarterly_bulletins.php">Quarterly Bulletins</a>
+                </li>
+                <li>
+                    <a href="../publications/inflations_report.php">Inflation Reports</a>
+                </li>
+                <li>
+                    <a href="../publications/balance_of_payment.php">Balance of Payment</a>
+                </li>
+                <li>
+                    <a href="../publications/blueprints.php">Blueprints</a>
+                </li>
+                <li>
+                    <a href="../publications/banking_code.php">Banking Code</a>
+                </li>
+                <li>
+                    <a href="../publications/economic_and_monetary_statistics.php">Economic and Monetary Statistics</a>
+                </li>
+                <li class="has-sub">
+                    <a href="../publications/research_papers.php">Research Papers</a>
+                    <ul>
+                        <li><a href="../publications/macro_conference.php">Macro conference</a></li>
+                        <li><a href="../publications/other_research_papers.php">Other Research Papers</a></li>
+                        <li><a href="../publications/working_papers.php">Working Papers</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="../publications/other_reports.php">Other Reports</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="https://cafiu.gov.kh/">CAFIU</a>
+        </li>
+    </ul>
+</div>
+<div class="dropmenu" ​ style="border-bottom:0px solid #ccc;background-color:#fff;">
+    <ul>
+        <li>
+            <a href="../index.php">
+                <img src="../../images/home.svg" style="width:15px;height:15px;" border="0"></a>
+        </li>
+        <li>
+            <a href="../about_the_bank/overview_of_functions_and_operation.php">About</a>
+            <ul>
+                <li>
+                    <a href="../about_the_bank/overview_of_functions_and_operation.php">Overview</a>
+                </li>
+                <li class='has-sub'>
+                    <a href="../about_the_bank/structure_of_nbc.php">Organization</a>
+                    <ul>
+                        <li><a href="../about_the_bank/structure_of_nbc.php">Structure</a></li>
+                        <li><a href="../about_the_bank/board_of_directors.php">Board of Directors</a></li>
+                        <li><a href="../about_the_bank/nbc_branch.php">Branches</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="../about_the_bank/history_of_nbc.php">History</a>
+                </li>
+                <li class="has-sub">
+                    <a href="../about_the_bank/career_at_the_nbc.php">Careers at the NBC</a>
+                    <ul>
+                        <li><a href="../about_the_bank/working_at_the_nbc.php">Working at the NBC</a></li>
+                        <li><a href="../about_the_bank/staff_data.php">Staff Data</a></li>
+                        <li><a href="../about_the_bank/staff_development.php">Staff Development</a></li>
+                        <li><a href="../about_the_bank/current_vacancies.php">Current Vacancies</a></li>
+                        <li><a href="../about_the_bank/internships.php">Available Internships</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="../about_the_bank/banking_terms.php">Banking Terms</a>
+                </li>
+                <li class="has-sub">
+                    <a href="../about_the_bank/banknotes_in_circulation.php">Currency Gallery</a>
+                    <ul>
+                        <li><a href="../about_the_bank/banknotes_in_circulation.php">Banknotes in Circulation</a></li>
+                        <li><a href="../about_the_bank/previously_used_banknotes.php">Previously Used Banknotes</a></li>
+                        <li><a href="../about_the_bank/indochina_banknotes.php">Indochina Banknotes</a></li>
+                        <li><a href="../about_the_bank/coins_in_circulation.php">Coins in Circulation</a></li>
+                        <li><a href="../about_the_bank/previously_used_coins.php">Previously Used Coins</a></li>
+                        <li><a href="../about_the_bank/commemorative_coins.php">Commemorative Coins</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="../about_the_bank/contact_us.php">Contact Us</a>
+                </li>
+                <li>
+                    <a href="../about_the_bank/privacy_policy.php">Privacy Policy</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="../news_and_events/news.php">News</a>
+            <ul>
+                <li><a href="../news_and_events/news.php">All News</a></li>
+                <li><a href="../news_and_events/announcements.php">Announcements</a></li>
+                <li><a href="../news_and_events/speeches.php">Speeches</a></li>
+                <li><a href="../news_and_events/press_releases.php">Press Releases</a></li>
+                <li><a href="../news_and_events/official_holiday.php">Public Holidays</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="../legislation/laws_applicable_to_banks_and_financial_institutions.php">Legislation</a>
+            <ul>
+                <li><a href="../legislation/laws_applicable_to_banks_and_financial_institutions.php">Laws Applicable to Banks and Financial Institutions</a></li>
+                <li><a href="../legislation/anukret.php">Anukret</a></li>
+                <li><a href="../legislation/prakas_new.php">Prakas & Circulars</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="../monetary_policy/overview.php">Monetary Policy</a>
+            <ul>
+
+                <li>
+                    <a href="../monetary_policy/monetary_policy_committee.php">Monetary Policy Committee</a>
+                </li>
+                <li>
+                    <a href="../monetary_policy/exchange_rate_policy.php">Exchange Rate Policy</a>
+                </li>
+                <li>
+                    <a href="../monetary_policy/reserve_requirements.php">Reserve Requirements</a>
+                </li>
+                <li class="has-sub">
+                    <a
+                        href="/english/monetary_policy/monetary_operations_framework_overview.php">Monetary Policy Implementation</a>
+                    <ul>
+                        <li><a href="/english/monetary_policy/repurchase_agreement.php">Repurchase Agreement</a></li>
+                        <li><a
+                                href="/english/monetary_policy/central_bank_bills.php">Central Bank Bills</a>
+                        </li>
+                        <li><a href="/english/monetary_policy/open_market_operations.php">Open Market Operations</a></li>
+                        <li><a href="/english/monetary_policy/liquidity_facilities.php">Liquidity Facilities</a></li>
+                        <li class="has-sub"><a href="#">National Bank of Cambodia Platform</a>
+                            <ul class="sub-sub-submenu" style="left: 100%; transform: translateY(-30%);">
+                                <li><a href="NBC_platform.php">National Bank of Cambodia Platform (NBCP)</a></li>
+                                <li><a href="NBCP_Application_Requirements.php">Procedure for requesting to use the National Bank of Cambodia (NBCP)</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/english/monetary_policy/information.php">Auction Information</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="../supervision/overview.php">Supervision</a>
+            <ul>
+                <li>
+                    <a href="../supervision/regulatory_policy_and_risk_assessment.php">Regulatory Policy and Risk Assessment Department</a>
+                </li>
+                <li>
+                    <a href="../supervision/macro_surveillance_supervisory_data_management.php">Macro-surveillance and Supervisory Data Management Department</a>
+                </li>
+                <li>
+                    <a href="../supervision/supervision_department_1.php" style="padding-right: 11px;">Supervision Department 1</a>
+                </li>
+                <li>
+                    <a href="../supervision/supervision_department_2.php" style="padding-right: 11px;">Supervision Department 2</a>
+                </li>
+                <li class='has-sub'>
+                    <a href="../supervision/commercial_banks.php">List of Regulated Entities</a>
+                    <ul>
+                        <li><a href="../supervision/commercial_banks.php">Commercial Banks</a></li>
+                        <li><a href="../supervision/specialized_banks.php">Specialized Banks</a></li>
+                        <li><a href="../supervision/representative_offices.php">Representative Offices</a></li>
+                        <li><a href="../supervision/microfinance_deposit_taking_institutions.php">Microfinance Deposit-Taking Institutions</a></li>
+                        <li><a href="../supervision/microfinance_non_deposit_taking_institutions.php">Microfinance Non Deposit-Taking Institutions</a></li>
+                        <li><a href="../supervision/leasing_companies.php">Financial Leasing Companies</a></li>
+                        <li><a href="../supervision/payment_service.php">Payment Service Institutions</a></li>
+                        <li><a href="../supervision/credit_bureau_companies.php">Credit Bureau Companies</a></li>
+                        <li><a href="../supervision/rural_credit_institutions.php">Rural Credit Institutions</a></li>
+                        <li><a href="../supervision/third_party_processors.php">Third-Party Processors</a></li>
+                        <li><a href="../supervision/audit_firms.php">Audit Firms</a></li>
+                        <li><a href="../supervision/foreign_exchange_business.php">Foreign Exchange Business</a></li>
+                        <li><a href="../supervision/import_export_company.php">Import-Export Metals and Precious Stones Companies</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="../payment_systems/overview_of_payment_systems.php">Payment Systems</a>
+            <ul>
+                <li>
+                    <a href="../payment_systems/background_of_payment_systems.php">Background of Payment Systems
+                    </a>
+                </li>
+                <li>
+                    <a href="../payment_systems/role_of_nbc_in_payment_systems.php">Role of NBC in Payment Systems
+                    </a>
+                </li>
+                <li class="has-sub">
+                    <a href="../payment_systems/overview_national_clearing_house.php">National Clearing House</a>
+                    <ul>
+                        <li><a href="../payment_systems/overview_national_clearing_house.php">Overview</a></li>
+                        <li><a href="../payment_systems/membership_and_process.php">Membership & Process</a></li>
+                    </ul>
+                </li>
+                <li class="has-sub">
+                    <a href="../payment_systems/overview_of_payments_instruments.php">Type of Payment Instruments</a>
+                    <ul>
+                        <li><a href="../payment_systems/overview_of_payments_instruments.php">Overview</a></li>
+                        <li><a href="../payment_systems/cash_and_checks.php">Cash & Checks</a></li>
+                        <li><a href="../payment_systems/electronic_payment_order.php">Electronic Payment Order</a></li>
+                        <li><a href="../payment_systems/payment_cards.php">Payment Card</a></li>
+                    </ul>
+                </li>
+                <li class="has-sub">
+                    <a href="../payment_systems/banking_institutions.php">Service Providers</a>
+                    <ul>
+                        <li><a href="../payment_systems/banking_institutions.php">Banking Institutions</a></li>
+                        <li><a href="../payment_systems/non_bank_institutions.php">Non-Bank Institutions</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="../economic_research/exchange_rate.php">Statistics</a>
+            <ul>
+                <li>
+                    <a href="../economic_research/exchange_rate.php">Exchange Rate</a>
+                </li>
+                <li>
+                    <a href="../economic_research/interest_rate.php">Interest Rate</a>
+                </li>
+                <li>
+                    <a href="../economic_research/monetary_and_financial_statistics_data.php">Monetary and Financial Statistics Data</a>
+                </li>
+                <li>
+                    <a href="../economic_research/balance_of_payment_data.php">Balance of Payment Data</a>
+                </li>
+                <li class="has-sub"><a href="../economic_research/deposit_taking_banks_and_financial_institutions.php">Data on Banks and Financial Institutions</a>
+                    <ul>
+                        <li><a href="../economic_research/deposit_taking_banks_and_financial_institutions.php">Data on Deposit-taking Banks and Financial Institutions</a></li>
+                        <li><a href="../economic_research/non_deposit_taking_banks_and_financial_institutions.php">Data on Non-deposit-taking Banks and Financial Institutions</a></li>
+                        <li class="has-sub"><a href="../economic_research/banks_reports.php">Achieved Data (2010~2023)</a>
+                            <ul style="left: 100%; transform: translateY(-40%);">
+                                <li><a href="../economic_research/banks_reports.php">Data on Banking Sector</a></li>
+                                <li><a href="../economic_research/mfis_reports.php">Data on MFI Sector</a></li>
+                                <li><a href="../economic_research/flcs_reports.php">Data on Financial Leasing Sector</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <!-- <li>
+                    <a href="../economic_research/banks_reports.php">Banks Data</a>
+                </li>
+                <li>
+                    <a href="../economic_research/mfis_reports.php">MFIs Data</a>
+                </li> -->
+                <li class="has-sub">
+                    <a href="../economic_research/NSDP.html" target="_blank">Enhance General Data Dissemination System</a>
+                    <ul>
+                        <li><a href="../economic_research/NSDP.html" target="_blank">National Summary Data Page (NSDP)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="../publications/annual_reports.php">Publications</a>
+            <ul>
+                <li class="has-sub">
+                    <a href="../publications/annual_reports.php">Annual Reports</a>
+                    <ul>
+                        <li><a href="../publications/annual_reports.php">NBC Annual Reports</a></li>
+                        <li><a href="../publications/payment_system_annual_reports.php">Payment System Annual Report</a></li>
+                        <li><a href="../publications/fsr.php">Financial Stability Review</a></li>
+                        <li><a href="../publications/supervision_annual_reports.php">Supervision Annual Reports</a></li>
+                        <li><a href="../publications/commercial_bank_annual_report.php">Commercial Bank's Annual Report</a></li>
+                        <li><a href="../publications/specialized_bank_annual_report.php">Specialized Bank's Annual Report</a></li>
+                        <li><a href="../publications/mdi_annual_report.php">MDI's Annual Report</a></li>
+                        <li><a href="../publications/mfi_annual_report.php">MFI's Annual Report</a></li>
+                        <li><a href="../publications/flc_annual_report.php">Financial Leasing Company's Annual Report</a></li>
+                        <li><a href="../publications/rci_annual_report.php">RCI's Annual Report</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="../publications/guidelines_it_policy.php">Guidelines</a>
+                </li>
+                <li>
+                    <a href="../publications/quarterly_bulletins.php">Quarterly Bulletins</a>
+                </li>
+                <li>
+                    <a href="../publications/inflations_report.php">Inflation Reports</a>
+                </li>
+                <li>
+                    <a href="../publications/balance_of_payment.php">Balance of Payment</a>
+                </li>
+                <li>
+                    <a href="../publications/blueprints.php">Blueprints</a>
+                </li>
+                <li>
+                    <a href="../publications/banking_code.php">Banking Code</a>
+                </li>
+                <li>
+                    <a href="../publications/economic_and_monetary_statistics.php">Economic and Monetary Statistics</a>
+                </li>
+                <li class="has-sub">
+                    <a href="../publications/research_papers.php">Research Papers</a>
+                    <ul>
+                        <li><a href="../publications/macro_conference.php">Macro conference</a></li>
+                        <li><a href="../publications/other_research_papers.php">Other Research Papers</a></li>
+                        <!--<li><a href="../publications/working_papers.php">Working Papers</a></li>-->
+                    </ul>
+                </li>
+                <li>
+                    <a href="../publications/other_reports.php">Other Reports</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="https://cafiu.gov.kh/">CAFIU</a>
+        </li>
+    </ul>
+</div>
+<style>
+    .nav li ul {
+        display: none;
+    }
+
+    .nav li.hover>ul {
+        display: block;
+    }
+
+    .nav li ul {
+        display: none;
+        transition: all 0.3s ease;
+    }
+
+    /* Mobile menu fixes - ensure visibility */
+    @media only screen and (max-width: 780px) {
+        .responsive-menu {
+            display: block !important;
+            position: relative !important;
+            z-index: 9999 !important;
+            width: 100% !important;
+        }
+
+        .toggleMenu {
+            display: inline-block !important;
+            cursor: pointer !important;
+            z-index: 10000 !important;
+        }
+
+        .nav {
+            position: relative !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+            display: none;
+            /* Hidden by default, shown when active */
+        }
+
+        .toggleMenu.active+.nav,
+        .nav:visible {
+            display: block !important;
+        }
+
+        .nav li {
+            float: none !important;
+            width: 100% !important;
+            display: block !important;
+        }
+
+        /* Submenu styling for mobile */
+        .nav li ul {
+            position: static !important;
+            left: auto !important;
+            width: 100% !important;
+            display: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Show submenu when parent has hover class */
+        .nav li.hover>ul {
+            display: block !important;
+        }
+
+
+        .nav li li.hover>ul {
+            display: block !important;
+        }
+
+        /* Submenu list items */
+        .nav li li {
+            float: none !important;
+            width: 100% !important;
+            display: block !important;
+        }
+
+    }
+</style>			</div>			
+			<div class="subpage-content">
+				<div class="subpage-content-left">
+					<div id="left-navigation">
+	<div id="header_left_menu"><a href="exchange_rate.php">Statistics</a></div>
+	<nav>
+		<div class="menu-item">
+			<h4 id="sler"><a href="exchange_rate.php">Exchange Rates</a></h4>
+			<h4 id="slir"><a href="interest_rate.php">Interest Rates</a></h4>
+			<h4 id="slmf"><a href="monetary_and_financial_statistics_data.php">Monetary and Financial Statistics Data</a></h4>
+			<h4 id="slbopd"><a href="balance_of_payment_data.php">Balance of Payment Data</a></h4>
+		</div>
+		<div class="menu-item">
+			<h4 id="slbf">
+				<a href="deposit_taking_banks_and_financial_institutions.php">Data on Banks and Financial Institutions</a>
+			</h4>
+			<ul id="bfs">
+				<li id="b1">
+					<a href="deposit_taking_banks_and_financial_institutions.php">Data on Deposit-taking Banks and Financial Institutions</a>
+				</li>
+				<li id="b2">
+					<a href="non_deposit_taking_banks_and_financial_institutions.php">Data on Non-deposit-taking Banks and Financial Institutions</a>
+				</li>
+				<li id="b3">
+					<a href="banks_reports.php"><span style="color: #000; font-weight: bold;">Achieved Data (2010~2023)</span></a>
+					<ul id="bfs2">
+						<li id="b4" style="border-top: 1px solid #e7e3e3ff;">
+							<a href="banks_reports.php">
+								<span style=" margin-left: 10px; display: flex; text-align: left; justify-content: center;">Data on Banking Sector</span>
+							</a>
+						</li>
+						<li id="b5" style="border-top: 1px solid #e7e3e3ff;">
+							<a href="mfis_reports.php">
+								<span style=" margin-left: 10px; display: flex; text-align: left; justify-content: center; padding-right: 22px;">Data on MFI Sector</span>
+							</a>
+						</li>
+						<li id="b6" style="border-top: 1px solid #e7e3e3ff;">
+							<a href="flcs_reports.php">
+								<span style=" margin-left: 10px; display: flex; text-align: left; justify-content: center;">Data on Financial Leasing Sector</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+
+		</div>
+		<div class="menu-item">
+			<h4 id="slegd"><a href="NSDP.html" target="_blank">Enhance General Data Dissemination System</a></h4>
+			<ul id="egd">
+				<li id="eg1"><a href="NSDP.html" target="_blank">National Summary Data Page (NSDP)</a></li>
+			</ul>
+		</div>
+	</nav>
+</div>
+&nbsp;				</div>				
+				<div class="subpage-content-right">
+					<div class="subpage-breadcrumb">
+							
+		<a class='breadcrumb' href='../index.php'>Home</a>
+		&nbsp;&nbsp;<img src='../../images/next.png' width='11' height='11' />&nbsp;&nbsp;
+		<a class='breadcrumb' href='exchange_rate.php'>Statistics </a>
+		&nbsp;&nbsp;<img src='../../images/next.png' width='11' height='11' />&nbsp;&nbsp;
+		<a class='breadcrumb' href='exchange_rate.php'>Exchange Rate</a> 					</div>
+					<div class="content-title">
+						Exchange Rate				
+					</div>
+					<div class="content-text">
+												<form method="POST" class="frm-general" id="fm-ex">
+							<table>
+								<tr>
+									<td>
+										 Exchange Rate on : <font color="#FF3300">2026-07-13</font> 
+										<br>
+									</td>
+								</tr>
+								<tr>
+									<td>											
+										<br>
+										Official Exchange Rate : <font color="#FF3300">4037</font> KHR / USD
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<br>
+										 Please select date :  <input type="text" name="exdate" id="datepicker" class="required" value="2026-07-13"/>
+										<input type="hidden" name="tk" value="vXDZhAyKgLfGabM7OwFGPmbXJ88S0GVgb467O1H5Nao="/>
+										<input type="submit" class="" name="view" value="View" style="height:35px;vertical-align:center;"/>
+									</td>
+								</tr>								
+							</table>
+						</form>
+						<br>
+						<table cellspacing="0" cellpadding="0" width="100%" class="tbl-responsive">                            
+                             <tr bgcolor="#983D3A" style="color:#fff;" align="center">
+                            	<td class='' style="border-right:1px solid #fff;">Currency</td>
+                                <td class='' style="border-right:1px solid #fff;">Symbol</td>
+                                <td class='' style="border-right:1px solid #fff;">Unit</td>
+                                <td class='' style="border-right:1px solid #fff;">Bid</td>
+                                <td class='' style="border-right:1px solid #fff;">Ask</td>
+                                <td class='' style="border-right:1px solid #fff;">Average</td>
+                            </tr>
+							<tr>								
+											<td>Australian Dollar</td>
+											<td align='center'>AUD/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>2805</td>
+											<td align='right'>2833</td>
+											<td align='right'>2819.00</td>								
+											</tr><tr>								
+											<td>Canadian Dollar</td>
+											<td align='center'>CAD/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>2850</td>
+											<td align='right'>2878</td>
+											<td align='right'>2864.00</td>								
+											</tr><tr>								
+											<td>Switzerland Franc</td>
+											<td align='center'>CHF/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>5014</td>
+											<td align='right'>5064</td>
+											<td align='right'>5039.00</td>								
+											</tr><tr>								
+											<td>Off-shore CNY</td>
+											<td align='center'>CNH/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>595</td>
+											<td align='right'>601</td>
+											<td align='right'>598.00</td>								
+											</tr><tr>								
+											<td>China Yuan</td>
+											<td align='center'>CNY/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>596</td>
+											<td align='right'>602</td>
+											<td align='right'>599.00</td>								
+											</tr><tr>								
+											<td>European Euro</td>
+											<td align='center'>EUR/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>4618</td>
+											<td align='right'>4664</td>
+											<td align='right'>4641.00</td>								
+											</tr><tr>								
+											<td>British Pound</td>
+											<td align='center'>GBP/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>5418</td>
+											<td align='right'>5472</td>
+											<td align='right'>5445.00</td>								
+											</tr><tr>								
+											<td>Hong Kong Dollar</td>
+											<td align='center'>HKD/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>515</td>
+											<td align='right'>520</td>
+											<td align='right'>517.50</td>								
+											</tr><tr>								
+											<td>Indonesian Rupiah</td>
+											<td align='center'>IDR/KHR</td>
+											<td align='center'>1000</td>
+											<td align='right'>224</td>
+											<td align='right'>226</td>
+											<td align='right'>225.00</td>								
+											</tr><tr>								
+											<td>Indian Rupee</td>
+											<td align='center'>INR/KHR</td>
+											<td align='center'>100</td>
+											<td align='right'>4235</td>
+											<td align='right'>4277</td>
+											<td align='right'>4256.00</td>								
+											</tr><tr>								
+											<td>Japanese Yen</td>
+											<td align='center'>JPY/KHR</td>
+											<td align='center'>100</td>
+											<td align='right'>2498</td>
+											<td align='right'>2523</td>
+											<td align='right'>2510.50</td>								
+											</tr><tr>								
+											<td>Korean Won</td>
+											<td align='center'>KRW/KHR</td>
+											<td align='center'>100</td>
+											<td align='right'>268</td>
+											<td align='right'>271</td>
+											<td align='right'>269.50</td>								
+											</tr><tr>								
+											<td>Laotian Kip</td>
+											<td align='center'>LAK/KHR</td>
+											<td align='center'>1000</td>
+											<td align='right'>180</td>
+											<td align='right'>182</td>
+											<td align='right'>181.00</td>								
+											</tr><tr>								
+											<td>Myanmar Kyat</td>
+											<td align='center'>MMK/KHR</td>
+											<td align='center'>100</td>
+											<td align='right'>193</td>
+											<td align='right'>195</td>
+											<td align='right'>194.00</td>								
+											</tr><tr>								
+											<td>Malaysian Ringgit</td>
+											<td align='center'>MYR/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>993</td>
+											<td align='right'>1003</td>
+											<td align='right'>998.00</td>								
+											</tr><tr>								
+											<td>New Zealand Dollar</td>
+											<td align='center'>NZD/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>2330</td>
+											<td align='right'>2353</td>
+											<td align='right'>2341.50</td>								
+											</tr><tr>								
+											<td>Philippine Peso</td>
+											<td align='center'>PHP/KHR</td>
+											<td align='center'>100</td>
+											<td align='right'>6564</td>
+											<td align='right'>6629</td>
+											<td align='right'>6596.50</td>								
+											</tr><tr>								
+											<td>Special Drawing Right</td>
+											<td align='center'>SDR/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>5482</td>
+											<td align='right'>5537</td>
+											<td align='right'>5509.50</td>								
+											</tr><tr>								
+											<td>Swedish Krona</td>
+											<td align='center'>SEK/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>418</td>
+											<td align='right'>422</td>
+											<td align='right'>420.00</td>								
+											</tr><tr>								
+											<td>Singapore Dollar</td>
+											<td align='center'>SGD/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>3128</td>
+											<td align='right'>3159</td>
+											<td align='right'>3143.50</td>								
+											</tr><tr>								
+											<td>Thai Baht</td>
+											<td align='center'>THB/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>121</td>
+											<td align='right'>122</td>
+											<td align='right'>121.50</td>								
+											</tr><tr>								
+											<td>Taiwan Dollar</td>
+											<td align='center'>TWD/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>125</td>
+											<td align='right'>127</td>
+											<td align='right'>126.00</td>								
+											</tr><tr>								
+											<td>Vietnamese Dong</td>
+											<td align='center'>VND/KHR</td>
+											<td align='center'>1000</td>
+											<td align='right'>154</td>
+											<td align='right'>155</td>
+											<td align='right'>154.50</td>								
+											</tr><tr>								
+											<td>United Arab Emirates Dirham</td>
+											<td align='center'>AED/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>1099</td>
+											<td align='right'>1110</td>
+											<td align='right'>1104.50</td>								
+											</tr><tr>								
+											<td>South African Rand</td>
+											<td align='center'>ZAR/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>248</td>
+											<td align='right'>250</td>
+											<td align='right'>249.00</td>								
+											</tr><tr>								
+											<td>Nigerian Naira</td>
+											<td align='center'>NGN/KHR</td>
+											<td align='center'>100</td>
+											<td align='right'>293</td>
+											<td align='right'>296</td>
+											<td align='right'>294.50</td>								
+											</tr><tr>								
+											<td>Danish krone</td>
+											<td align='center'>DKK/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>618</td>
+											<td align='right'>624</td>
+											<td align='right'>621.00</td>								
+											</tr><tr>								
+											<td>Saudi Riyal</td>
+											<td align='center'>SAR/KHR</td>
+											<td align='center'>1</td>
+											<td align='right'>1075</td>
+											<td align='right'>1086</td>
+											<td align='right'>1080.50</td>								
+											</tr>                        </table>
+						<br>
+						<table width="100%">
+							<tr>
+								<td align="right">
+									<a href='../../download_files/Summary_of_Directive_for_Calculation_of_OER_English.pdf' target='_blank'>OER Calculation Methods
+									<img src='../../images/pdf.jpg' style='border:0px;vertical-align:middle;'/></a>
+										<a href='../../download_files/economic_research/off_ex_rate_eng/oer_13-07-2026.pdf ' target='_blank'>  Official Exchange Rate  <img src='../../images/pdf.jpg' style='border:0px;vertical-align:middle;'/></a>&nbsp;<a href='../../download_files/economic_research/off_cro_rate_eng/ocr_13-07-26.pdf ' target='_blank'> Official Cross Rate  <img src='../../images/pdf.jpg' style='border:0px;vertical-align:middle;'/></a>								</td>
+							</tr>					
+						</table>						
+					</div>
+				</div>	
+			</div>			
+		</div>
+		<div id="footer">
+		<div class="footer-container">
+	<div class="footer-widget">
+		<a href="../index.php">Home</a><br>
+		<a href="../about_the_bank/site_map.php">Site Map</a><br>
+		<a href="../about_the_bank/overview_of_functions_and_operation.php">About NBC</a><br>	
+		<a href="../news_and_events/news.php">News</a><br>		
+	</div>
+	<div class="footer-widget">	
+		<a href="../legislation/laws_applicable_to_banks_and_financial_institutions.php">Legislation</a><br>
+		<a href="../monetary_policy/overview.php">Monetary Policy</a><br>	
+		<a href="../supervision/overview.php">Supervision</a><br>
+		<a href="../payment_systems/overview_of_payment_systems.php">Payment Systems</a><br>
+	</div>
+	<div class="footer-widget">	
+		<a href="../publications/annual_reports.php">Publications</a><br>
+		<a href="../news_and_events/official_holiday.php">Public Holidays</a><br>
+		<a href="../../download_files/KhmerUnicode2.0.1.exe">Khmer Unicode</a><br>
+		<a href="https://mail.nbc.gov.kh">Webmail</a>
+	</div>
+</div>
+
+<div class="footer-res">
+	<div class="footer-col">
+		<a href="../index.php"><img src="../../images/logoonly.png" class="img-logo-footer"></a>	
+	</div>	
+	<div class="footer-col">
+		<ul class="footer-nav">
+			<li><a href="../index.php">Home</a></li>
+			<li><a href="../about_the_bank/site_map.php">Site Map</a></li>
+			<li><a href="../about_the_bank/overview_of_functions_and_operation.php">About NBC</a></li>
+			<li><a href="../news_and_events/news.php">News</a></li>			
+		</ul>
+	</div>
+	<div class="footer-col">
+		<ul class="footer-nav">			
+			<li><a href="../legislation/laws_applicable_to_banks_and_financial_institutions.php">Legislation</a></li>
+			<li><a href="../monetary_policy/overview.php">Monetary Policy</a></li>	
+			<li><a href="../supervision/overview.php">Supervision</a></li>
+			<li><a href="../payment_systems/overview_of_payment_systems.php">Payment Systems</a></li>
+		</ul>
+	</div>
+	<div class="footer-col">
+		<ul class="footer-nav">
+			<li><a href="../publications/annual_reports.php">Publications</a></li>
+			<li><a href="../news_and_events/official_holiday.php">Public Holidays</a></li>
+			<li><a href="../../download_files/KhmerUnicode2.0.1.exe">Khmer Unicode</a></li>
+			<li><a href="https://mail.nbc.gov.kh">Webmail</a></li>
+		</ul>
+	</div>
+</div>
+<div class="copyright">
+<i>© 2015 National Bank of Cambodia, All Rights Reserved. </i>
+</div>
+<script>
+$(document).ready(function() {
+	$("#back-top").hide();	
+	// fade in #back-top
+	$(function () {
+		$(window).scroll(function () {
+			if ($(this).scrollTop() > 100) {
+				$('#back-top').fadeIn();
+			} else {
+				$('#back-top').fadeOut();
+			}
+		});
+		// scroll body to 0px on click
+		$('#back-top a').click(function () {
+			$('body,html').animate({
+				scrollTop: 0
+			}, 500);
+			return false;
+		});
+		//left menu
+		$(window).scroll(function () {
+			if ($(this).scrollTop() > 210) {
+				$("#left-navigation").addClass("fixed-scroll");					
+			} else {
+				$("#left-navigation").removeClass("fixed-scroll");
+			}
+		});	
+		
+	}); 
+});
+ </script>
+ <p id="back-top">
+	<a href="#top"><span></span>Top</a>
+</p>	</div>    
+	</div>  
+	
+</div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-26787576-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script></body>
+</html>

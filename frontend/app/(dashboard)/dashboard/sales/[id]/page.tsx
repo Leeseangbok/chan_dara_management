@@ -6,6 +6,7 @@ import { transactionsApi } from "@/lib/api/transactions";
 import { TransactionResponse } from "@/lib/api/types";
 import { formatCurrency } from "@/lib/utils/currency";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useAuth } from "@/lib/auth/AuthContext";
 import { ArrowLeft, Loader2, Receipt, Trash2, Edit2, Plus, DollarSign, Check } from "lucide-react";
 import { EditTransactionModal } from "@/components/ui/EditTransactionModal";
 
@@ -13,6 +14,7 @@ export default function TransactionDetailsPage() {
   const { id } = useParams() as { id: string };
   const router = useRouter();
   const { t } = useLanguage();
+  const { hasRole } = useAuth();
 
   const [transaction, setTransaction] = useState<TransactionResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -85,14 +87,14 @@ export default function TransactionDetailsPage() {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-brand-600 dark:text-brand-400" />
       </div>
     );
   }
 
   if (!transaction) {
     return (
-      <div className="p-6 text-center text-gray-500">
+      <div className="p-6 text-center text-slate-500 dark:text-slate-400">
         Transaction not found.
       </div>
     );
@@ -101,49 +103,52 @@ export default function TransactionDetailsPage() {
   const dueAmount = Math.max(0, transaction.totalAmount - (transaction.paidAmount || 0));
 
   return (
-    <div className="flex flex-col h-full bg-gray-50/50 p-6 space-y-6 overflow-y-auto">
+    <div className="flex flex-col h-full bg-transparent p-6 space-y-6 overflow-y-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.push("/dashboard/sales")}
-            className="p-2 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-gray-200 shadow-sm"
+            className="p-2 hover:bg-white dark:bg-slate-900 rounded-xl transition-colors border border-transparent hover:border-slate-100 dark:border-slate-800/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <Receipt className="w-6 h-6 text-indigo-600" />
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Receipt className="w-6 h-6 text-brand-600 dark:text-brand-400" />
               Receipt #{transaction.id.substring(0, 8).toUpperCase()}
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               {new Date(transaction.transactionDate).toLocaleString()} • Cashier: {transaction.cashierId.substring(0,8)}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
-          >
-            <Edit2 className="w-4 h-4" />
-            Edit Items
-          </button>
-          <button
-            onClick={handleDelete}
-            className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
-          >
-            <Trash2 className="w-4 h-4" />
-            Delete
-          </button>
-        </div>
+          {hasRole("ADMIN", "MANAGER") && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-white/[0.04] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.08] rounded-xl text-sm font-semibold transition-all"
+              >
+                <Edit2 className="w-4 h-4" />
+                <span className="hidden sm:inline">Edit Items</span>
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className="flex items-center gap-2 px-4 py-2 bg-rose-50 dark:bg-rose-500/[0.05] text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/[0.1] rounded-xl text-sm font-semibold transition-all"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="hidden sm:inline">Delete</span>
+              </button>
+            </div>
+          )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Col: Items */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-            <h2 className="text-lg font-bold text-gray-900">Purchased Items</h2>
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none overflow-hidden flex flex-col">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-800/60 flex justify-between items-center bg-transparent">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Purchased Items</h2>
             <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
               transaction.paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
             }`}>
@@ -153,20 +158,20 @@ export default function TransactionDetailsPage() {
           <div className="flex-1 overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-white border-b border-gray-100 text-gray-500 text-sm font-medium">
+                <tr className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 text-sm font-medium">
                   <th className="px-6 py-4">Item</th>
                   <th className="px-6 py-4 text-right">Price</th>
                   <th className="px-6 py-4 text-right">Qty</th>
                   <th className="px-6 py-4 text-right">Subtotal</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-slate-50">
                 {transaction.items.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50/50">
-                    <td className="px-6 py-4 font-medium text-gray-900">{item.productName}</td>
-                    <td className="px-6 py-4 text-right text-gray-600">{formatCurrency(item.unitPrice)}</td>
-                    <td className="px-6 py-4 text-right font-medium text-gray-900">{item.quantity}</td>
-                    <td className="px-6 py-4 text-right font-bold text-indigo-600">{formatCurrency(item.subtotal)}</td>
+                  <tr key={idx} className="hover:bg-transparent">
+                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{item.productName}</td>
+                    <td className="px-6 py-4 text-right text-slate-600 dark:text-slate-400">{formatCurrency(item.unitPrice)}</td>
+                    <td className="px-6 py-4 text-right font-medium text-slate-900 dark:text-white">{item.quantity}</td>
+                    <td className="px-6 py-4 text-right font-bold text-brand-600 dark:text-brand-400">{formatCurrency(item.subtotal)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -176,47 +181,48 @@ export default function TransactionDetailsPage() {
 
         {/* Right Col: Summary & Payment */}
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
-            <h3 className="text-lg font-bold text-gray-900">Summary</h3>
-            <div className="flex justify-between text-gray-600">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none p-6 space-y-4">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Summary</h3>
+            <div className="flex justify-between text-slate-600 dark:text-slate-400">
               <span>Customer</span>
-              <span className="font-medium text-gray-900">{transaction.customerName || 'Walk-in'}</span>
+              <span className="font-medium text-slate-900 dark:text-white">{transaction.customerName || 'Walk-in'}</span>
             </div>
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between text-slate-600 dark:text-slate-400">
               <span>Payment Method</span>
-              <span className="font-medium text-gray-900">{transaction.paymentMethod}</span>
+              <span className="font-medium text-slate-900 dark:text-white">{transaction.paymentMethod}</span>
             </div>
-            <div className="pt-4 border-t border-gray-100 space-y-2">
-              <div className="flex justify-between text-gray-600">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800/60 space-y-2">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Total Amount</span>
-                <span className="font-bold text-gray-900">{formatCurrency(transaction.totalAmount)}</span>
+                <span className="font-bold text-slate-900 dark:text-white">{formatCurrency(transaction.totalAmount)}</span>
               </div>
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Paid Amount</span>
                 <span className="font-bold text-green-600">{formatCurrency(transaction.paidAmount || 0)}</span>
               </div>
-              <div className="flex justify-between text-gray-900 text-lg font-bold pt-2 border-t border-gray-100">
+              <div className="flex justify-between text-slate-900 dark:text-white text-lg font-bold pt-2 border-t border-slate-100 dark:border-slate-800/60">
                 <span>Due Amount</span>
-                <span className={dueAmount > 0 ? "text-red-600" : "text-gray-900"}>{formatCurrency(dueAmount)}</span>
+                <span className={dueAmount > 0 ? "text-red-600" : "text-slate-900 dark:text-white"}>{formatCurrency(dueAmount)}</span>
               </div>
             </div>
           </div>
 
-          {transaction.paymentStatus === 'UNPAID' && dueAmount > 0 && (
-            <div className="bg-indigo-50 rounded-2xl border border-indigo-100 shadow-sm p-6 space-y-4">
-              <h3 className="text-lg font-bold text-indigo-900 flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-indigo-600" />
+          {/* Add Payment Section */}
+          {transaction.paymentStatus !== "PAID" && hasRole("ADMIN", "MANAGER") && dueAmount > 0 && (
+            <div className="bg-brand-50 dark:bg-brand-900/30 rounded-2xl border border-brand-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none p-6 space-y-4">
+              <h3 className="text-lg font-bold text-brand-900 flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-brand-600 dark:text-brand-400" />
                 Log Payment
               </h3>
               <div>
-                <label className="block text-sm font-medium text-indigo-900 mb-1">Amount Paid</label>
+                <label className="block text-sm font-medium text-brand-900 mb-1">Amount Paid</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">$</span>
                   <input
                     type="number"
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
-                    className="w-full pl-8 pr-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                    className="w-full pl-8 pr-4 py-2 border border-brand-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none"
                     placeholder={dueAmount.toString()}
                     min="0"
                     step="0.01"
@@ -224,11 +230,11 @@ export default function TransactionDetailsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-indigo-900 mb-1">Payment Method</label>
+                <label className="block text-sm font-medium text-brand-900 mb-1">Payment Method</label>
                 <select
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value as "CASH" | "QR_CODE")}
-                  className="w-full px-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white"
+                  className="w-full px-4 py-2 border border-brand-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none bg-white dark:bg-slate-900"
                 >
                   <option value="CASH">Cash</option>
                   <option value="QR_CODE">QR Code</option>
@@ -237,7 +243,7 @@ export default function TransactionDetailsPage() {
               <button
                 onClick={handleAddPayment}
                 disabled={isPaying || !paymentAmount}
-                className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                className="w-full py-2 bg-brand-600 dark:bg-brand-500 hover:bg-brand-700 dark:bg-brand-600 text-white rounded-xl font-medium transition-colors disabled:opacity-50"
               >
                 {isPaying ? "Processing..." : "Confirm Payment"}
               </button>

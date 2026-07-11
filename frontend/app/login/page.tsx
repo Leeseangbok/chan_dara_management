@@ -42,12 +42,12 @@ export default function LoginPage() {
 
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 relative">
+    <div className="flex min-h-[100dvh] items-center justify-center bg-transparent relative">
       {/* Language Switcher */}
       <div className="absolute top-6 right-6">
         <button
           onClick={() => setLanguage(language === "en" ? "km" : "en")}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-full shadow-sm transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white/80 dark:bg-white/[0.04] backdrop-blur-xl border border-slate-200/50 dark:border-white/[0.08] hover:bg-white dark:hover:bg-white/[0.08] rounded-full shadow-sm transition-all"
         >
           <Globe className="w-4 h-4" />
           {language === "en" ? "ខ្មែរ" : "English"}
@@ -56,26 +56,26 @@ export default function LoginPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded-2xl border border-gray-100 bg-white p-8 shadow-xl"
+        className="w-full max-w-sm rounded-2xl glass-card p-8 animate-slide-up"
         style={{ fontFamily: language === 'km' ? "'Khmer OS', 'Noto Sans Khmer', sans-serif" : undefined }}
       >
-        <div className="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-xl mb-6">
-          <span className="text-indigo-600 font-bold text-xl">CD</span>
+        <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl mb-6 shadow-[0_0_16px_rgba(99,102,241,0.4)]">
+          <span className="text-white font-bold text-xl">CD</span>
         </div>
         
-        <h1 className="mb-6 text-2xl font-bold text-gray-900 tracking-tight">
+        <h1 className="mb-6 text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
           {t.loginToYourAccount}
         </h1>
 
         {errorMessage && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 font-medium">
+          <div className="mb-6 rounded-xl border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-400 font-medium">
             {errorMessage}
           </div>
         )}
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+            <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
               {t.username}
             </label>
             <input
@@ -83,12 +83,12 @@ export default function LoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="w-full rounded-xl border border-gray-200 text-gray-700 px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none transition-all bg-gray-50/50"
+              className="w-full rounded-2xl border border-slate-200 dark:border-white/[0.1] text-slate-900 dark:text-white px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition-all bg-white/50 dark:bg-white/[0.03]"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+            <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
               {t.password}
             </label>
             <div className="relative">
@@ -97,12 +97,12 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-xl border border-gray-200 text-gray-700 pl-4 pr-10 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none transition-all bg-gray-50/50"
+                className="w-full rounded-2xl border border-slate-200 dark:border-white/[0.1] text-slate-900 dark:text-white pl-4 pr-10 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition-all bg-white/50 dark:bg-white/[0.03]"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 dark:text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300"
                 tabIndex={-1}
               >
                 {showPassword ? (
@@ -118,7 +118,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-8 w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg disabled:opacity-50 disabled:shadow-none"
+          className="mt-8 w-full rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-600 py-3 font-semibold text-white shadow-[0_0_16px_rgba(99,102,241,0.35)] hover:shadow-[0_0_24px_rgba(99,102,241,0.5)] transition-all hover:from-indigo-400 hover:to-violet-500 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-50 disabled:shadow-none disabled:transform-none"
         >
           {isSubmitting ? t.signingIn : t.signIn}
         </button>

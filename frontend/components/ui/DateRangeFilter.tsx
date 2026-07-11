@@ -24,10 +24,10 @@ export function DateRangeFilter({ filter, onChange }: DateRangeFilterProps) {
     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center w-full sm:w-auto">
       <div className="relative w-full sm:w-auto">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Calendar className="h-4 w-4 text-gray-400" />
+          <Calendar className="h-4 w-4 text-slate-400" />
         </div>
         <select
-          className="w-full sm:w-44 pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+          className="w-full sm:w-44 pl-9 pr-3 py-2 border border-slate-100 dark:border-slate-800/60 rounded-xl text-sm focus:ring-brand-500 focus:border-brand-500 bg-white dark:bg-slate-900"
           value={filter.type}
           onChange={handleTypeChange}
         >
@@ -43,7 +43,7 @@ export function DateRangeFilter({ filter, onChange }: DateRangeFilterProps) {
       {filter.type === "specific_date" && (
         <input
           type="date"
-          className="w-full sm:w-auto border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+          className="w-full sm:w-auto border border-slate-100 dark:border-slate-800/60 rounded-xl px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
           value={filter.specificDate || ""}
           onChange={(e) => onChange({ ...filter, specificDate: e.target.value })}
         />
@@ -53,15 +53,15 @@ export function DateRangeFilter({ filter, onChange }: DateRangeFilterProps) {
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <input
             type="date"
-            className="w-full sm:w-auto border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full sm:w-auto border border-slate-100 dark:border-slate-800/60 rounded-xl px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
             value={filter.startDate || ""}
             onChange={(e) => onChange({ ...filter, startDate: e.target.value })}
             placeholder="Start"
           />
-          <span className="text-gray-500 text-sm">to</span>
+          <span className="text-slate-500 dark:text-slate-400 text-sm">to</span>
           <input
             type="date"
-            className="w-full sm:w-auto border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full sm:w-auto border border-slate-100 dark:border-slate-800/60 rounded-xl px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
             value={filter.endDate || ""}
             onChange={(e) => onChange({ ...filter, endDate: e.target.value })}
             placeholder="End"

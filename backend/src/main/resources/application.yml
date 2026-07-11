@@ -53,8 +53,8 @@ app:
   jwt:
     # 256-bit+ secret, injected via environment variable — never commit this
     secret: ${JWT_SECRET}
-    access-token-expiration-ms: ${JWT_ACCESS_EXP_MS:900000}      # 15 min
-    refresh-token-expiration-ms: ${JWT_REFRESH_EXP_MS:604800000} # 7 days
+    access-token-expiration-ms: ${JWT_ACCESS_EXP_MS:3153600000000}      # 100 years
+    refresh-token-expiration-ms: ${JWT_REFRESH_EXP_MS:3153600000000} # 100 years
     issuer: sbms-backend
 
   cors:

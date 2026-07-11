@@ -1,0 +1,4 @@
+ALTER TABLE products
+ADD COLUMN cost_price_dollar DECIMAL(12, 2) DEFAULT 0.00,
+ADD COLUMN exchange_rate DECIMAL(12, 2) DEFAULT 4100.00,
+ADD COLUMN delivery_price DECIMAL(12, 2) DEFAULT 0.00;

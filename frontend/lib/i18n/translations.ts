@@ -165,4 +165,73 @@ export type Translations = {
   searchSales: string;
   receiptId: string;
   payment: string;
+
+  // Settings
+  accountSettings: string;
+  appearance: string;
+  notifications: string;
+  businessInfo: string;
+  security: string;
+  dataSystem: string;
+  changePassword: string;
+  theme: string;
+  themeDesc: string;
+  light: string;
+  dark: string;
+  system: string;
+  languageDesc: string;
+  lowStockAlert: string;
+  lowStockDesc: string;
+  dailySummary: string;
+  dailySummaryDesc: string;
+  exchangeRateSetting: string;
+  fetchNbc: string;
+  businessName: string;
+  exportData: string;
+  exportDataDesc: string;
+  appVersion: string;
+  helpSupport: string;
+  saveSettings: string;
+
+  // Deliveries
+  deliveries: string;
+  deliveriesSub: string;
+  searchDeliveries: string;
+  oldestFirst: string;
+  newestFirst: string;
+  highestAmount: string;
+  noPendingDeliveries: string;
+  noDeliveriesDesc: string;
+  itemsLabel: string;
+  startPreparing: string;
+  markReady: string;
+  outForDelivery: string;
+  markDelivered: string;
+  update: string;
+  pending: string;
+  preparing: string;
+  ready: string;
+  inTransit: string;
+  delivered: string;
+
+  // Activity Log
+  activityLog: string;
+  activityLogSub: string;
+  loadingActivity: string;
+  noActivityForPeriod: string;
+  performed: string;
+  on: string;
+
+  // Delivery Features
+  deliveryUpdated: string;
+  errorUpdatingDelivery: string;
+  activeDeliveries: string;
+  liveDeliveryBoard: string;
+  manageDeliveries: string;
+  empty: string;
+  deliveryDetails: string;
+  noLocationProvided: string;
+  close: string;
+  customer: string;
+  total: string;
 };

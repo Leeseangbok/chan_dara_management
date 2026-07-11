@@ -1,10 +1,66 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ─── Brand Palette: Indigo / Violet ─────────────────────────────────────── */
+@theme {
+  --color-brand-50:  #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
 }
 
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Light Mode Tokens ───────────────────────────────────────────────────── */
+:root {
+  --background: #f0f2f9;
+  --foreground: #0f172a;
+  --surface: #ffffff;
+  --surface-raised: #f8fafc;
+  --surface-overlay: rgba(255, 255, 255, 0.9);
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(226, 232, 240, 0.9);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --sidebar-bg: rgba(255, 255, 255, 0.96);
+  --sidebar-border: rgba(226, 232, 240, 0.9);
+  --header-bg: rgba(240, 242, 249, 0.88);
+
+  /* Light orb colors */
+  --orb-1: rgba(99, 102, 241, 0.10);
+  --orb-2: rgba(139, 92, 246, 0.08);
+  --orb-3: rgba(168, 85, 247, 0.06);
+  --orb-4: rgba(59, 130, 246, 0.07);
+  --grid-color: rgba(99, 102, 241, 0.05);
+}
+
+/* ─── Dark Mode Tokens ────────────────────────────────────────────────────── */
+.dark {
+  --background: #07090f;
+  --foreground: #e2e8f0;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-raised: rgba(255, 255, 255, 0.07);
+  --surface-overlay: rgba(18, 21, 32, 0.95);
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255,255,255,0.03);
+  --sidebar-bg: rgba(8, 10, 18, 0.98);
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --header-bg: rgba(7, 9, 15, 0.88);
+
+  /* Dark orb colors */
+  --orb-1: rgba(99, 102, 241, 0.14);
+  --orb-2: rgba(139, 92, 246, 0.10);
+  --orb-3: rgba(168, 85, 247, 0.08);
+  --orb-4: rgba(59, 130, 246, 0.07);
+  --grid-color: rgba(255, 255, 255, 0.025);
+}
+
+/* ─── Theme Map ───────────────────────────────────────────────────────────── */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -12,10 +68,246 @@
   --font-mono: var(--font-geist-mono);
 }
 
-
+/* ─── Base ────────────────────────────────────────────────────────────────── */
+html {
+  height: 100%;
+}
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), var(--font-noto-sans-khmer), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+}
+
+html.lang-km {
+  font-size: 110%; /* Scale up rem values slightly to make Khmer text more legible */
+}
+
+html.lang-km body {
+  font-family: var(--font-noto-sans-khmer), var(--font-sans), sans-serif;
+}
+
+html.lang-km th {
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   BACKGROUND DESIGN SYSTEM
+   Layer stack (bottom → top):
+   1. Base color
+   2. Mesh gradient blobs (slow drift)
+   3. Dot/grid pattern overlay
+   4. Noise texture (subtle grain)
+   5. Edge vignette
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1 + 2: Base + Mesh gradient blobs ────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+
+  /* Light mode: soft pastel gradient mesh */
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 12% -5%,  var(--orb-1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 88% 105%, var(--orb-2) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,  var(--orb-3) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 85% 15%,  var(--orb-4) 0%, transparent 55%),
+    radial-gradient(ellipse 35% 28% at 8% 90%,   var(--orb-2) 0%, transparent 55%);
+}
+
+/* ── 3: Dot grid pattern ───────────────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+
+  /* Dot grid — extremely subtle */
+  background-image: radial-gradient(circle, var(--grid-color) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 40%, transparent 100%);
+}
+
+/* ── 4: Noise texture (grain) ──────────────────────────────────────────────── */
+/* SVG-based noise — no external assets needed */
+.noise-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+.dark .noise-layer {
+  opacity: 0.04;
+}
+
+/* ── 5: Edge vignette for depth ────────────────────────────────────────────── */
+.vignette-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 100% 100% at 50% 50%, transparent 60%, rgba(0,0,0,0.06) 100%);
+}
+
+.dark .vignette-layer {
+  background: radial-gradient(ellipse 100% 100% at 50% 50%, transparent 50%, rgba(0,0,0,0.35) 100%);
+}
+
+/* ── Floating ambient orbs (animated) ─────────────────────────────────────── */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  will-change: transform;
+  z-index: -3;
+}
+
+.orb-1 {
+  width: 600px; height: 600px;
+  top: -15%; left: -10%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12), transparent 70%);
+  animation: orb-drift-1 20s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 500px; height: 500px;
+  bottom: -10%; right: -10%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.10), transparent 70%);
+  animation: orb-drift-2 25s ease-in-out infinite;
+}
+
+.orb-3 {
+  width: 350px; height: 350px;
+  top: 40%; left: 55%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.07), transparent 70%);
+  animation: orb-drift-3 18s ease-in-out infinite;
+}
+
+.dark .orb-1 {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.20), transparent 70%);
+}
+.dark .orb-2 {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent 70%);
+}
+.dark .orb-3 {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.10), transparent 70%);
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.20); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.40); }
+.dark ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); }
+.dark ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.15); }
+
+/* ─── Keyframe Animations ─────────────────────────────────────────────────── */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(99, 102, 241, 0.45), 0 0 20px rgba(99, 102, 241, 0.2); }
+  50%       { box-shadow: 0 0 18px rgba(99, 102, 241, 0.7), 0 0 35px rgba(99, 102, 241, 0.35); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes slide-up-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes fade-scale-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Slow floating drift for ambient orbs */
+@keyframes orb-drift-1 {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  33%  { transform: translate(40px, 30px) scale(1.05); }
+  66%  { transform: translate(-20px, 50px) scale(0.97); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes orb-drift-2 {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  33%  { transform: translate(-50px, -25px) scale(1.08); }
+  66%  { transform: translate(30px, -40px) scale(0.95); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes orb-drift-3 {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  50%  { transform: translate(-30px, 35px) scale(1.12); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+/* Page-in animation */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ─── Utility Classes ─────────────────────────────────────────────────────── */
+.animate-slide-up {
+  animation: slide-up-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-scale {
+  animation: fade-scale-in 0.3s ease-out forwards;
+}
+
+.animate-page-in {
+  animation: page-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.glow-brand {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Glass card base */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Gradient brand border top */
+.brand-top-bar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 2px 2px 0 0;
+}
+
+/* Active nav glow bar */
+.nav-glow-bar {
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.9), 0 0 20px rgba(99, 102, 241, 0.4);
+}
+
+/* ── Light mode: subtle colored left border on page wrapper ─────────────────── */
+.page-content-wrapper {
+  position: relative;
 }

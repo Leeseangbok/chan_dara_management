@@ -101,10 +101,10 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && onClose()} />
             
             {/* Modal */}
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Header */}
-                <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-gray-900" style={{ fontFamily: language === 'km' ? "var(--font-noto-sans-khmer), sans-serif" : undefined }}>
+                <div className="bg-slate-50 dark:bg-slate-950 px-6 py-4 border-b border-slate-100 dark:border-slate-800/60 flex items-center justify-between">
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-white" style={{ fontFamily: language === 'km' ? "var(--font-noto-sans-khmer), sans-serif" : undefined }}>
                         {isCreatingCustomer ? t.createNewCustomer : t.completePayment}
                     </h2>
                     <button 
@@ -116,7 +116,7 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                             }
                         }} 
                         disabled={isSubmitting || isSubmittingCustomer}
-                        className="p-2 -mr-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-200/50 transition-colors disabled:opacity-50"
+                        className="p-2 -mr-2 text-slate-400 hover:text-slate-600 dark:text-slate-400 rounded-xl hover:bg-slate-200/50 transition-colors disabled:opacity-50"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -125,45 +125,45 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                 {isCreatingCustomer ? (
                     <form onSubmit={handleCreateCustomer} className="p-6 space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{t.nameStar}</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t.nameStar}</label>
                             <input
                                 type="text"
                                 required
                                 value={newCustomerForm.name}
                                 onChange={(e) => setNewCustomerForm({ ...newCustomerForm, name: e.target.value })}
-                                className="w-full px-4 py-2 bg-gray-50 text-gray-700 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-800/60 rounded-2xl focus:bg-white dark:bg-slate-900 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{t.phone}</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t.phone}</label>
                             <input
                                 type="text"
                                 value={newCustomerForm.phone}
                                 onChange={(e) => setNewCustomerForm({ ...newCustomerForm, phone: e.target.value })}
-                                className="w-full px-4 py-2 bg-gray-50 text-gray-700 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-800/60 rounded-2xl focus:bg-white dark:bg-slate-900 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{t.address}</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t.address}</label>
                             <textarea
                                 rows={2}
                                 value={newCustomerForm.address}
                                 onChange={(e) => setNewCustomerForm({ ...newCustomerForm, address: e.target.value })}
-                                className="w-full px-4 py-2 bg-gray-50 text-gray-700 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none"
+                                className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-800/60 rounded-2xl focus:bg-white dark:bg-slate-900 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none resize-none"
                             />
                         </div>
                         <div className="pt-4 flex gap-3">
                             <button
                                 type="button"
                                 onClick={() => setIsCreatingCustomer(false)}
-                                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50"
+                                className="flex-1 px-4 py-2.5 rounded-2xl border border-slate-100 dark:border-slate-800/60 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:bg-slate-950"
                             >
                                 {t.cancel}
                             </button>
                             <button
                                 type="submit"
                                 disabled={isSubmittingCustomer || !newCustomerForm.name.trim()}
-                                className="flex-1 px-4 py-2.5 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="flex-1 px-4 py-2.5 rounded-2xl bg-brand-600 dark:bg-brand-500 text-white font-medium hover:bg-brand-700 dark:bg-brand-600 disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {isSubmittingCustomer ? <Loader2 className="w-5 h-5 animate-spin" /> : t.saveChanges}
                             </button>
@@ -173,27 +173,27 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                     <>
                         <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
                     {/* Amount Due */}
-                    <div className="bg-indigo-50 rounded-xl p-4 flex items-center justify-between border border-indigo-100">
-                        <span className="text-indigo-900 font-medium">{t.amountDue}</span>
-                        <span className="text-3xl font-bold text-indigo-700">{formatCurrency(totalAmount)}</span>
+                    <div className="bg-brand-50 dark:bg-brand-900/30 rounded-2xl p-4 flex items-center justify-between border border-brand-100">
+                        <span className="text-brand-900 font-medium">{t.amountDue}</span>
+                        <span className="text-3xl font-bold text-brand-700 dark:text-brand-300">{formatCurrency(totalAmount)}</span>
                     </div>
 
                     {/* Customer Selection */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Customer {paymentStatus === "UNPAID" && <span className="text-red-500">*</span>}</label>
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Customer {paymentStatus === "UNPAID" && <span className="text-red-500">*</span>}</label>
                         <div className="grid grid-cols-2 gap-3 mb-3">
                             <button
                                 onClick={() => {
                                     setCustomerType("WALK_IN");
                                     setCustomerId(null);
                                 }}
-                                className={`py-2 px-4 rounded-xl font-medium border-2 transition-all ${customerType === 'WALK_IN' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                                className={`py-2 px-4 rounded-2xl font-medium border-2 transition-all ${customerType === 'WALK_IN' ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300' : 'border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950'}`}
                             >
                                 {t.walkInGuest}
                             </button>
                             <button
                                 onClick={() => setCustomerType("EXISTING")}
-                                className={`py-2 px-4 rounded-xl font-medium border-2 transition-all ${customerType === 'EXISTING' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                                className={`py-2 px-4 rounded-2xl font-medium border-2 transition-all ${customerType === 'EXISTING' ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300' : 'border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950'}`}
                             >
                                 {t.existingCustomer}
                             </button>
@@ -202,25 +202,25 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                         {customerType === "EXISTING" && (
                             <div className="mt-3 flex flex-col gap-2">
                                 <div className="relative">
-                                    <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                                     <input
                                         type="text"
                                         placeholder={t.searchByNamePhone}
                                         value={searchCustomerQuery}
                                         onChange={(e) => setSearchCustomerQuery(e.target.value)}
-                                        className={`w-full pl-10 pr-10 py-3 bg-white border-2 ${isCustomerRequired && !customerId ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-200'} rounded-xl focus:ring-4 transition-all outline-none text-gray-700`}
+                                        className={`w-full pl-10 pr-10 py-3 bg-white dark:bg-slate-900 border-2 ${isCustomerRequired && !customerId ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-slate-100 dark:border-slate-800/60 focus:border-brand-500 focus:ring-brand-200'} rounded-2xl focus:ring-4 transition-all outline-none text-slate-700 dark:text-slate-300`}
                                     />
                                     {searchCustomerQuery && (
                                         <button 
                                             onClick={() => setSearchCustomerQuery("")} 
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-400 p-1 rounded-full hover:bg-slate-100 dark:bg-slate-800 transition-colors"
                                         >
                                             <X className="w-4 h-4" />
                                         </button>
                                     )}
                                 </div>
                                 
-                                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
+                                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-2xl overflow-hidden shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none flex flex-col">
                                     <div className="max-h-48 overflow-y-auto p-1.5 space-y-1">
                                         {customers
                                             .filter(c => 
@@ -231,19 +231,19 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                                                 <button
                                                     key={c.id}
                                                     onClick={() => setCustomerId(c.id)}
-                                                    className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between transition-colors ${customerId === c.id ? 'bg-indigo-50 ring-1 ring-indigo-500/50' : 'hover:bg-gray-50'}`}
+                                                    className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center justify-between transition-colors ${customerId === c.id ? 'bg-brand-50 dark:bg-brand-900/30 ring-1 ring-brand-500/50' : 'hover:bg-slate-50 dark:bg-slate-950'}`}
                                                 >
                                                     <div className="flex items-center gap-3">
-                                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${customerId === c.id ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-500'}`}>
+                                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${customerId === c.id ? 'bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
                                                             <User className="w-4 h-4" />
                                                         </div>
                                                         <div className="flex flex-col">
-                                                            <span className={`text-sm font-semibold ${customerId === c.id ? 'text-indigo-900' : 'text-gray-900'}`}>{c.name}</span>
-                                                            {c.phone && <span className="text-xs text-gray-500 flex items-center gap-1.5 mt-0.5"><Phone className="w-3 h-3" />{c.phone}</span>}
-                                                            {c.address && <span className="text-xs text-gray-400 flex items-center gap-1.5 mt-0.5 truncate max-w-[200px]"><MapPin className="w-3 h-3 shrink-0" />{c.address}</span>}
+                                                            <span className={`text-sm font-semibold ${customerId === c.id ? 'text-brand-900' : 'text-slate-900 dark:text-white'}`}>{c.name}</span>
+                                                            {c.phone && <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-0.5"><Phone className="w-3 h-3" />{c.phone}</span>}
+                                                            {c.address && <span className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5 truncate max-w-[200px]"><MapPin className="w-3 h-3 shrink-0" />{c.address}</span>}
                                                         </div>
                                                     </div>
-                                                    {customerId === c.id && <Check className="w-5 h-5 text-indigo-600" />}
+                                                    {customerId === c.id && <Check className="w-5 h-5 text-brand-600 dark:text-brand-400" />}
                                                 </button>
                                             ))}
                                             {customers.filter(c => 
@@ -251,20 +251,20 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                                                 (c.phone && c.phone.includes(searchCustomerQuery))
                                             ).length === 0 && (
                                                 <div className="py-6 text-center flex flex-col items-center justify-center gap-2">
-                                                    <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
-                                                        <Search className="w-5 h-5 text-gray-400" />
+                                                    <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
+                                                        <Search className="w-5 h-5 text-slate-400" />
                                                     </div>
-                                                    <span className="text-sm font-medium text-gray-500">No customers found</span>
+                                                    <span className="text-sm font-medium text-slate-500 dark:text-slate-400">No customers found</span>
                                                 </div>
                                             )}
                                     </div>
-                                    <div className="p-2 border-t border-gray-100 bg-gray-50/50">
+                                    <div className="p-2 border-t border-slate-100 dark:border-slate-800/60 bg-transparent">
                                         <button
                                             onClick={() => {
                                                 setIsCreatingCustomer(true);
                                                 setCustomerId(null);
                                             }}
-                                            className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100/50 rounded-lg transition-colors"
+                                            className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:bg-brand-900/50/50 rounded-xl transition-colors"
                                         >
                                             <UserPlus className="w-4 h-4" />
                                             {t.plusCreateNewCustomer}
@@ -278,17 +278,17 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
 
                     {/* Payment Status */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">{t.paymentStatus}</label>
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t.paymentStatus}</label>
                         <div className="grid grid-cols-2 gap-3">
                             <button
                                 onClick={() => setPaymentStatus("PAID")}
-                                className={`py-2 px-4 rounded-xl font-medium border-2 transition-all ${paymentStatus === 'PAID' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                                className={`py-2 px-4 rounded-2xl font-medium border-2 transition-all ${paymentStatus === 'PAID' ? 'border-green-500 bg-green-50 text-green-700' : 'border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950'}`}
                             >
                                 {t.paid}
                             </button>
                             <button
                                 onClick={() => setPaymentStatus("UNPAID")}
-                                className={`py-2 px-4 rounded-xl font-medium border-2 transition-all ${paymentStatus === 'UNPAID' ? 'border-red-500 bg-red-50 text-red-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                                className={`py-2 px-4 rounded-2xl font-medium border-2 transition-all ${paymentStatus === 'UNPAID' ? 'border-red-500 bg-red-50 text-red-700' : 'border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950'}`}
                             >
                                 {t.unpaidCredit}
                             </button>
@@ -298,17 +298,17 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                     {/* Payment Method */}
                     {paymentStatus === "PAID" && (
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">{t.paymentMethod}</label>
+                            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t.paymentMethod}</label>
                             <div className="grid grid-cols-2 gap-3">
                                 <button
                                     onClick={() => setPaymentMethod("CASH")}
-                                    className={`py-2 px-4 rounded-xl font-medium border-2 transition-all ${paymentMethod === 'CASH' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                                    className={`py-2 px-4 rounded-2xl font-medium border-2 transition-all ${paymentMethod === 'CASH' ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300' : 'border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950'}`}
                                 >
                                     {t.cash}
                                 </button>
                                 <button
                                     onClick={() => setPaymentMethod("QR_CODE")}
-                                    className={`py-2 px-4 rounded-xl font-medium border-2 transition-all ${paymentMethod === 'QR_CODE' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                                    className={`py-2 px-4 rounded-2xl font-medium border-2 transition-all ${paymentMethod === 'QR_CODE' ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300' : 'border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-950'}`}
                                 >
                                     {t.qrCodeBank}
                                 </button>
@@ -317,26 +317,26 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                     )}
 
                     {/* Delivery Options */}
-                    <div className="pt-2 border-t border-gray-100">
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800/60">
                         <label className="flex items-center gap-2 cursor-pointer mb-3">
                             <input
                                 type="checkbox"
                                 checked={requiresDelivery}
                                 onChange={(e) => setRequiresDelivery(e.target.checked)}
-                                className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
+                                className="w-4 h-4 text-brand-600 dark:text-brand-400 rounded focus:ring-brand-500"
                             />
-                            <span className="text-sm font-semibold text-gray-700">Requires Delivery</span>
+                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Requires Delivery</span>
                         </label>
 
                         {requiresDelivery && (
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Location / Notes <span className="text-red-500">*</span></label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Delivery Location / Notes <span className="text-red-500">*</span></label>
                                 <textarea
                                     rows={2}
                                     placeholder="Enter address, maps link, or instructions"
                                     value={deliveryLocation}
                                     onChange={(e) => setDeliveryLocation(e.target.value)}
-                                    className="w-full px-4 py-2 bg-gray-50 text-gray-700 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none"
+                                    className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-800/60 rounded-2xl focus:bg-white dark:bg-slate-900 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none resize-none"
                                 />
                             </div>
                         )}
@@ -346,22 +346,22 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                     {paymentStatus === "PAID" && paymentMethod === "CASH" && (
                         <>
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.cashReceived}</label>
+                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t.cashReceived}</label>
                                 <div className="relative">
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">៛</span>
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-bold">៛</span>
                                     <CurrencyInput
                                         value={cashReceived}
                                         onChangeValue={(val) => setCashReceived(val ? val.toString() : "")}
                                         disabled={isSubmitting}
-                                        className="w-full pl-4 pr-12 py-3 text-2xl font-bold text-gray-700 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all outline-none"
+                                        className="w-full pl-4 pr-12 py-3 text-2xl font-bold text-slate-700 dark:text-slate-300 border-2 border-slate-100 dark:border-slate-800/60 rounded-2xl focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 transition-all outline-none"
                                     />
                                 </div>
                             </div>
 
                             {/* Change Due */}
-                            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                <span className="text-gray-500 font-medium">{t.changeDue}</span>
-                                <span className={`text-2xl font-bold ${changeDue > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                            <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800/60">
+                                <span className="text-slate-500 dark:text-slate-400 font-medium">{t.changeDue}</span>
+                                <span className={`text-2xl font-bold ${changeDue > 0 ? 'text-green-600' : 'text-slate-400'}`}>
                                     {formatCurrency(changeDue)}
                                 </span>
                             </div>
@@ -370,11 +370,11 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                 </div>
 
                 {/* Actions */}
-                <div className="p-4 bg-gray-50 border-t border-gray-100 flex gap-3">
+                <div className="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800/60 flex gap-3">
                     <button
                         onClick={onClose}
                         disabled={isSubmitting}
-                        className="flex-1 py-3 px-4 rounded-xl border border-gray-300 text-gray-700 font-semibold bg-white hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        className="flex-1 py-3 px-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 text-slate-700 dark:text-slate-300 font-semibold bg-white dark:bg-slate-900 hover:bg-slate-50 dark:bg-slate-950 transition-colors disabled:opacity-50"
                     >
                         {t.cancel}
                     </button>
@@ -387,7 +387,7 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                             deliveryLocation
                         })}
                         disabled={isSubmitting || !isValid}
-                        className="flex-[2] py-3 px-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed"
+                        className="flex-[2] py-3 px-4 rounded-2xl text-white font-semibold flex items-center justify-center gap-2 bg-brand-600 dark:bg-brand-500 hover:bg-brand-700 dark:bg-brand-600 shadow-[0_4px_20px_rgb(0,0,0,0.04)] dark:shadow-none hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed"
                     >
                         {isSubmitting ? (
                             <>

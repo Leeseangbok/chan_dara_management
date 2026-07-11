@@ -28,6 +28,10 @@ public record CreateProductRequest(
         @DecimalMin(value = "0.00", message = "Cost price must be >= 0")
         BigDecimal costPrice,
 
+        BigDecimal costPriceDollar,
+        BigDecimal exchangeRate,
+        BigDecimal deliveryPrice,
+
         @Min(value = 0, message = "Stock quantity must be >= 0")
         int stockQuantity
 ) {}

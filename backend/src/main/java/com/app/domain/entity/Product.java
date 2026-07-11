@@ -48,6 +48,15 @@ public class Product {
     @Column(name = "cost_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal costPrice;
 
+    @Column(name = "cost_price_dollar", precision = 12, scale = 2)
+    private BigDecimal costPriceDollar;
+
+    @Column(name = "exchange_rate", precision = 12, scale = 2)
+    private BigDecimal exchangeRate;
+
+    @Column(name = "delivery_price", precision = 12, scale = 2)
+    private BigDecimal deliveryPrice;
+
     @Column(name = "stock_quantity", nullable = false)
     @Builder.Default
     private int stockQuantity = 0;

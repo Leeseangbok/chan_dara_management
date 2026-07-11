@@ -9,6 +9,9 @@ export interface CreateProductPayload {
   categoryId: string | null;
   price: number;
   costPrice: number;
+  costPriceDollar?: number;
+  exchangeRate?: number;
+  deliveryPrice?: number;
   stockQuantity: number;
 }
 

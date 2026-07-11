@@ -13,5 +13,8 @@ public record ProductResponse(
         CategoryResponse category,
         BigDecimal price,
         BigDecimal costPrice,
+        BigDecimal costPriceDollar,
+        BigDecimal exchangeRate,
+        BigDecimal deliveryPrice,
         int stockQuantity
 ) {}

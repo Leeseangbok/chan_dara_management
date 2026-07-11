@@ -90,6 +90,9 @@ public class ProductService {
                 .category(category)
                 .price(req.price())
                 .costPrice(req.costPrice())
+                .costPriceDollar(req.costPriceDollar())
+                .exchangeRate(req.exchangeRate())
+                .deliveryPrice(req.deliveryPrice())
                 .stockQuantity(req.stockQuantity())
                 .build();
         
@@ -110,6 +113,9 @@ public class ProductService {
         product.setCategory(resolveCategory(req.categoryId()));
         product.setPrice(req.price());
         product.setCostPrice(req.costPrice());
+        product.setCostPriceDollar(req.costPriceDollar());
+        product.setExchangeRate(req.exchangeRate());
+        product.setDeliveryPrice(req.deliveryPrice());
         product.setStockQuantity(req.stockQuantity());
         
         Product saved = productRepository.save(product);
@@ -149,7 +155,9 @@ public class ProductService {
                 p.getId(), p.getSku(), p.getName(), p.getNameKh(),
                 p.getDescription(), p.getImageUrl(),
                 p.getCategory() != null ? categoryService.toResponse(p.getCategory()) : null,
-                p.getPrice(), p.getCostPrice(), p.getStockQuantity()
+                p.getPrice(), p.getCostPrice(),
+                p.getCostPriceDollar(), p.getExchangeRate(), p.getDeliveryPrice(),
+                p.getStockQuantity()
         );
     }
 }

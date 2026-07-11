@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { usersApi } from "@/lib/api/users";
 import { User, Role } from "@/lib/api/types";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { Plus, Search, Loader2, ShieldAlert, User as UserIcon, Edit2, Shield, AlertCircle } from "lucide-react";
+import { ModalPortal } from "@/components/ui/ModalPortal";
+import { Plus, Search, Loader2, ShieldAlert, User as UserIcon, Edit2, Shield, AlertCircle, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -98,111 +99,95 @@ export default function StaffPage() {
   if (currentUser?.role !== "ADMIN") {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center p-6">
-        <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4">
+        <div className="w-16 h-16 bg-rose-50 dark:bg-rose-500/[0.1] text-rose-500 rounded-2xl flex items-center justify-center mb-4">
           <ShieldAlert className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-        <p className="text-gray-500 max-w-md">
-          You do not have permission to view or manage staff. Please contact an Administrator if you need access.
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Access Denied</h2>
+        <p className="text-slate-500 dark:text-slate-400 max-w-md text-sm">
+          You do not have permission to view or manage staff. Please contact an Administrator.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-gray-50/50 p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t.staffOverview}</h1>
-          <p className="text-sm text-gray-500 mt-1">{t.staffSub}</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{t.staffOverview}</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{t.staffSub}</p>
         </div>
-        <button
-          onClick={openCreateModal}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-sm"
-        >
-          <Plus className="w-5 h-5" />
-          <span>{t.addUser}</span>
+        <button onClick={openCreateModal}
+          className="flex items-center gap-2 text-white px-5 py-2.5 rounded-xl font-semibold text-sm
+            bg-gradient-to-r from-indigo-500 to-violet-600
+            shadow-[0_0_16px_rgba(99,102,241,0.35)] hover:shadow-[0_0_24px_rgba(99,102,241,0.55)]
+            hover:-translate-y-px transition-all active:scale-95">
+          <Plus className="w-4 h-4" /> {t.addUser}
         </button>
       </div>
 
-      <div className="relative max-w-md text-gray-700">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700" />
-        <input
-          type="text"
-          placeholder="Search by username..."
-          value={searchQuery}
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+        <input type="text" placeholder="Search by username…" value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm"
-        />
+          className="w-full pl-9 pr-4 py-2.5 text-sm text-slate-900 dark:text-white bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-500/25 transition-all" />
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex-1">
-        <div className="overflow-x-auto min-h-[400px]">
-          <table className="w-full text-left border-collapse">
+      <div className="rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 text-sm font-medium">
-                <th className="px-6 py-4">Username</th>
-                <th className="px-6 py-4">Role</th>
-                <th className="px-6 py-4">{t.status}</th>
-                <th className="px-6 py-4">Created At</th>
-                <th className="px-6 py-4 text-right">{t.actions}</th>
+              <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200/60 dark:border-white/[0.06]">
+                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Username</th>
+                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Role</th>
+                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.status}</th>
+                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Created At</th>
+                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">{t.actions}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 text-gray-700">
+            <tbody className="divide-y divide-slate-100/60 dark:divide-white/[0.04] text-slate-700 dark:text-slate-300">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
                     Loading staff...
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
                     <UserIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
                     <p>No staff found.</p>
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((u) => (
-                  <tr key={u.id} className="hover:bg-gray-50/80 transition-colors">
-                    <td className="px-6 py-4 font-medium text-gray-900 flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${u.role === 'ADMIN' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'
-                        }`}>
-                        {u.username.charAt(0).toUpperCase()}
+                  filteredUsers.map((u) => (
+                  <tr key={u.id} className="hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${u.role === 'ADMIN' ? 'bg-indigo-100 dark:bg-indigo-500/[0.15] text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-slate-400'}`}>
+                          {u.username.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{u.username}</span>
+                        {u.id === currentUser?.id && (
+                          <span className="text-[10px] bg-indigo-50 dark:bg-indigo-500/[0.1] text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">You</span>
+                        )}
                       </div>
-                      {u.username}
-                      {u.id === currentUser?.id && (
-                        <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ml-2">You</span>
-                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5">
-                        {u.role === 'ADMIN' && <Shield className="w-4 h-4 text-indigo-600" />}
-                        <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded ${u.role === 'ADMIN' ? 'bg-indigo-50 text-indigo-700' :
-                          u.role === 'MANAGER' ? 'bg-blue-50 text-blue-700' :
-                            'bg-gray-100 text-gray-700'
-                          }`}>
-                          {u.role}
-                        </span>
+                        {u.role === 'ADMIN' && <Shield className="w-3.5 h-3.5 text-indigo-500" />}
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${u.role === 'ADMIN' ? 'bg-indigo-100 dark:bg-indigo-500/[0.12] text-indigo-700 dark:text-indigo-300' : u.role === 'MANAGER' ? 'bg-sky-100 dark:bg-sky-500/[0.12] text-sky-700 dark:text-sky-300' : 'bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-slate-400'}`}>{u.role}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded ${u.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                        }`}>
-                        {u.active ? 'Active' : 'Inactive'}
-                      </span>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${u.active ? 'bg-emerald-100 dark:bg-emerald-500/[0.12] text-emerald-700 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-500/[0.12] text-rose-700 dark:text-rose-400'}`}>{u.active ? 'Active' : 'Inactive'}</span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(u.createAt).toLocaleDateString()}
-                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{new Date(u.createAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => openEditModal(u)}
-                        className="inline-flex items-center justify-center p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-transparent hover:border-indigo-100"
-                        title="Edit Staff"
-                      >
-                        <Edit2 className="w-4 h-4" />
+                      <button onClick={() => openEditModal(u)}
+                        className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/[0.1] transition-all active:scale-90" title="Edit">
+                        <Edit2 className="w-3.5 h-3.5" />
                       </button>
                     </td>
                   </tr>
@@ -214,49 +199,49 @@ export default function StaffPage() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 text-gray-700">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900">
-                {editingUser ? "Edit Staff Member" : "Add New Staff"}
-              </h2>
+        <ModalPortal>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-[#13161f] border border-slate-200 dark:border-white/[0.08] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 dark:border-white/[0.07] flex items-center justify-between">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">{editingUser ? "Edit Staff Member" : "Add New Staff"}</h2>
+              <button onClick={() => setIsModalOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.07] transition-all"><X className="w-4 h-4" /></button>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Username</label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   disabled={!!editingUser}
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                  className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800/60 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-50"
                   required
                 />
-                {editingUser && <p className="text-xs text-gray-500 mt-1">Username cannot be changed.</p>}
+                {editingUser && <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Username cannot be changed.</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   {editingUser ? "New Password (leave blank to keep current)" : "Password"}
                 </label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500"
                   required={!editingUser}
                   minLength={6}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Role</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value as Role)}
                   disabled={editingUser?.id === currentUser?.id}
-                  className="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                  className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-50"
                 >
                   <option value="STAFF">STAFF</option>
                   <option value="MANAGER">MANAGER</option>
@@ -270,10 +255,10 @@ export default function StaffPage() {
               </div>
 
               {editingUser && editingUser.id !== currentUser?.id && (
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800/60">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Account Status</p>
-                    <p className="text-xs text-gray-500">Enable or disable this account</p>
+                    <p className="text-sm font-medium text-slate-900 dark:text-white">Account Status</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Enable or disable this account</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
@@ -282,24 +267,15 @@ export default function StaffPage() {
                       checked={isActive}
                       onChange={(e) => setIsActive(e.target.checked)}
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white dark:bg-slate-900 after:border-slate-100 dark:border-slate-800/60 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600 dark:bg-brand-500"></div>
                   </label>
                 </div>
               )}
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={formLoading}
-                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white px-6 py-2 rounded-xl transition-all font-medium"
-                >
+              <div className="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-white/[0.06]">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/[0.1] rounded-xl hover:bg-slate-50 dark:hover:bg-white/[0.05] transition-colors">Cancel</button>
+                <button type="submit" disabled={formLoading}
+                  className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-violet-600 rounded-xl shadow-[0_0_14px_rgba(99,102,241,0.3)] hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] disabled:opacity-50 disabled:shadow-none transition-all">
                   {formLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                   {editingUser ? "Save Changes" : "Create Staff"}
                 </button>
@@ -307,6 +283,7 @@ export default function StaffPage() {
             </form>
           </div>
         </div>
+        </ModalPortal>
       )}
     </div>
   );

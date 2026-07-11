@@ -34,6 +34,9 @@ export interface Product {
   category: Category | null;
   price: number;
   costPrice: number;
+  costPriceDollar?: number;
+  exchangeRate?: number;
+  deliveryPrice?: number;
   stockQuantity: number;
 }
 

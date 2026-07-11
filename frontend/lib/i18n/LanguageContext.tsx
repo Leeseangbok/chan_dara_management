@@ -21,8 +21,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const stored = localStorage.getItem("app_lang") as Language;
-    if (stored === "en" || stored === "km") {
-      setLanguage(stored);
+    const initialLang = (stored === "en" || stored === "km") ? stored : "en";
+    setLanguage(initialLang);
+    document.documentElement.lang = initialLang;
+    if (initialLang === "km") {
+      document.documentElement.classList.add("lang-km");
+    } else {
+      document.documentElement.classList.remove("lang-km");
     }
     setMounted(true);
   }, []);
@@ -30,6 +35,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);
     localStorage.setItem("app_lang", lang);
+    document.documentElement.lang = lang;
+    if (lang === "km") {
+      document.documentElement.classList.add("lang-km");
+    } else {
+      document.documentElement.classList.remove("lang-km");
+    }
   };
 
   // During SSR or first render, provide the default language but hide content to avoid hydration mismatch

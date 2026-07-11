@@ -11,9 +11,11 @@ import { CartPanel } from "@/components/pos/CartPanel";
 import { CheckoutModal } from "@/components/pos/CheckoutModal";
 import { AxiosError } from "axios";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { Search, Tag, AlertCircle, ArrowLeft, Globe, LogOut, X, ShoppingCart } from "lucide-react";
+import { Search, Tag, AlertCircle, ArrowLeft, Globe, LogOut, X, ShoppingCart, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { LiveClock } from "@/components/ui/LiveClock";
+import { NotificationBell } from "@/components/ui/NotificationBell";
 import { formatCurrency } from "@/lib/utils/currency";
 import Link from "next/link";
 
@@ -187,45 +189,71 @@ export default function PosPage() {
     }
 
     return (
-        <div className="flex h-[100dvh] bg-gray-100 font-sans relative overflow-hidden" style={{ fontFamily: language === 'km' ? "var(--font-noto-sans-khmer), sans-serif" : undefined }}>
+        <div className="flex h-[100dvh] bg-transparent font-sans relative overflow-hidden" style={{ fontFamily: language === 'km' ? "var(--font-noto-sans-khmer), sans-serif" : undefined }}>
             {/* Left Column: POS Grid */}
             <div className="flex-1 flex flex-col min-w-0 h-full pb-20 lg:pb-0">
                 {/* Top Bar: Search & Categories */}
-                <div className="bg-white border-b border-gray-200 z-10 shadow-sm shrink-0">
-                    <div className="p-3 lg:p-4 flex flex-col sm:flex-row gap-3 lg:gap-4 items-center">
-                        <div className="flex w-full sm:w-auto items-center gap-3">
-                            {hasRole("ADMIN", "MANAGER") && (
-                                <Link href="/dashboard" className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-600 transition-colors shrink-0" title={t.dashboard}>
+                <div className="glass-card border-x-0 border-t-0 shrink-0 z-10">
+                    <div className="flex flex-col border-b border-slate-100 dark:border-slate-800/60">
+                        {/* Row 1: Controls & Tools */}
+                        <div className="p-3 lg:p-4 flex flex-col sm:flex-row justify-between items-center gap-3 lg:gap-4 border-b border-slate-100 dark:border-slate-800/60">
+                            <div className="flex w-full sm:w-1/2 lg:w-1/3 items-center gap-3">
+                                <Link href="/dashboard" className="p-2 bg-white/50 dark:bg-white/[0.04] border border-slate-200/50 dark:border-white/[0.08] hover:bg-white dark:hover:bg-white/[0.08] rounded-xl text-slate-600 dark:text-slate-400 transition-colors shrink-0" title={t.dashboard}>
                                     <ArrowLeft className="w-5 h-5" />
                                 </Link>
-                            )}
-                            <div className="relative flex-1 group">
-                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
-                                <input
-                                    type="text"
-                                    placeholder={t.searchPlaceholder}
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-11 pr-10 py-2.5 lg:py-3 bg-gray-100/80 hover:bg-gray-100 text-gray-700 border-2 border-transparent focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 rounded-2xl transition-all outline-none font-medium"
-                                />
-                                {searchQuery && (
-                                    <button
-                                        onClick={() => setSearchQuery("")}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1.5 hover:bg-gray-200 rounded-full transition-colors"
-                                        title="Clear search"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
-                                )}
+                                <div className="relative flex-1 group">
+                                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
+                                    <input
+                                        type="text"
+                                        placeholder={t.searchPlaceholder}
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full pl-11 pr-10 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 text-slate-700 dark:text-slate-300 focus:bg-white dark:focus:bg-slate-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 rounded-xl transition-all outline-none font-medium text-sm"
+                                    />
+                                    {searchQuery && (
+                                        <button
+                                            onClick={() => setSearchQuery("")}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-400 p-1 hover:bg-slate-200 rounded-full transition-colors"
+                                            title="Clear search"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 sm:gap-3 shrink-0 w-full sm:w-auto justify-end">
+                                <div className="hidden sm:block">
+                                    <LiveClock />
+                                </div>
+                                <div className="flex items-center justify-center p-1 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200/50 dark:border-slate-800">
+                                    <NotificationBell />
+                                </div>
+                                <button
+                                    onClick={() => setLanguage(language === "en" ? "km" : "en")}
+                                    className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900 hover:bg-slate-200 border border-slate-200/50 dark:border-slate-800 text-slate-600 dark:text-slate-400 transition-colors flex items-center justify-center"
+                                    title={language === "en" ? "Switch to Khmer" : "ប្តូរទៅភាសាអង់គ្លេស"}
+                                >
+                                    <Globe className="w-5 h-5" />
+                                </button>
+                                <button
+                                    onClick={handleLogout}
+                                    className="p-2 rounded-xl bg-rose-50 dark:bg-rose-500/[0.05] hover:bg-rose-100 dark:hover:bg-rose-500/[0.1] border border-rose-100 dark:border-rose-500/10 text-rose-600 dark:text-rose-400 transition-colors flex items-center justify-center"
+                                    title="Logout"
+                                >
+                                    <LogOut className="w-5 h-5" />
+                                </button>
                             </div>
                         </div>
-                        <div className="w-full sm:flex-1 overflow-x-auto pb-1 sm:pb-0 hide-scrollbar flex items-center">
-                            <div className="flex gap-2 min-w-max px-1">
+
+                        {/* Row 2: Categories */}
+                        <div className="w-full overflow-x-auto hide-scrollbar bg-white/30 dark:bg-slate-900/30 backdrop-blur-md">
+                            <div className="flex items-center gap-2 min-w-max p-3 lg:px-4">
                                 <button
                                     onClick={() => setSelectedCategoryId(null)}
-                                    className={`whitespace-nowrap px-4 py-2 lg:px-5 lg:py-2.5 rounded-xl text-sm font-semibold transition-all ${selectedCategoryId === null
-                                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
-                                        : "bg-white border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                                    className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold transition-all ${selectedCategoryId === null
+                                        ? "bg-brand-600 text-white shadow-md shadow-brand-500/25"
+                                        : "bg-slate-50 dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                                         }`}
                                 >
                                     {t.allItems}
@@ -234,9 +262,9 @@ export default function PosPage() {
                                     <button
                                         key={cat.id}
                                         onClick={() => setSelectedCategoryId(cat.id)}
-                                        className={`whitespace-nowrap px-4 py-2 lg:px-5 lg:py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${selectedCategoryId === cat.id
-                                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200"
-                                            : "bg-white border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                                        className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${selectedCategoryId === cat.id
+                                            ? "bg-brand-600 text-white shadow-md shadow-brand-500/25"
+                                            : "bg-slate-50 dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                                             }`}
                                     >
                                         <Tag className="w-4 h-4" />
@@ -245,27 +273,11 @@ export default function PosPage() {
                                 ))}
                             </div>
                         </div>
-                        <div className="hidden sm:flex items-center gap-2 shrink-0">
-                            <button
-                                onClick={() => setLanguage(language === "en" ? "km" : "en")}
-                                className="p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors flex items-center justify-center"
-                                title={language === "en" ? "Switch to Khmer" : "ប្តូរទៅភាសាអង់គ្លេស"}
-                            >
-                                <Globe className="w-5 h-5" />
-                            </button>
-                            <button
-                                onClick={handleLogout}
-                                className="p-2.5 rounded-xl bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 transition-colors flex items-center justify-center"
-                                title="Logout"
-                            >
-                                <LogOut className="w-5 h-5" />
-                            </button>
-                        </div>
                     </div>
                 </div>
 
                 {/* Product Grid Area */}
-                <div className="flex-1 overflow-y-auto bg-gray-50/50 p-2 lg:p-0">
+                <div className="flex-1 overflow-y-auto bg-transparent p-2 lg:p-0">
                     <ProductGrid
                         products={filteredProducts}
                         isLoading={isLoading}
@@ -279,7 +291,7 @@ export default function PosPage() {
                 <div className="fixed bottom-4 left-4 right-4 z-30 lg:hidden">
                     <button
                         onClick={() => setIsMobileCartOpen(true)}
-                        className="w-full bg-indigo-600 text-white rounded-2xl p-4 shadow-xl flex items-center justify-between font-bold hover:bg-indigo-700 active:scale-[0.98] transition-all"
+                        className="w-full bg-brand-600 dark:bg-brand-500 text-white rounded-2xl p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center justify-between font-bold hover:bg-brand-700 dark:bg-brand-600 active:scale-[0.98] transition-all"
                     >
                         <div className="flex items-center gap-2">
                             <ShoppingCart className="w-5 h-5" />
@@ -293,22 +305,22 @@ export default function PosPage() {
             {/* Mobile Cart Overlay Backdrop */}
             {isMobileCartOpen && (
                 <div 
-                    className="fixed inset-0 bg-gray-900/50 z-40 lg:hidden transition-opacity"
+                    className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden transition-opacity"
                     onClick={() => setIsMobileCartOpen(false)}
                 />
             )}
 
             {/* Right Column: Cart Panel */}
-            <div className={`fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white border-l border-gray-200 shadow-2xl lg:shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)] flex flex-col transform transition-transform duration-300 lg:relative lg:translate-x-0 ${isMobileCartOpen ? "translate-x-0" : "translate-x-full"}`}>
-                <div className="p-4 lg:p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50 shrink-0">
+            <div className={`fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white dark:bg-slate-900 border-l border-slate-100 dark:border-slate-800/60 shadow-2xl lg:shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)] flex flex-col transform transition-transform duration-300 lg:relative lg:translate-x-0 ${isMobileCartOpen ? "translate-x-0" : "translate-x-full"}`}>
+                <div className="p-4 lg:p-5 border-b border-slate-100 dark:border-slate-800/60 flex items-center justify-between bg-transparent shrink-0">
                     <div className="flex items-center gap-3">
                         <button 
-                            className="p-1.5 -ml-1.5 text-gray-500 hover:bg-gray-200 rounded-lg lg:hidden transition-colors"
+                            className="p-1.5 -ml-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-200 rounded-xl lg:hidden transition-colors"
                             onClick={() => setIsMobileCartOpen(false)}
                         >
                             <X className="w-6 h-6" />
                         </button>
-                        <h2 className="text-xl font-bold text-gray-900 tracking-tight">{t.currentSale}</h2>
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{t.currentSale}</h2>
                     </div>
                     {cart.length > 0 && (
                         <button onClick={() => setCart([])} className="text-sm font-medium text-red-500 hover:text-red-700 transition-colors">
@@ -318,13 +330,13 @@ export default function PosPage() {
                 </div>
 
                 {errorMessage && (
-                    <div className="mx-4 mt-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2 shrink-0">
+                    <div className="mx-4 mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2 shrink-0">
                         <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
                         <p>{errorMessage}</p>
                     </div>
                 )}
                 {successMessage && (
-                    <div className="mx-4 mt-4 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm font-medium shrink-0">
+                    <div className="mx-4 mt-4 p-3 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm font-medium shrink-0">
                         {successMessage}
                     </div>
                 )}
@@ -340,12 +352,12 @@ export default function PosPage() {
                     />
                 </div>
 
-                <div className="p-4 lg:p-5 bg-white border-t border-gray-100 shrink-0 z-10 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
+                <div className="p-4 lg:p-5 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800/60 shrink-0 z-10 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
                     <button
                         onClick={() => setIsCheckoutModalOpen(true)}
                         disabled={cart.length === 0}
-                        className="w-full py-4 rounded-xl bg-indigo-600 text-white text-lg font-bold
-                             hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-md hover:shadow-lg
+                        className="w-full py-4 rounded-2xl bg-brand-600 dark:bg-brand-500 text-white text-lg font-bold
+                             hover:bg-brand-700 dark:bg-brand-600 active:scale-[0.98] transition-all shadow-[0_4px_20px_rgb(0,0,0,0.04)] dark:shadow-none hover:shadow-lg
                              disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
                     >
                         {t.checkout}
