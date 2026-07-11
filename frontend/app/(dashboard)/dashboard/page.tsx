@@ -17,6 +17,7 @@ import { transactionsApi } from "@/lib/api/transactions";
 import { reportApi } from "@/lib/api/reports";
 import { DashboardMetricsResponse } from "@/lib/api/types";
 import { formatCurrency } from "@/lib/utils/currency";
+import { ExportReportModal } from "@/components/ExportReportModal";
 
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -27,6 +28,7 @@ export default function DashboardOverview() {
   const [metrics, setMetrics] = useState<DashboardMetricsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<Timeframe>('today');
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   useEffect(() => {
     transactionsApi.getDashboardMetrics()
@@ -88,7 +90,7 @@ export default function DashboardOverview() {
         <div className="flex items-center gap-3">
           {/* Export Button */}
           <button
-            onClick={() => reportApi.exportComprehensiveExcel(timeframe === 'today' ? 'day' : timeframe)}
+            onClick={() => setIsExportModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors shadow-sm"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
@@ -282,6 +284,12 @@ export default function DashboardOverview() {
         </div>
 
       </div>
+
+      <ExportReportModal 
+        isOpen={isExportModalOpen} 
+        onClose={() => setIsExportModalOpen(false)} 
+        onExport={reportApi.exportComprehensiveExcel} 
+      />
     </div>
   );
 }

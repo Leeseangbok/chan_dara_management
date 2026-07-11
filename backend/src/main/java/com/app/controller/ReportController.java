@@ -25,38 +25,53 @@ public class ReportController {
     private final ReportService reportService;
 
     @GetMapping("/comprehensive/excel")
-    public ResponseEntity<byte[]> exportComprehensiveExcel(@RequestParam(defaultValue = "day") String period) {
+    public ResponseEntity<byte[]> exportComprehensiveExcel(
+            @RequestParam(defaultValue = "day") String period,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String customTitle) {
+            
         ZoneId zone = ZoneId.of("Asia/Phnom_Penh");
         ZonedDateTime now = ZonedDateTime.now(zone);
         
         Instant start;
         Instant end;
         String title;
-        String filenamePrefix;
+        String filenamePrefix = "Comprehensive_Report";
 
-        switch (period.toLowerCase()) {
-            case "month":
-                ZonedDateTime startOfMonth = now.with(TemporalAdjusters.firstDayOfMonth()).truncatedTo(ChronoUnit.DAYS);
-                start = startOfMonth.toInstant();
-                end = startOfMonth.plusMonths(1).minusNanos(1).toInstant();
-                title = "Monthly Report (" + startOfMonth.getMonth().name() + " " + startOfMonth.getYear() + ")";
-                filenamePrefix = "Comprehensive_Monthly_Report";
-                break;
-            case "year":
-                ZonedDateTime startOfYear = now.with(TemporalAdjusters.firstDayOfYear()).truncatedTo(ChronoUnit.DAYS);
-                start = startOfYear.toInstant();
-                end = startOfYear.plusYears(1).minusNanos(1).toInstant();
-                title = "Yearly Report (" + startOfYear.getYear() + ")";
-                filenamePrefix = "Comprehensive_Yearly_Report";
-                break;
-            case "day":
-            default:
-                ZonedDateTime startOfDay = now.truncatedTo(ChronoUnit.DAYS);
-                start = startOfDay.toInstant();
-                end = startOfDay.plus(1, ChronoUnit.DAYS).minusNanos(1).toInstant();
-                title = "Daily Report (" + startOfDay.toLocalDate().toString() + ")";
-                filenamePrefix = "Comprehensive_Daily_Report";
-                break;
+        if (startDate != null && endDate != null) {
+            // Parse custom date range
+            ZonedDateTime startZdt = ZonedDateTime.parse(startDate);
+            ZonedDateTime endZdt = ZonedDateTime.parse(endDate);
+            start = startZdt.toInstant();
+            end = endZdt.toInstant();
+            title = customTitle != null ? customTitle : "Custom Report";
+        } else {
+            // Fallback to legacy period behavior
+            switch (period.toLowerCase()) {
+                case "month":
+                    ZonedDateTime startOfMonth = now.with(TemporalAdjusters.firstDayOfMonth()).truncatedTo(ChronoUnit.DAYS);
+                    start = startOfMonth.toInstant();
+                    end = startOfMonth.plusMonths(1).minusNanos(1).toInstant();
+                    title = "Monthly Report (" + startOfMonth.getMonth().name() + " " + startOfMonth.getYear() + ")";
+                    filenamePrefix = "Comprehensive_Monthly_Report";
+                    break;
+                case "year":
+                    ZonedDateTime startOfYear = now.with(TemporalAdjusters.firstDayOfYear()).truncatedTo(ChronoUnit.DAYS);
+                    start = startOfYear.toInstant();
+                    end = startOfYear.plusYears(1).minusNanos(1).toInstant();
+                    title = "Yearly Report (" + startOfYear.getYear() + ")";
+                    filenamePrefix = "Comprehensive_Yearly_Report";
+                    break;
+                case "day":
+                default:
+                    ZonedDateTime startOfDay = now.truncatedTo(ChronoUnit.DAYS);
+                    start = startOfDay.toInstant();
+                    end = startOfDay.plus(1, ChronoUnit.DAYS).minusNanos(1).toInstant();
+                    title = "Daily Report (" + startOfDay.toLocalDate().toString() + ")";
+                    filenamePrefix = "Comprehensive_Daily_Report";
+                    break;
+            }
         }
 
         try {
