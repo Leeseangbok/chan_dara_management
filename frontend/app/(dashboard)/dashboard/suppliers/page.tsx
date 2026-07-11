@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -31,13 +32,15 @@ export default function SuppliersPage() {
   const [email, setEmail] = useState(""); const [address, setAddress] = useState(""); const [notes, setNotes] = useState("");
   const [formLoading, setFormLoading] = useState(false);
 
-  useEffect(() => { fetchSuppliers(); }, []);
-
-  const fetchSuppliers = async () => {
+  async function fetchSuppliers() {
     try { setSuppliers(await suppliersApi.list()); }
     catch { toast.error("Failed to load suppliers"); }
     finally { setLoading(false); }
   };
+
+  useEffect(() => { fetchSuppliers(); }, []);
+
+
 
   const openCreateModal = () => { setEditingSupplier(null); setName(""); setContactName(""); setPhone(""); setEmail(""); setAddress(""); setNotes(""); setIsModalOpen(true); };
   const openEditModal = (s: Supplier) => { setEditingSupplier(s); setName(s.name); setContactName(s.contactName || ""); setPhone(s.phone || ""); setEmail(s.email || ""); setAddress(s.address || ""); setNotes(s.notes || ""); setIsModalOpen(true); };

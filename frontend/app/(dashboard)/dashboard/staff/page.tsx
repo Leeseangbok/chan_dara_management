@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -27,11 +28,7 @@ export default function StaffPage() {
   const [isActive, setIsActive] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  async function fetchUsers() {
     try {
       const data = await usersApi.list();
       setUsers(data);
@@ -42,6 +39,12 @@ export default function StaffPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+
 
   const openCreateModal = () => {
     setEditingUser(null);

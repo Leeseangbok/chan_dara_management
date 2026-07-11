@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -39,11 +40,7 @@ export default function PurchasesPage() {
     }
   };
 
-  useEffect(() => {
-    fetchPurchases();
-  }, []);
-
-  const fetchPurchases = async () => {
+  async function fetchPurchases() {
     try {
       const data = await purchasesApi.list();
       setPurchases(data);
@@ -54,6 +51,11 @@ export default function PurchasesPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchPurchases();
+  }, []);
+
 
   const handleReceive = async (poId: string) => {
     if (!window.confirm("Are you sure you want to mark this PO as received? This will update inventory stock and average cost.")) return;

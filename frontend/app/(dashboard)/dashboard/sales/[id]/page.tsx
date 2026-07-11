@@ -25,19 +25,18 @@ export default function TransactionDetailsPage() {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
+    async function fetchTransaction() {
+      try {
+        const data = await transactionsApi.getById(id);
+        setTransaction(data);
+      } catch (error) {
+        console.error("Failed to fetch transaction", error);
+      } finally {
+        setLoading(false);
+      }
+    }
     fetchTransaction();
   }, [id]);
-
-  const fetchTransaction = async () => {
-    try {
-      const data = await transactionsApi.getById(id);
-      setTransaction(data);
-    } catch (error) {
-      console.error("Failed to fetch transaction", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddPayment = async () => {
     if (!paymentAmount || isNaN(Number(paymentAmount))) return;

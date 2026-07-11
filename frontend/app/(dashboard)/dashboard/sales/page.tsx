@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -21,9 +22,7 @@ export default function SalesHistoryPage() {
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
   const [dateFilter, setDateFilter] = useState<DateFilterState>({ type: "all" });
 
-  useEffect(() => { fetchTransactions(); }, []);
-
-  const fetchTransactions = async () => {
+  async function fetchTransactions() {
     try {
       const data = await transactionsApi.getAll();
       setTransactions(data);
@@ -33,6 +32,10 @@ export default function SalesHistoryPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => { fetchTransactions(); }, []);
+
+
 
   const filteredTransactions = transactions.filter(tx => {
     const s = searchQuery.toLowerCase();

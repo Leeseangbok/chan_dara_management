@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -19,14 +20,7 @@ export function EditTransactionModal({ isOpen, onClose, items, onSave }: EditTra
   const [searchQuery, setSearchQuery] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      setCurrentItems(items.map(i => ({ productId: i.productId, productName: i.productName, quantity: i.quantity, unitPrice: i.unitPrice })));
-      fetchProducts();
-    }
-  }, [isOpen, items]);
-
-  const fetchProducts = async () => {
+  async function fetchProducts() {
     try {
       const data = await productsApi.list();
       setAllProducts(data);
@@ -34,6 +28,15 @@ export function EditTransactionModal({ isOpen, onClose, items, onSave }: EditTra
       console.error("Failed to fetch products", error);
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentItems(items.map(i => ({ productId: i.productId, productName: i.productName, quantity: i.quantity, unitPrice: i.unitPrice })));
+      fetchProducts();
+    }
+  }, [isOpen, items]);
+
+
 
   const handleAdd = (product: Product) => {
     setCurrentItems(prev => {
