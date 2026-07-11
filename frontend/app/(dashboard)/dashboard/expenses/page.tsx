@@ -11,13 +11,13 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 const EXPENSE_CATEGORIES: ExpenseCategory[] = ["UTILITIES", "RENT", "PAYROLL", "MAINTENANCE", "SUPPLIES", "MARKETING", "OTHER"];
 
 const categoryColors: Record<string, string> = {
-  UTILITIES:   "bg-sky-100 dark:bg-sky-500/[0.12] text-sky-700 dark:text-sky-400",
-  RENT:        "bg-violet-100 dark:bg-violet-500/[0.12] text-violet-700 dark:text-violet-400",
-  PAYROLL:     "bg-indigo-100 dark:bg-indigo-500/[0.12] text-indigo-700 dark:text-indigo-400",
+  UTILITIES: "bg-sky-100 dark:bg-sky-500/[0.12] text-sky-700 dark:text-sky-400",
+  RENT: "bg-violet-100 dark:bg-violet-500/[0.12] text-violet-700 dark:text-violet-400",
+  PAYROLL: "bg-indigo-100 dark:bg-indigo-500/[0.12] text-indigo-700 dark:text-indigo-400",
   MAINTENANCE: "bg-amber-100 dark:bg-amber-500/[0.12] text-amber-700 dark:text-amber-400",
-  SUPPLIES:    "bg-emerald-100 dark:bg-emerald-500/[0.12] text-emerald-700 dark:text-emerald-400",
-  MARKETING:   "bg-pink-100 dark:bg-pink-500/[0.12] text-pink-700 dark:text-pink-400",
-  OTHER:       "bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-400",
+  SUPPLIES: "bg-emerald-100 dark:bg-emerald-500/[0.12] text-emerald-700 dark:text-emerald-400",
+  MARKETING: "bg-pink-100 dark:bg-pink-500/[0.12] text-pink-700 dark:text-pink-400",
+  OTHER: "bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-400",
 };
 
 const inputCls = "w-full px-4 py-2.5 text-sm text-slate-900 dark:text-white bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-500/25 transition-all";
@@ -38,7 +38,7 @@ export default function ExpensesPage() {
 
   useEffect(() => { fetchExpenses(); }, []);
 
-  const fetchExpenses = async () => {
+  async function fetchExpenses() {
     try { setExpenses(await expensesApi.list()); }
     catch { toast.error("Failed to load expenses"); }
     finally { setLoading(false); }
@@ -170,27 +170,27 @@ export default function ExpensesPage() {
         <ModalPortal>
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white dark:bg-[#13161f] border border-slate-200 dark:border-white/[0.08] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-white/[0.07] flex items-center justify-between">
-              <h2 className="text-base font-bold text-slate-900 dark:text-white">{editingExpense ? "Edit Expense" : "Add Expense"}</h2>
-              <button onClick={() => setIsModalOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.07] transition-all"><X className="w-4 h-4" /></button>
+              <div className="px-6 py-4 border-b border-slate-100 dark:border-white/[0.07] flex items-center justify-between">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">{editingExpense ? "Edit Expense" : "Add Expense"}</h2>
+                <button onClick={() => setIsModalOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.07] transition-all"><X className="w-4 h-4" /></button>
+              </div>
+              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div><label className={labelCls}>Date *</label><input type="date" value={expenseDate} onChange={(e) => setExpenseDate(e.target.value)} className={inputCls} required /></div>
+                  <div><label className={labelCls}>Amount ($) *</label><input type="number" min="0.01" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} className={inputCls} required /></div>
+                </div>
+                <div><label className={labelCls}>Category *</label><select value={category} onChange={(e) => setCategory(e.target.value as ExpenseCategory)} className={inputCls}>{EXPENSE_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
+                <div><label className={labelCls}>Description *</label><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className={inputCls + " resize-none"} required placeholder="What was this expense for?" /></div>
+                <div className="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-white/[0.06]">
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/[0.1] rounded-xl hover:bg-slate-50 dark:hover:bg-white/[0.05] transition-colors">Cancel</button>
+                  <button type="submit" disabled={formLoading} className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-red-600 rounded-xl shadow-[0_0_14px_rgba(239,68,68,0.3)] hover:shadow-[0_0_20px_rgba(239,68,68,0.45)] disabled:opacity-50 disabled:shadow-none transition-all">
+                    {formLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {editingExpense ? "Save Changes" : "Save Expense"}
+                  </button>
+                </div>
+              </form>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div><label className={labelCls}>Date *</label><input type="date" value={expenseDate} onChange={(e) => setExpenseDate(e.target.value)} className={inputCls} required /></div>
-                <div><label className={labelCls}>Amount ($) *</label><input type="number" min="0.01" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} className={inputCls} required /></div>
-              </div>
-              <div><label className={labelCls}>Category *</label><select value={category} onChange={(e) => setCategory(e.target.value as ExpenseCategory)} className={inputCls}>{EXPENSE_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
-              <div><label className={labelCls}>Description *</label><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className={inputCls + " resize-none"} required placeholder="What was this expense for?" /></div>
-              <div className="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-white/[0.06]">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/[0.1] rounded-xl hover:bg-slate-50 dark:hover:bg-white/[0.05] transition-colors">Cancel</button>
-                <button type="submit" disabled={formLoading} className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-red-600 rounded-xl shadow-[0_0_14px_rgba(239,68,68,0.3)] hover:shadow-[0_0_20px_rgba(239,68,68,0.45)] disabled:opacity-50 disabled:shadow-none transition-all">
-                  {formLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {editingExpense ? "Save Changes" : "Save Expense"}
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
         </ModalPortal>
       )}
     </div>

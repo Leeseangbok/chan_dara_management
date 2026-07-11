@@ -164,7 +164,7 @@ export default function DeliveriesPage() {
                             <option value="DATE_DESC">{t.newestFirst}</option>
                             <option value="AMOUNT_DESC">{t.highestAmount}</option>
                         </select>
-                        
+
                         <DateRangeFilter filter={dateFilter} onChange={setDateFilter} />
 
                         <button
