@@ -514,6 +514,7 @@ export default function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("");
   const [filterStock, setFilterStock] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("");
   const [modalMode, setModalMode] = useState<ModalMode>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
@@ -563,6 +564,14 @@ export default function InventoryPage() {
       (filterStock === "out" && p.stockQuantity <= 0) ||
       (filterStock === "low" && p.stockQuantity > 0 && p.stockQuantity <= 10);
     return matchSearch && matchCat && matchStock;
+  }).sort((a, b) => {
+    if (sortBy === "nameAsc") return a.name.localeCompare(b.name);
+    if (sortBy === "nameDesc") return b.name.localeCompare(a.name);
+    if (sortBy === "priceAsc") return a.price - b.price;
+    if (sortBy === "priceDesc") return b.price - a.price;
+    if (sortBy === "stockAsc") return a.stockQuantity - b.stockQuantity;
+    if (sortBy === "stockDesc") return b.stockQuantity - a.stockQuantity;
+    return 0;
   });
 
   return (
@@ -614,6 +623,16 @@ export default function InventoryPage() {
             <option value="in" className="dark:bg-[#1a1d2e]">In Stock</option>
             <option value="low" className="dark:bg-[#1a1d2e]">Low Stock (≤ 10)</option>
             <option value="out" className="dark:bg-[#1a1d2e]">Out of Stock</option>
+          </select>
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
+            className="px-3 py-2.5 border border-slate-200 dark:border-white/[0.08] rounded-xl text-sm text-slate-900 dark:text-white bg-white dark:bg-[#1a1d2e] focus:outline-none focus:ring-2 focus:ring-indigo-500/40 min-w-[150px] transition-all">
+            <option value="" className="dark:bg-[#1a1d2e]">Default Sort</option>
+            <option value="nameAsc" className="dark:bg-[#1a1d2e]">Name (A-Z)</option>
+            <option value="nameDesc" className="dark:bg-[#1a1d2e]">Name (Z-A)</option>
+            <option value="priceAsc" className="dark:bg-[#1a1d2e]">Price (Low to High)</option>
+            <option value="priceDesc" className="dark:bg-[#1a1d2e]">Price (High to Low)</option>
+            <option value="stockAsc" className="dark:bg-[#1a1d2e]">Stock (Low to High)</option>
+            <option value="stockDesc" className="dark:bg-[#1a1d2e]">Stock (High to Low)</option>
           </select>
         </div>
 
