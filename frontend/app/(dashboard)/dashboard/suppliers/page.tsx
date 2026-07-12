@@ -8,6 +8,7 @@ import { ModalPortal } from "@/components/ui/ModalPortal";
 import { Plus, Search, Loader2, Building2, Edit2, Phone, Mail, MapPin, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 const inputCls = "w-full px-4 py-2.5 text-sm text-slate-900 dark:text-white bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-500/25 transition-all";
 const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5";
@@ -72,13 +73,13 @@ export default function SuppliersPage() {
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{t.suppliersOverview}</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{t.suppliersSub}</p>
         </div>
-        <button onClick={openCreateModal}
+        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }} onClick={openCreateModal}
           className="flex items-center gap-2 text-white px-5 py-2.5 rounded-xl font-semibold text-sm
-            bg-gradient-to-r from-amber-500 to-orange-600
-            shadow-[0_0_16px_rgba(245,158,11,0.35)] hover:shadow-[0_0_24px_rgba(245,158,11,0.5)]
-            hover:-translate-y-px transition-all active:scale-95">
+            bg-gradient-to-r from-indigo-500 to-violet-600
+            shadow-[0_0_16px_rgba(99,102,241,0.35)] hover:shadow-[0_0_24px_rgba(99,102,241,0.55)]
+            transition-all">
           <Plus className="w-4 h-4" /> {t.addSupplier}
-        </button>
+        </motion.button>
       </div>
 
       {/* Search */}
@@ -99,29 +100,36 @@ export default function SuppliersPage() {
             <Building2 className="w-12 h-12 mb-2 opacity-30" /><p className="text-sm">No suppliers found.</p>
           </div>
         ) : (
-          filteredSuppliers.map((s, i) => (
-            <div key={s.id}
-              className="relative rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] p-5 shadow-sm hover:border-slate-300 dark:hover:border-white/[0.14] hover:shadow-md dark:hover:shadow-[0_4px_24px_rgba(0,0,0,0.35)] transition-all duration-200 flex flex-col overflow-hidden group">
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r opacity-60" style={{ backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))` }} />
-              <div className="flex justify-between items-start mb-4">
-                <div className={`w-11 h-11 bg-gradient-to-br ${avatarGrads[i % avatarGrads.length]} text-white rounded-2xl flex items-center justify-center font-bold text-base uppercase shadow-lg`}>
-                  {s.name.substring(0, 2)}
+          <AnimatePresence mode="popLayout">
+            {filteredSuppliers.map((s, i) => (
+              <motion.div key={s.id}
+                layout
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2, delay: i * 0.05 }}
+                className="relative rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] p-5 shadow-sm hover:border-slate-300 dark:hover:border-white/[0.14] hover:shadow-md dark:hover:shadow-[0_4px_24px_rgba(0,0,0,0.35)] transition-all duration-200 flex flex-col overflow-hidden group">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r opacity-60" style={{ backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))` }} />
+                <div className="flex justify-between items-start mb-4">
+                  <div className={`w-11 h-11 bg-gradient-to-br ${avatarGrads[i % avatarGrads.length]} text-white rounded-2xl flex items-center justify-center font-bold text-base uppercase shadow-lg`}>
+                    {s.name.substring(0, 2)}
+                  </div>
+                  <button onClick={() => openEditModal(s)}
+                    className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/[0.1] transition-all active:scale-90 opacity-0 group-hover:opacity-100">
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                <button onClick={() => openEditModal(s)}
-                  className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/[0.1] transition-all active:scale-90 opacity-0 group-hover:opacity-100">
-                  <Edit2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              <h3 className="font-bold text-slate-900 dark:text-slate-100 line-clamp-1">{s.name}</h3>
-              {s.contactName && <p className="text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-1">{s.contactName}</p>}
-              {!s.contactName && <div className="h-5 mb-3" />}
-              <div className="space-y-2 mt-auto pt-4 border-t border-slate-100 dark:border-white/[0.06]">
-                {s.phone && <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400"><Phone className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate">{s.phone}</span></div>}
-                {s.email && <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400"><Mail className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate">{s.email}</span></div>}
-                {s.address && <div className="flex items-start gap-2 text-xs text-slate-500 dark:text-slate-400"><MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400 mt-0.5" /><span className="line-clamp-2">{s.address}</span></div>}
-              </div>
-            </div>
-          ))
+                <h3 className="font-bold text-slate-900 dark:text-slate-100 line-clamp-1">{s.name}</h3>
+                {s.contactName && <p className="text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-1">{s.contactName}</p>}
+                {!s.contactName && <div className="h-5 mb-3" />}
+                <div className="space-y-2 mt-auto pt-4 border-t border-slate-100 dark:border-white/[0.06]">
+                  {s.phone && <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400"><Phone className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate">{s.phone}</span></div>}
+                  {s.email && <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400"><Mail className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate">{s.email}</span></div>}
+                  {s.address && <div className="flex items-start gap-2 text-xs text-slate-500 dark:text-slate-400"><MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400 mt-0.5" /><span className="line-clamp-2">{s.address}</span></div>}
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         )}
       </div>
 

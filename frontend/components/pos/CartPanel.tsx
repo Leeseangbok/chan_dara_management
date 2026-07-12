@@ -6,6 +6,7 @@ import React from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { formatCurrency } from "@/lib/utils/currency";
 import { CurrencyInput } from "../ui/CurrencyInput";
+import { motion, AnimatePresence } from "framer-motion";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8081";
 
@@ -40,14 +41,23 @@ export function CartPanel({ cart, onIncrement, onDecrement, onRemove, onUpdateQu
 
     return (
         <div className="flex-1 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950/30">
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
                 <div className="p-3 space-y-3">
-                    {cart.map((line) => {
-                        const atMaxStock = line.quantity >= line.product.stockQuantity;
-                        const subtotal = line.unitPrice * line.quantity;
-                        
-                        return (
-                            <div key={line.product.id} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-2xl p-3 shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none flex flex-col gap-3 group transition-all hover:border-brand-100">
+                    <AnimatePresence initial={false}>
+                        {cart.map((line) => {
+                            const atMaxStock = line.quantity >= line.product.stockQuantity;
+                            const subtotal = line.unitPrice * line.quantity;
+                            
+                            return (
+                                <motion.div 
+                                    layout
+                                    initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    transition={{ duration: 0.2 }}
+                                    key={line.product.id} 
+                                    className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-2xl p-3 shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none flex flex-col gap-3 group transition-all hover:border-brand-100"
+                                >
                                 <div className="flex gap-3 items-start">
                                     {/* Thumbnail */}
                                     <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-800/60">
@@ -129,9 +139,10 @@ export function CartPanel({ cart, onIncrement, onDecrement, onRemove, onUpdateQu
                                         <div className="text-sm font-bold text-slate-900 dark:text-white">{formatCurrency(subtotal)}</div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
+                                </motion.div>
+                            );
+                        })}
+                    </AnimatePresence>
                 </div>
             </div>
 

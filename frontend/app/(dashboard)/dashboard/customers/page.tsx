@@ -10,6 +10,7 @@ import { TransactionResponse } from "@/lib/api/types";
 import { ModalPortal } from "@/components/ui/ModalPortal";
 import { formatCurrency } from "@/lib/utils/currency";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 // ─── Shared input class ────────────────────────────────────────────────────────
 const inputCls = "w-full px-4 py-2.5 text-sm text-slate-900 dark:text-white bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-500/25 transition-all placeholder-slate-400 dark:placeholder-slate-600";
@@ -125,9 +126,18 @@ export default function CustomersPage() {
                   <p className="text-sm">{t.noCustomersYet}</p>
                 </td></tr>
               ) : (
-                filteredCustomers.map((c) => (
-                  <tr key={c.id} className="hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors">
-                    <td className="px-6 py-4">
+                <AnimatePresence mode="popLayout">
+                  {filteredCustomers.map((c) => (
+                    <motion.tr 
+                      layout
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      key={c.id} 
+                      className="hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors"
+                    >
+                      <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-500/[0.12] flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs shrink-0">
                           {c.name.charAt(0).toUpperCase()}
@@ -149,8 +159,9 @@ export default function CustomersPage() {
                         <button onClick={() => handleDelete(c.id)} className="p-2 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/[0.1] transition-all active:scale-90" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </td>
-                  </tr>
-                ))
+                  </motion.tr>
+                ))}
+              </AnimatePresence>
               )}
             </tbody>
           </table>

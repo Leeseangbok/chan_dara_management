@@ -10,6 +10,7 @@ import Link from "next/link";
 import { formatCurrency } from "@/lib/utils/currency";
 import { toPng } from 'html-to-image';
 import { useRef } from "react";
+import { motion } from "framer-motion";
 
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import React from "react";
@@ -103,13 +104,15 @@ export default function PurchasesPage() {
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{t.purchasesOverview}</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{t.purchasesSub}</p>
         </div>
-        <Link href="/dashboard/purchases/new"
-          className="flex items-center gap-2 text-white px-5 py-2.5 rounded-xl font-semibold text-sm
-            bg-gradient-to-r from-indigo-500 to-violet-600
-            shadow-[0_0_16px_rgba(99,102,241,0.35)] hover:shadow-[0_0_24px_rgba(99,102,241,0.55)]
-            hover:-translate-y-px transition-all active:scale-95">
-          <Plus className="w-4 h-4" /> {t.newPo}
-        </Link>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }}>
+          <Link href="/dashboard/purchases/new"
+            className="flex items-center gap-2 text-white px-5 py-2.5 rounded-xl font-semibold text-sm
+              bg-gradient-to-r from-indigo-500 to-violet-600
+              shadow-[0_0_16px_rgba(99,102,241,0.35)] hover:shadow-[0_0_24px_rgba(99,102,241,0.55)]
+              transition-all">
+            <Plus className="w-4 h-4" /> {t.newPo}
+          </Link>
+        </motion.div>
       </div>
 
       <div className="relative max-w-sm">
@@ -120,7 +123,12 @@ export default function PurchasesPage() {
       </div>
 
       <div className="rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="overflow-x-auto"
+        >
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200/60 dark:border-white/[0.06]">
@@ -272,7 +280,7 @@ export default function PurchasesPage() {
               )}
             </tbody>
           </table>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

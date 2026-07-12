@@ -3,6 +3,7 @@ import React from "react";
 import { ImagePlus, PackageX } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { formatCurrency } from "@/lib/utils/currency";
+import { motion, AnimatePresence } from "framer-motion";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8081";
 
@@ -42,22 +43,29 @@ export function ProductGrid({ products, isLoading, onAddToCart }: ProductGridPro
     }
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
-            {products.map((product) => {
-                const outOfStock = product.stockQuantity <= 0;
-                const lowStock = product.stockQuantity > 0 && product.stockQuantity <= 5;
-                
-                return (
-                    <button
-                        key={product.id}
-                        disabled={outOfStock}
-                        onClick={() => onAddToCart(product)}
-                        className={`group relative text-left rounded-2xl border transition-all duration-200 overflow-hidden bg-white dark:bg-slate-900 flex flex-col
-                            ${outOfStock
-                                ? "opacity-60 cursor-not-allowed border-slate-100 dark:border-slate-800/60"
-                                : "border-slate-100 dark:border-slate-800/60 hover:border-brand-500 hover:shadow-lg active:scale-[0.98]"
-                            }`}
-                    >
+        <motion.div layout className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
+            <AnimatePresence mode="popLayout">
+                {products.map((product, i) => {
+                    const outOfStock = product.stockQuantity <= 0;
+                    const lowStock = product.stockQuantity > 0 && product.stockQuantity <= 5;
+                    
+                    return (
+                        <motion.button
+                            layout
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.2, delay: Math.min(i * 0.03, 0.2) }}
+                            whileTap={outOfStock ? {} : { scale: 0.95 }}
+                            key={product.id}
+                            disabled={outOfStock}
+                            onClick={() => onAddToCart(product)}
+                            className={`group relative text-left rounded-2xl border transition-all duration-200 overflow-hidden bg-white dark:bg-slate-900 flex flex-col
+                                ${outOfStock
+                                    ? "opacity-60 cursor-not-allowed border-slate-100 dark:border-slate-800/60"
+                                    : "border-slate-100 dark:border-slate-800/60 hover:border-brand-500 hover:shadow-lg"
+                                }`}
+                        >
                         {/* Image Container */}
                         <div className="w-full aspect-square bg-slate-50 dark:bg-slate-950 relative border-b border-slate-100 dark:border-slate-800/60 flex items-center justify-center overflow-hidden">
                             {product.imageUrl ? (
@@ -103,9 +111,10 @@ export function ProductGrid({ products, isLoading, onAddToCart }: ProductGridPro
                                 )}
                             </div>
                         </div>
-                    </button>
-                );
-            })}
-        </div>
+                        </motion.button>
+                    );
+                })}
+            </AnimatePresence>
+        </motion.div>
     );
 }

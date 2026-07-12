@@ -26,6 +26,20 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { DeliveryBoard } from "@/components/ui/DeliveryBoard";
 import { TransactionResponse } from "@/lib/api/types";
 import Link from "next/link";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
 
 type Timeframe = "today" | "month" | "year";
 
@@ -160,23 +174,26 @@ export default function DashboardOverview() {
 
         <div className="flex items-center gap-3 flex-wrap">
           {/* Export */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setIsExportModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-xl
               bg-gradient-to-r from-emerald-500 to-teal-600
               shadow-[0_0_16px_rgba(16,185,129,0.25)]
               hover:shadow-[0_0_24px_rgba(16,185,129,0.4)]
-              hover:-translate-y-px transition-all duration-200 active:scale-95"
+              transition-all duration-200"
           >
             <FileSpreadsheet className="w-4 h-4" />
             Export Excel
-          </button>
+          </motion.button>
 
           {/* Timeframe selector */}
           <div className="flex bg-slate-100 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] p-1 rounded-xl gap-1">
             {timeframeBtns.map(({ key, label }) => (
-              <button
+              <motion.button
                 key={key}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setTimeframe(key)}
                 className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ${
                   timeframe === key
@@ -185,60 +202,81 @@ export default function DashboardOverview() {
                 }`}
               >
                 {label}
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>
       </div>
 
       {/* ── KPI Cards ───────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <StatCard
-          label={t.revenue}
-          value={formatCurrency(currentMetrics.revenue)}
-          icon={TrendingUp}
-          accentFrom="from-emerald-400"
-          accentTo="to-teal-500"
-          iconBg="bg-emerald-50 dark:bg-emerald-500/[0.1]"
-          iconColor="text-emerald-600 dark:text-emerald-400"
-        />
-        <StatCard
-          label={t.purchasesCogs || "Purchases (COGS)"}
-          value={formatCurrency(currentMetrics.purchases)}
-          icon={Package}
-          accentFrom="from-amber-400"
-          accentTo="to-orange-500"
-          iconBg="bg-amber-50 dark:bg-amber-500/[0.1]"
-          iconColor="text-amber-600 dark:text-amber-400"
-        />
-        <StatCard
-          label={t.expenses || "Expenses"}
-          value={formatCurrency(currentMetrics.expenses)}
-          icon={TrendingDown}
-          accentFrom="from-rose-400"
-          accentTo="to-red-500"
-          iconBg="bg-rose-50 dark:bg-rose-500/[0.1]"
-          iconColor="text-rose-600 dark:text-rose-400"
-        />
-        <StatCard
-          label={t.profit}
-          value={formatCurrency(currentMetrics.profit)}
-          icon={DollarSign}
-          accentFrom="from-indigo-400"
-          accentTo="to-violet-500"
-          iconBg="bg-indigo-50 dark:bg-indigo-500/[0.12]"
-          iconColor="text-indigo-600 dark:text-indigo-400"
-        />
-      </div>
+      <motion.div 
+        variants={containerVariants} 
+        initial="hidden" 
+        animate="show" 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"
+      >
+        <motion.div variants={itemVariants}>
+          <StatCard
+            label={t.revenue}
+            value={formatCurrency(currentMetrics.revenue)}
+            icon={TrendingUp}
+            accentFrom="from-emerald-400"
+            accentTo="to-teal-500"
+            iconBg="bg-emerald-50 dark:bg-emerald-500/[0.12]"
+            iconColor="text-emerald-600 dark:text-emerald-400"
+          />
+        </motion.div>
+        
+        <motion.div variants={itemVariants}>
+          <StatCard
+            label={t.purchasesCogs || "Purchases (COGS)"}
+            value={formatCurrency(currentMetrics.purchases)}
+            icon={Package}
+            accentFrom="from-amber-400"
+            accentTo="to-orange-500"
+            iconBg="bg-amber-50 dark:bg-amber-500/[0.12]"
+            iconColor="text-amber-600 dark:text-amber-400"
+          />
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <StatCard
+            label={t.expenses || "Expenses"}
+            value={formatCurrency(currentMetrics.expenses)}
+            icon={TrendingDown}
+            accentFrom="from-rose-400"
+            accentTo="to-red-500"
+            iconBg="bg-rose-50 dark:bg-rose-500/[0.12]"
+            iconColor="text-rose-600 dark:text-rose-400"
+          />
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <StatCard
+            label={t.profit}
+            value={formatCurrency(currentMetrics.profit)}
+            icon={DollarSign}
+            accentFrom="from-indigo-400"
+            accentTo="to-violet-500"
+            iconBg="bg-indigo-50 dark:bg-indigo-500/[0.12]"
+            iconColor="text-indigo-600 dark:text-indigo-400"
+          />
+        </motion.div>
+      </motion.div>
 
       {/* ── Secondary Row ────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 lg:grid-cols-3 gap-5"
+      >
 
         {/* Left column: Inventory + Debts */}
         <div className="space-y-5">
 
           {/* Inventory card */}
-          <div className="relative rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] p-6 overflow-hidden hover:border-slate-300 dark:hover:border-white/[0.12] transition-all duration-300">
+          <motion.div variants={itemVariants} className="relative rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] p-6 overflow-hidden hover:border-slate-300 dark:hover:border-white/[0.12] transition-all duration-300">
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-400 to-teal-500 rounded-t-2xl" />
             <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-500/[0.1] flex items-center justify-center">
@@ -268,10 +306,10 @@ export default function DashboardOverview() {
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Outstanding debts card */}
-          <div className="relative rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] p-6 overflow-hidden hover:border-rose-300 dark:hover:border-rose-500/30 transition-all duration-300">
+          <motion.div variants={itemVariants} className="relative rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] p-6 overflow-hidden hover:border-rose-300 dark:hover:border-rose-500/30 transition-all duration-300">
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-rose-400 to-red-500 rounded-t-2xl" />
             <div className="absolute -bottom-6 -right-6 w-28 h-28 rounded-full bg-rose-500/[0.05] blur-2xl" />
             <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
@@ -298,11 +336,11 @@ export default function DashboardOverview() {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Right: Recent Transactions */}
-        <div className="relative rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] p-6 lg:col-span-2 flex flex-col h-[525px] hover:border-slate-300 dark:hover:border-white/[0.12] transition-all duration-300 overflow-hidden">
+        <motion.div variants={itemVariants} className="relative rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] p-6 lg:col-span-2 flex flex-col h-[525px] hover:border-slate-300 dark:hover:border-white/[0.12] transition-all duration-300 overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-400 to-violet-500 rounded-t-2xl" />
 
           {/* Header */}
@@ -325,7 +363,12 @@ export default function DashboardOverview() {
           </div>
 
           {/* Transaction list */}
-          <div className="flex-1 overflow-y-auto -mr-2 pr-2 space-y-2">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="flex-1 overflow-y-auto -mr-2 pr-2 space-y-2"
+          >
             {!metrics?.recentTransactions || metrics.recentTransactions.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 py-12">
                 <Clock className="w-12 h-12 mb-3 opacity-30" />
@@ -333,7 +376,8 @@ export default function DashboardOverview() {
               </div>
             ) : (
               metrics.recentTransactions.map((tx) => (
-                <div
+                <motion.div
+                  variants={itemVariants}
                   key={tx.id}
                   className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 dark:border-white/[0.05] hover:border-slate-200 dark:hover:border-white/[0.1] hover:bg-slate-50 dark:hover:bg-white/[0.03] transition-all duration-200 group"
                 >
@@ -375,15 +419,21 @@ export default function DashboardOverview() {
                       {tx.paymentStatus}
                     </span>
                   </div>
-                </div>
+                </motion.div>
               ))
             )}
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {/* ── Third Row: Delivery Board ─────────────────────────────────────── */}
-      <div className="mt-8 relative rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] p-6 lg:col-span-2 hover:border-slate-300 dark:hover:border-white/[0.12] transition-all duration-300 overflow-hidden">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.4 }}
+        className="mt-8 relative rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] p-6 lg:col-span-2 hover:border-slate-300 dark:hover:border-white/[0.12] transition-all duration-300 overflow-hidden"
+      >
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-400 to-indigo-500 rounded-t-2xl" />
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -403,7 +453,7 @@ export default function DashboardOverview() {
           </Link>
         </div>
         <DeliveryBoard deliveries={pendingDeliveries} onUpdate={fetchDashboardData} />
-      </div>
+      </motion.div>
 
       <ExportReportModal
         isOpen={isExportModalOpen}

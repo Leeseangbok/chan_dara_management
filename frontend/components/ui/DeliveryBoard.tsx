@@ -2,6 +2,7 @@ import { TransactionResponse } from "@/lib/api/types";
 import { formatCurrency } from "@/lib/utils/currency";
 import { Clock, Package, Truck, RefreshCw, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { transactionsApi } from "@/lib/api/transactions";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import toast from "react-hot-toast";
@@ -43,9 +44,18 @@ const Column = ({
           <p className="text-sm">{t.empty}</p>
         </div>
       ) : (
-        items.map((delivery: TransactionResponse) => (
-          <div key={delivery.id} className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all group">
-            <div className="flex justify-between items-start mb-2">
+        <AnimatePresence mode="popLayout">
+          {items.map((delivery: TransactionResponse) => (
+            <motion.div 
+              layout
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              key={delivery.id} 
+              className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all group"
+            >
+              <div className="flex justify-between items-start mb-2">
               <div>
                 <p className="font-bold text-slate-900 dark:text-white line-clamp-1">{delivery.customerName || "Walk-in Customer"}</p>
                 <p className="text-xs text-slate-500 font-mono mt-0.5">#{delivery.id.substring(0, 8).toUpperCase()}</p>
@@ -68,8 +78,9 @@ const Column = ({
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             )}
-          </div>
-        ))
+          </motion.div>
+          ))}
+        </AnimatePresence>
       )}
     </div>
   </div>
