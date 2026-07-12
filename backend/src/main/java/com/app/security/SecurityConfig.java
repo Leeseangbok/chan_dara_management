@@ -82,8 +82,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/categories/**").permitAll()
-
                         // ---- Admin-only ----
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/users/**").hasRole("ADMIN")
@@ -102,7 +100,7 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "MANAGER", "STAFF")
 
                         // ---- Read-only product/catalog access: any authenticated role ----
-                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**", "/api/v1/categories/**")
                         .hasAnyRole("ADMIN", "MANAGER", "STAFF")
 
                         .anyRequest().authenticated()
