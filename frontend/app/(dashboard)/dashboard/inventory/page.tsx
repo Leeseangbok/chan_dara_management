@@ -513,6 +513,7 @@ export default function InventoryPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("");
+  const [filterStock, setFilterStock] = useState<string>("");
   const [modalMode, setModalMode] = useState<ModalMode>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
@@ -557,7 +558,11 @@ export default function InventoryPage() {
       (p.nameKh ?? "").includes(searchTerm) ||
       p.sku.toLowerCase().includes(searchTerm.toLowerCase());
     const matchCat = !filterCategory || p.category?.id === filterCategory;
-    return matchSearch && matchCat;
+    const matchStock = !filterStock || 
+      (filterStock === "in" && p.stockQuantity > 0) || 
+      (filterStock === "out" && p.stockQuantity <= 0) ||
+      (filterStock === "low" && p.stockQuantity > 0 && p.stockQuantity <= 10);
+    return matchSearch && matchCat && matchStock;
   });
 
   return (
@@ -597,11 +602,18 @@ export default function InventoryPage() {
               className="w-full pl-9 pr-4 py-2.5 border border-slate-200 dark:border-white/[0.08] rounded-xl text-sm text-slate-900 dark:text-white bg-white dark:bg-white/[0.04] placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-500/25 transition-all" />
           </div>
           <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}
-            className="px-3 py-2.5 border border-slate-200 dark:border-white/[0.08] rounded-xl text-sm text-slate-900 dark:text-white bg-white dark:bg-white/[0.04] focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-500/25 min-w-[160px] transition-all">
-            <option value="">{t.allCategories}</option>
+            className="px-3 py-2.5 border border-slate-200 dark:border-white/[0.08] rounded-xl text-sm text-slate-900 dark:text-white bg-white dark:bg-[#1a1d2e] focus:outline-none focus:ring-2 focus:ring-indigo-500/40 min-w-[160px] transition-all">
+            <option value="" className="dark:bg-[#1a1d2e]">{t.allCategories}</option>
             {categories.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
+              <option key={c.id} value={c.id} className="dark:bg-[#1a1d2e]">{c.name}</option>
             ))}
+          </select>
+          <select value={filterStock} onChange={(e) => setFilterStock(e.target.value)}
+            className="px-3 py-2.5 border border-slate-200 dark:border-white/[0.08] rounded-xl text-sm text-slate-900 dark:text-white bg-white dark:bg-[#1a1d2e] focus:outline-none focus:ring-2 focus:ring-indigo-500/40 min-w-[150px] transition-all">
+            <option value="" className="dark:bg-[#1a1d2e]">All Stock Status</option>
+            <option value="in" className="dark:bg-[#1a1d2e]">In Stock</option>
+            <option value="low" className="dark:bg-[#1a1d2e]">Low Stock (≤ 10)</option>
+            <option value="out" className="dark:bg-[#1a1d2e]">Out of Stock</option>
           </select>
         </div>
 
