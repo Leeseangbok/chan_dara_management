@@ -2,33 +2,39 @@ package com.app.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.*;
 import java.util.UUID;
 
 @Slf4j
 @Service
 public class FileStorageService {
 
-    private final Path uploadRoot;
+    private final RestClient restClient;
+    private final String supabaseUrl;
+    private final String supabaseBucket;
+    private final String supabaseKey;
 
-    public FileStorageService(@Value("${app.upload.dir:uploads}") String uploadDir) {
-        this.uploadRoot = Paths.get(uploadDir).toAbsolutePath().normalize();
-        try {
-            Files.createDirectories(this.uploadRoot.resolve("products"));
-        } catch (IOException e) {
-            throw new RuntimeException("Could not create upload directory: " + this.uploadRoot, e);
-        }
-        log.info("File storage initialised at: {}", this.uploadRoot);
+    public FileStorageService(
+            @Value("${app.supabase.url}") String supabaseUrl,
+            @Value("${app.supabase.key}") String supabaseKey,
+            @Value("${app.supabase.bucket:product-images}") String supabaseBucket) {
+        
+        this.supabaseUrl = supabaseUrl;
+        this.supabaseKey = supabaseKey;
+        this.supabaseBucket = supabaseBucket;
+        this.restClient = RestClient.create();
+        
+        log.info("File storage configured for Supabase bucket: {}", this.supabaseBucket);
     }
 
     /**
-     * Stores the file as products/<productId>.<ext> and returns the public URL
-     * path.
+     * Uploads the file to Supabase Storage and returns the public URL path.
      */
     public String storeProductImage(UUID productId, MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename() != null ? file.getOriginalFilename() : "file";
@@ -36,9 +42,26 @@ public class FileStorageService {
         String ext = StringUtils.getFilenameExtension(original);
         String filename = productId + (ext != null && !ext.isBlank() ? "." + ext.toLowerCase() : ".jpg");
 
-        Path target = uploadRoot.resolve("products").resolve(filename);
-        Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+        // Supabase upload endpoint: POST /storage/v1/object/{bucket}/{filename}
+        String uploadUrl = String.format("%s/storage/v1/object/%s/%s", supabaseUrl, supabaseBucket, filename);
+        
+        String contentType = file.getContentType();
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
 
-        return "/uploads/products/" + filename;
+        log.info("Uploading file to Supabase: {}", filename);
+
+        restClient.post()
+                .uri(uploadUrl)
+                .header("Authorization", "Bearer " + supabaseKey)
+                .header("x-upsert", "true") // Overwrite if exists
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(file.getBytes())
+                .retrieve()
+                .toBodilessEntity(); // Throws exception on 4xx/5xx
+
+        // Construct public URL
+        return String.format("%s/storage/v1/object/public/%s/%s", supabaseUrl, supabaseBucket, filename);
     }
 }

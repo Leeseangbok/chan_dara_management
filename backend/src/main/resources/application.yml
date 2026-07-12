@@ -63,6 +63,11 @@ app:
   upload:
     dir: ${UPLOAD_DIR:uploads}
 
+  supabase:
+    url: ${SUPABASE_URL}
+    key: ${SUPABASE_KEY}
+    bucket: ${SUPABASE_BUCKET:product-images}
+
 
 # --- Actuator (Render health checks) ---
 management:
