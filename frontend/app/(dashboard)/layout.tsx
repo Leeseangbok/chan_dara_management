@@ -32,6 +32,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { NotificationBell } from "@/components/ui/NotificationBell";
 import { LiveClock } from "@/components/ui/LiveClock";
 import { useTheme } from "next-themes";
+import { Logo } from "@/components/ui/Logo";
 
 // ─── Per-nav icon color config ────────────────────────────────────────────────
 const navIconColors: Record<string, string> = {
@@ -119,8 +120,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         {/* Logo */}
         <div className="h-16 flex items-center justify-between px-5 border-b border-[var(--sidebar-border)] shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-[0_0_16px_rgba(99,102,241,0.5)] flex-shrink-0">
-              <LayoutDashboard className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex items-center justify-center shadow-[0_0_16px_rgba(99,102,241,0.15)] flex-shrink-0 p-1.5">
+              <Logo className="w-full h-full" />
             </div>
             <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white">Chan Dara</span>
           </div>
