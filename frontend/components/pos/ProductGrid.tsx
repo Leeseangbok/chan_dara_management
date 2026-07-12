@@ -62,7 +62,7 @@ export function ProductGrid({ products, isLoading, onAddToCart }: ProductGridPro
                         <div className="w-full aspect-square bg-slate-50 dark:bg-slate-950 relative border-b border-slate-100 dark:border-slate-800/60 flex items-center justify-center overflow-hidden">
                             {product.imageUrl ? (
                                 // eslint-disable-next-line @next/next/no-img-element
-                                <img src={`${API_BASE}${product.imageUrl}`} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <img src={product.imageUrl.startsWith('http') ? product.imageUrl : `${API_BASE}${product.imageUrl}`} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             ) : (
                                 <ImagePlus className="w-8 h-8 text-slate-300" />
                             )}

@@ -53,7 +53,7 @@ export function CartPanel({ cart, onIncrement, onDecrement, onRemove, onUpdateQu
                                     <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-800/60">
                                         {line.product.imageUrl ? (
                                             // eslint-disable-next-line @next/next/no-img-element
-                                            <img src={`${API_BASE}${line.product.imageUrl}`} alt={line.product.name} className="w-full h-full object-cover" />
+                                            <img src={line.product.imageUrl.startsWith('http') ? line.product.imageUrl : `${API_BASE}${line.product.imageUrl}`} alt={line.product.name} className="w-full h-full object-cover" />
                                         ) : (
                                             <ImagePlus className="w-5 h-5 text-slate-300" />
                                         )}

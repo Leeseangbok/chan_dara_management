@@ -641,7 +641,7 @@ export default function InventoryPage() {
                         <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 dark:bg-white/[0.05] border border-slate-200/60 dark:border-white/[0.07] flex items-center justify-center shrink-0">
                           {p.imageUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={`${API_BASE}${p.imageUrl}`} alt={p.name} className="w-full h-full object-cover" />
+                            <img src={p.imageUrl.startsWith('http') ? p.imageUrl : `${API_BASE}${p.imageUrl}`} alt={p.name} className="w-full h-full object-cover" />
                           ) : (
                             <ImagePlus className="w-4 h-4 text-slate-300 dark:text-slate-600" />
                           )}
