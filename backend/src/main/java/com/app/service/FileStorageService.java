@@ -24,12 +24,12 @@ public class FileStorageService {
             @Value("${app.supabase.url}") String supabaseUrl,
             @Value("${app.supabase.key}") String supabaseKey,
             @Value("${app.supabase.bucket:product-images}") String supabaseBucket) {
-        
+
         this.supabaseUrl = supabaseUrl;
         this.supabaseKey = supabaseKey;
         this.supabaseBucket = supabaseBucket;
         this.restClient = RestClient.create();
-        
+
         log.info("File storage configured for Supabase bucket: {}", this.supabaseBucket);
     }
 
@@ -37,14 +37,14 @@ public class FileStorageService {
      * Uploads the file to Supabase Storage and returns the public URL path.
      */
     public String storeProductImage(UUID productId, MultipartFile file) throws IOException {
-        String originalFilename = file.getOriginalFilename() != null ? file.getOriginalFilename() : "file";
+        String originalFilename = java.util.Objects.requireNonNullElse(file.getOriginalFilename(), "file");
         String original = StringUtils.cleanPath(originalFilename);
         String ext = StringUtils.getFilenameExtension(original);
         String filename = productId + (ext != null && !ext.isBlank() ? "." + ext.toLowerCase() : ".jpg");
 
         // Supabase upload endpoint: POST /storage/v1/object/{bucket}/{filename}
         String uploadUrl = String.format("%s/storage/v1/object/%s/%s", supabaseUrl, supabaseBucket, filename);
-        
+
         String contentType = file.getContentType();
         if (contentType == null) {
             contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;

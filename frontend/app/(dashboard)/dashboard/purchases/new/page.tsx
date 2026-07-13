@@ -271,7 +271,7 @@ export default function NewPurchaseOrderPage() {
             </div>
 
             {/* Selected Items Table */}
-            <div className="flex-1 overflow-x-auto">
+            <div className="flex-1 overflow-hidden">
               {selectedItems.length === 0 ? (
                 <div className="h-40 flex flex-col items-center justify-center text-slate-400 border-2 border-dashed border-slate-100 dark:border-slate-800/60 rounded-2xl">
                   <PackageSearch className="w-10 h-10 mb-2 opacity-50" />
@@ -279,68 +279,137 @@ export default function NewPurchaseOrderPage() {
                   <p className="text-xs mt-1">Search and select products above.</p>
                 </div>
               ) : (
-                <table className="w-full text-left text-sm border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 font-medium">
-                      <th className="px-4 py-3 rounded-tl-xl">Product</th>
-                      <th className="px-4 py-3 w-32">Unit Cost (៛)</th>
-                      <th className="px-4 py-3 w-32">Delivery (៛)</th>
-                      <th className="px-4 py-3 w-24">Qty</th>
-                      <th className="px-4 py-3 w-32 text-right">Subtotal</th>
-                      <th className="px-4 py-3 rounded-tr-xl w-12"></th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 text-slate-700 dark:text-slate-300">
+                <>
+                  {/* Desktop Table View */}
+                  <div className="hidden sm:block overflow-x-auto">
+                    <table className="w-full text-left text-sm border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 font-medium">
+                          <th className="px-4 py-3 rounded-tl-xl">Product</th>
+                          <th className="px-4 py-3 w-32">Unit Cost (៛)</th>
+                          <th className="px-4 py-3 w-32">Delivery (៛)</th>
+                          <th className="px-4 py-3 w-24">Qty</th>
+                          <th className="px-4 py-3 w-32 text-right">Subtotal</th>
+                          <th className="px-4 py-3 rounded-tr-xl w-12"></th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 text-slate-700 dark:text-slate-300">
+                        {selectedItems.map((item) => (
+                          <tr key={item.product.id} className="hover:bg-transparent">
+                            <td className="px-4 py-3">
+                              <div className="font-medium text-slate-900 dark:text-white">{item.product.name}</div>
+                              <div className="text-xs text-slate-500 dark:text-slate-400">SKU: {item.product.sku}</div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={item.unitCost}
+                                onChange={(e) => updateItem(item.product.id, "unitCost", parseFloat(e.target.value) || 0)}
+                                className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                              />
+                            </td>
+                            <td className="px-4 py-3">
+                              <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={item.deliveryCost}
+                                onChange={(e) => updateItem(item.product.id, "deliveryCost", parseFloat(e.target.value) || 0)}
+                                className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                              />
+                            </td>
+                            <td className="px-4 py-3">
+                              <input
+                                type="number"
+                                min="1"
+                                value={item.quantity}
+                                onChange={(e) => updateItem(item.product.id, "quantity", parseInt(e.target.value) || 1)}
+                                className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                              />
+                            </td>
+                            <td className="px-4 py-3 text-right font-medium text-slate-900 dark:text-white">
+                              {formatCurrency((item.unitCost + item.deliveryCost) * item.quantity)}
+                            </td>
+                            <td className="px-4 py-3 text-right">
+                              <button
+                                onClick={() => handleRemoveProduct(item.product.id)}
+                                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Mobile Card View */}
+                  <div className="sm:hidden flex flex-col divide-y divide-slate-100 dark:divide-white/[0.04]">
                     {selectedItems.map((item) => (
-                      <tr key={item.product.id} className="hover:bg-transparent">
-                        <td className="px-4 py-3">
-                          <div className="font-medium text-slate-900 dark:text-white">{item.product.name}</div>
-                          <div className="text-xs text-slate-500 dark:text-slate-400">SKU: {item.product.sku}</div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={item.unitCost}
-                            onChange={(e) => updateItem(item.product.id, "unitCost", parseFloat(e.target.value) || 0)}
-                            className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-3">
-                          <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={item.deliveryCost}
-                            onChange={(e) => updateItem(item.product.id, "deliveryCost", parseFloat(e.target.value) || 0)}
-                            className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-3">
-                          <input
-                            type="number"
-                            min="1"
-                            value={item.quantity}
-                            onChange={(e) => updateItem(item.product.id, "quantity", parseInt(e.target.value) || 1)}
-                            className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-3 text-right font-medium text-slate-900 dark:text-white">
-                          {formatCurrency((item.unitCost + item.deliveryCost) * item.quantity)}
-                        </td>
-                        <td className="px-4 py-3 text-right">
+                      <div key={item.product.id} className="p-4 flex flex-col gap-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="font-medium text-slate-900 dark:text-white">{item.product.name}</div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400">SKU: {item.product.sku}</div>
+                          </div>
                           <button
                             onClick={() => handleRemoveProduct(item.product.id)}
                             className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
-                        </td>
-                      </tr>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3 mt-1">
+                          <div>
+                            <label className="block text-[10px] font-medium text-slate-500 uppercase mb-1">Unit Cost</label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={item.unitCost}
+                              onChange={(e) => updateItem(item.product.id, "unitCost", parseFloat(e.target.value) || 0)}
+                              className="w-full px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-medium text-slate-500 uppercase mb-1">Delivery Cost</label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={item.deliveryCost}
+                              onChange={(e) => updateItem(item.product.id, "deliveryCost", parseFloat(e.target.value) || 0)}
+                              className="w-full px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-end mt-1 pt-3 border-t border-slate-100 dark:border-white/[0.04]">
+                          <div>
+                            <label className="block text-[10px] font-medium text-slate-500 uppercase mb-1">Quantity</label>
+                            <input
+                              type="number"
+                              min="1"
+                              value={item.quantity}
+                              onChange={(e) => updateItem(item.product.id, "quantity", parseInt(e.target.value) || 1)}
+                              className="w-24 px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                            />
+                          </div>
+                          <div className="text-right">
+                            <div className="text-[10px] font-medium text-slate-500 uppercase mb-1">Subtotal</div>
+                            <div className="font-bold text-slate-900 dark:text-white">
+                              {formatCurrency((item.unitCost + item.deliveryCost) * item.quantity)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
+                  </div>
+                </>
               )}
             </div>
           </div>

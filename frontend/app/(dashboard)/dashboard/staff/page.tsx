@@ -137,67 +137,120 @@ export default function StaffPage() {
       </div>
 
       <div className="rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200/60 dark:border-white/[0.06]">
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Username</th>
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Role</th>
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.status}</th>
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Created At</th>
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">{t.actions}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100/60 dark:divide-white/[0.04] text-slate-700 dark:text-slate-300">
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
-                    Loading staff...
-                  </td>
+        <div className="overflow-hidden">
+          {/* Desktop Table View */}
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200/60 dark:border-white/[0.06]">
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Username</th>
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Role</th>
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.status}</th>
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Created At</th>
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">{t.actions}</th>
                 </tr>
-              ) : filteredUsers.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
-                    <UserIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p>No staff found.</p>
-                  </td>
-                </tr>
-              ) : (
-                  filteredUsers.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${u.role === 'ADMIN' ? 'bg-indigo-100 dark:bg-indigo-500/[0.15] text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-slate-400'}`}>
-                          {u.username.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{u.username}</span>
-                        {u.id === currentUser?.id && (
-                          <span className="text-[10px] bg-indigo-50 dark:bg-indigo-500/[0.1] text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">You</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5">
-                        {u.role === 'ADMIN' && <Shield className="w-3.5 h-3.5 text-indigo-500" />}
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${u.role === 'ADMIN' ? 'bg-indigo-100 dark:bg-indigo-500/[0.12] text-indigo-700 dark:text-indigo-300' : u.role === 'MANAGER' ? 'bg-sky-100 dark:bg-sky-500/[0.12] text-sky-700 dark:text-sky-300' : 'bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-slate-400'}`}>{u.role}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${u.active ? 'bg-emerald-100 dark:bg-emerald-500/[0.12] text-emerald-700 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-500/[0.12] text-rose-700 dark:text-rose-400'}`}>{u.active ? 'Active' : 'Inactive'}</span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{new Date(u.createAt).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 text-right">
-                      <button onClick={() => openEditModal(u)}
-                        className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/[0.1] transition-all active:scale-90" title="Edit">
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
+              </thead>
+              <tbody className="divide-y divide-slate-100/60 dark:divide-white/[0.04] text-slate-700 dark:text-slate-300">
+                {loading ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
+                      <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
+                      Loading staff...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : filteredUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
+                      <UserIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                      <p>No staff found.</p>
+                    </td>
+                  </tr>
+                ) : (
+                    filteredUsers.map((u) => (
+                    <tr key={u.id} className="hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${u.role === 'ADMIN' ? 'bg-indigo-100 dark:bg-indigo-500/[0.15] text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-slate-400'}`}>
+                            {u.username.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{u.username}</span>
+                          {u.id === currentUser?.id && (
+                            <span className="text-[10px] bg-indigo-50 dark:bg-indigo-500/[0.1] text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">You</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5">
+                          {u.role === 'ADMIN' && <Shield className="w-3.5 h-3.5 text-indigo-500" />}
+                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${u.role === 'ADMIN' ? 'bg-indigo-100 dark:bg-indigo-500/[0.12] text-indigo-700 dark:text-indigo-300' : u.role === 'MANAGER' ? 'bg-sky-100 dark:bg-sky-500/[0.12] text-sky-700 dark:text-sky-300' : 'bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-slate-400'}`}>{u.role}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${u.active ? 'bg-emerald-100 dark:bg-emerald-500/[0.12] text-emerald-700 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-500/[0.12] text-rose-700 dark:text-rose-400'}`}>{u.active ? 'Active' : 'Inactive'}</span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{new Date(u.createAt).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 text-right">
+                        <button onClick={() => openEditModal(u)}
+                          className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/[0.1] transition-all active:scale-90" title="Edit">
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="sm:hidden flex flex-col divide-y divide-slate-100/60 dark:divide-white/[0.04]">
+            {loading ? (
+              <div className="p-8 text-center text-slate-400">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
+                Loading staff...
+              </div>
+            ) : filteredUsers.length === 0 ? (
+              <div className="p-8 text-center text-slate-400">
+                <UserIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>No staff found.</p>
+              </div>
+            ) : (
+              filteredUsers.map((u) => (
+                <div key={u.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${u.role === 'ADMIN' ? 'bg-indigo-100 dark:bg-indigo-500/[0.15] text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-slate-400'}`}>
+                        {u.username.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-base font-semibold text-slate-900 dark:text-slate-100">{u.username}</span>
+                          {u.id === currentUser?.id && (
+                            <span className="text-[10px] bg-indigo-50 dark:bg-indigo-500/[0.1] text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">You</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${u.role === 'ADMIN' ? 'bg-indigo-100 dark:bg-indigo-500/[0.12] text-indigo-700 dark:text-indigo-300' : u.role === 'MANAGER' ? 'bg-sky-100 dark:bg-sky-500/[0.12] text-sky-700 dark:text-sky-300' : 'bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-slate-400'}`}>
+                            {u.role}
+                          </span>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${u.active ? 'bg-emerald-100 dark:bg-emerald-500/[0.12] text-emerald-700 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-500/[0.12] text-rose-700 dark:text-rose-400'}`}>
+                            {u.active ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <button onClick={() => openEditModal(u)}
+                      className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/[0.1] transition-all active:scale-90" title="Edit">
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Joined: {new Date(u.createAt).toLocaleDateString()}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 

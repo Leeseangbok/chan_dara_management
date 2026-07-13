@@ -116,7 +116,8 @@ export default function ExpensesPage() {
 
       {/* Table */}
       <div className="rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200/60 dark:border-white/[0.06]">
@@ -162,6 +163,50 @@ export default function ExpensesPage() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="sm:hidden flex flex-col divide-y divide-slate-100/60 dark:divide-white/[0.04]">
+          {loading ? (
+            <div className="py-16 text-center"><Loader2 className="w-7 h-7 animate-spin mx-auto text-indigo-500" /></div>
+          ) : filteredExpenses.length === 0 ? (
+            <div className="py-16 text-center text-slate-400 dark:text-slate-600">
+              <Receipt className="w-10 h-10 mx-auto mb-2 opacity-30" /><p className="text-sm">No expenses found.</p>
+            </div>
+          ) : filteredExpenses.map((e) => (
+            <div key={e.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors">
+              <div className="flex justify-between items-start">
+                <div className="flex flex-col gap-1">
+                  <span className={`self-start text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${categoryColors[e.category] || categoryColors.OTHER}`}>
+                    {e.category}
+                  </span>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    <Calendar className="w-3.5 h-3.5 shrink-0" />
+                    {new Date(e.expenseDate).toLocaleDateString()}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-base font-bold text-slate-900 dark:text-slate-100 tabular-nums">${e.amount.toFixed(2)}</div>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{e.description}</p>
+                {e.loggedBy && <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Logged by {e.loggedBy}</p>}
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-white/[0.04] mt-1">
+                <button onClick={() => openEditModal(e)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 dark:bg-white/[0.05] hover:bg-indigo-50 dark:hover:bg-indigo-500/[0.1] transition-all">
+                  <Edit2 className="w-3.5 h-3.5" />
+                  Edit
+                </button>
+                <button onClick={() => handleDelete(e.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-white/[0.05] hover:bg-rose-50 dark:hover:bg-rose-500/[0.1] transition-all">
+                  <Trash2 className="w-3.5 h-3.5" />
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

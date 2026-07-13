@@ -64,6 +64,14 @@ export interface TransactionItemResponse {
   profit: number;
 }
 
+export interface TransactionPaymentResponse {
+  id: string;
+  amount: number;
+  paymentMethod: "CASH" | "QR_CODE";
+  paymentDate: string;
+  loggedByUsername?: string | null;
+}
+
 export interface TransactionResponse {
   id: string;
   cashierId: string;
@@ -78,6 +86,7 @@ export interface TransactionResponse {
   customerAddress: string | null;
   deliveryStatus: "NONE" | "PENDING" | "PREPARING" | "READY" | "IN_TRANSIT" | "DELIVERED" | "CANCELLED";
   deliveryLocation?: string | null;
+  payments?: TransactionPaymentResponse[];
 }
 
 export interface UnpaidAnalyticsResponse {

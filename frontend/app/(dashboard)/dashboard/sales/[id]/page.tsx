@@ -154,27 +154,48 @@ export default function TransactionDetailsPage() {
               {transaction.paymentStatus}
             </div>
           </div>
-          <div className="flex-1 overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 text-sm font-medium">
-                  <th className="px-6 py-4">Item</th>
-                  <th className="px-6 py-4 text-right">Price</th>
-                  <th className="px-6 py-4 text-right">Qty</th>
-                  <th className="px-6 py-4 text-right">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {transaction.items.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-transparent">
-                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{item.productName}</td>
-                    <td className="px-6 py-4 text-right text-slate-600 dark:text-slate-400">{formatCurrency(item.unitPrice)}</td>
-                    <td className="px-6 py-4 text-right font-medium text-slate-900 dark:text-white">{item.quantity}</td>
-                    <td className="px-6 py-4 text-right font-bold text-brand-600 dark:text-brand-400">{formatCurrency(item.subtotal)}</td>
+          <div className="flex-1 overflow-hidden">
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 text-sm font-medium">
+                    <th className="px-6 py-4">Item</th>
+                    <th className="px-6 py-4 text-right">Price</th>
+                    <th className="px-6 py-4 text-right">Qty</th>
+                    <th className="px-6 py-4 text-right">Subtotal</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60">
+                  {transaction.items.map((item, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                      <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{item.productName}</td>
+                      <td className="px-6 py-4 text-right text-slate-600 dark:text-slate-400">{formatCurrency(item.unitPrice)}</td>
+                      <td className="px-6 py-4 text-right font-medium text-slate-900 dark:text-white">{item.quantity}</td>
+                      <td className="px-6 py-4 text-right font-bold text-brand-600 dark:text-brand-400">{formatCurrency(item.subtotal)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="sm:hidden flex flex-col divide-y divide-slate-100 dark:divide-slate-800/60">
+              {transaction.items.map((item, idx) => (
+                <div key={idx} className="p-4 flex flex-col gap-2 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
+                  <div className="flex justify-between items-start">
+                    <span className="font-bold text-slate-900 dark:text-white">{item.productName}</span>
+                    <span className="font-black text-brand-600 dark:text-brand-400">{formatCurrency(item.subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm text-slate-500 dark:text-slate-400">
+                    <span>{formatCurrency(item.unitPrice)} each</span>
+                    <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md font-medium text-slate-700 dark:text-slate-300">
+                      Qty: {item.quantity}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -205,6 +226,31 @@ export default function TransactionDetailsPage() {
               </div>
             </div>
           </div>
+
+          {/* Payment History Section */}
+          {transaction.payments && transaction.payments.length > 0 && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none p-6 space-y-4">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Payment History</h3>
+              <div className="space-y-3">
+                {transaction.payments.map((payment) => (
+                  <div key={payment.id} className="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800 last:border-0">
+                    <div>
+                      <div className="text-sm font-medium text-slate-900 dark:text-white">
+                        {new Date(payment.paymentDate).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">{payment.paymentMethod}</span>
+                        {payment.loggedByUsername && <span> • Collected by <span className="text-brand-600 dark:text-brand-400">{payment.loggedByUsername}</span></span>}
+                      </div>
+                    </div>
+                    <div className="font-bold text-green-600">
+                      {formatCurrency(payment.amount)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Add Payment Section */}
           {transaction.paymentStatus !== "PAID" && hasRole("ADMIN", "MANAGER") && dueAmount > 0 && (

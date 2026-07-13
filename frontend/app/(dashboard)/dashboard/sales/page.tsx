@@ -59,15 +59,15 @@ export default function SalesHistoryPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center w-full">
-        <div className="relative flex-1 min-w-0">
+      <div className="flex flex-col sm:flex-row justify-between gap-3 items-start sm:items-center w-full">
+        <div className="relative w-full sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
           <input
             type="text"
             placeholder={t.searchSales}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 text-sm text-slate-900 dark:text-white bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-500/25 transition-all placeholder-slate-400 dark:placeholder-slate-600"
+            className="w-full pl-9 pr-4 py-2.5 text-sm text-slate-900 dark:text-white bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/40 dark:focus:ring-indigo-500/25 transition-all"
           />
         </div>
         <div className="flex gap-3 w-full sm:w-auto">
@@ -84,7 +84,8 @@ export default function SalesHistoryPage() {
 
       {/* Table */}
       <div className="rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200/60 dark:border-white/[0.06]">
@@ -159,6 +160,61 @@ export default function SalesHistoryPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="sm:hidden flex flex-col divide-y divide-slate-100/60 dark:divide-white/[0.04]">
+          {loading ? (
+            <div className="py-16 text-center text-slate-400">
+              <Loader2 className="w-7 h-7 animate-spin mx-auto mb-2 text-indigo-500" />
+              <p className="text-sm">Loading sales history…</p>
+            </div>
+          ) : sortedTransactions.length === 0 ? (
+            <div className="py-16 text-center text-slate-400 dark:text-slate-600">
+              <Receipt className="w-10 h-10 mx-auto mb-2 opacity-30" />
+              <p className="text-sm">No transactions found.</p>
+            </div>
+          ) : (
+            sortedTransactions.map((tx) => (
+              <div key={tx.id} 
+                onClick={() => router.push(`/dashboard/sales/${tx.id}`)}
+                className="p-4 flex flex-col gap-3 hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors cursor-pointer">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <span className="font-mono text-sm font-bold text-indigo-600 dark:text-indigo-400">#{tx.id.substring(0, 8).toUpperCase()}</span>
+                    <div className="text-sm font-semibold text-slate-900 dark:text-slate-100 mt-1">
+                      {tx.customerName || <span className="text-slate-400 italic font-normal">Walk-in</span>}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-slate-900 dark:text-slate-100">{formatCurrency(tx.totalAmount)}</span>
+                    {tx.paymentStatus === "UNPAID" && (tx.paidAmount || 0) > 0 && (
+                      <div className="text-xs text-rose-500 font-medium mt-0.5">
+                        Due: {formatCurrency(Math.max(0, tx.totalAmount - (tx.paidAmount || 0)))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex justify-between items-end mt-1">
+                  <div className="text-xs text-slate-500 dark:text-slate-400">
+                    {new Date(tx.transactionDate).toLocaleString()}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/[0.06] px-2 py-0.5 rounded-md">
+                      {tx.paymentMethod === "CASH" ? <Banknote className="w-3 h-3" /> : <Smartphone className="w-3 h-3" />}
+                      {tx.paymentMethod}
+                    </span>
+                    <span className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${tx.paymentStatus === "PAID"
+                      ? "bg-emerald-100 dark:bg-emerald-500/[0.12] text-emerald-700 dark:text-emerald-400"
+                      : "bg-rose-100 dark:bg-rose-500/[0.12] text-rose-700 dark:text-rose-400"}`}>
+                      {tx.paymentStatus}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

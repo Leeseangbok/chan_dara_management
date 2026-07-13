@@ -640,7 +640,8 @@ export default function InventoryPage() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200/60 dark:border-white/[0.06]">
@@ -749,6 +750,105 @@ export default function InventoryPage() {
               </AnimatePresence>
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="sm:hidden flex flex-col divide-y divide-slate-100/60 dark:divide-white/[0.04]">
+          <AnimatePresence mode="popLayout">
+            {isLoading ? (
+              <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-16 flex justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-brand-500" />
+              </motion.div>
+            ) : filtered.length === 0 ? (
+              <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-16 text-center text-slate-500 dark:text-slate-400 text-sm">
+                {searchTerm || filterCategory ? t.noResults : t.noProductsYet}
+              </motion.div>
+            ) : (
+              filtered.map((p, i) => {
+                const margin = p.price > 0
+                  ? (((p.price - p.costPrice) / p.price) * 100).toFixed(1)
+                  : "0.0";
+                return (
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2, delay: i * 0.03 }}
+                    key={p.id}
+                    className="p-4 flex flex-col gap-4 hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors"
+                  >
+                    <div className="flex gap-4 items-start">
+                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 dark:bg-white/[0.05] border border-slate-200/60 dark:border-white/[0.07] flex items-center justify-center shrink-0">
+                        {p.imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={p.imageUrl.startsWith('http') ? p.imageUrl : `${API_BASE}${p.imageUrl}`} alt={p.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <ImagePlus className="w-6 h-6 text-slate-300 dark:text-slate-600" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{p.name}</p>
+                        {p.nameKh && (
+                          <p className="text-xs text-indigo-600 dark:text-indigo-400 truncate mt-0.5" style={{ fontFamily: "'Khmer OS', 'Noto Sans Khmer', sans-serif" }}>{p.nameKh}</p>
+                        )}
+                        <p className="text-[11px] font-mono text-slate-400 dark:text-slate-500 mt-1">{p.sku}</p>
+                        
+                        {p.category && (
+                          <div className="mt-2">
+                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-indigo-50 dark:bg-indigo-500/[0.1] text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-500/[0.2]">
+                              <Tag className="w-2.5 h-2.5" />{p.category.name}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className={`inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 rounded-md text-[10px] font-bold tabular-nums ${p.stockQuantity > 20
+                          ? "bg-emerald-100 dark:bg-emerald-500/[0.12] text-emerald-800 dark:text-emerald-400"
+                          : p.stockQuantity > 0
+                            ? "bg-amber-100 dark:bg-amber-500/[0.12] text-amber-800 dark:text-amber-400"
+                            : "bg-rose-100 dark:bg-rose-500/[0.12] text-rose-800 dark:text-rose-400"
+                          }`}>{p.stockQuantity}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-2 py-3 border-y border-slate-100 dark:border-white/[0.04]">
+                      <div>
+                        <div className="text-[10px] text-slate-500 uppercase font-medium">{t.price}</div>
+                        <div className="text-sm font-bold text-slate-900 dark:text-slate-100 mt-0.5">{formatCurrency(p.price)}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-slate-500 uppercase font-medium">{t.cost}</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">{formatCurrency(p.costPrice)}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-[10px] text-slate-500 uppercase font-medium">{t.margin}</div>
+                        <div className={`text-sm font-bold mt-0.5 ${Number(margin) >= 10 ? "text-emerald-600 dark:text-emerald-400"
+                          : Number(margin) > 0 ? "text-amber-600 dark:text-amber-400"
+                            : "text-rose-600 dark:text-rose-400"
+                          }`}>{margin}%</div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => { setSelectedProduct(p); setModalMode("edit"); }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 dark:bg-white/[0.05] hover:bg-indigo-50 dark:hover:bg-indigo-500/[0.1] transition-all">
+                        <Edit2 className="w-3.5 h-3.5" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget(p)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-white/[0.05] hover:bg-rose-50 dark:hover:bg-rose-500/[0.1] transition-all">
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Delete
+                      </button>
+                    </div>
+                  </motion.div>
+                );
+              })
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

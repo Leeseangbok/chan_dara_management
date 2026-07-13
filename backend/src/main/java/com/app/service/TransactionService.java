@@ -211,6 +211,18 @@ public class TransactionService {
                 ))
                 .toList();
 
+        List<com.app.service.dto.TransactionPaymentResponse> payments = transactionPaymentRepository
+                .findByTransactionIdOrderByPaymentDateDesc(tx.getId())
+                .stream()
+                .map(p -> new com.app.service.dto.TransactionPaymentResponse(
+                        p.getId(),
+                        p.getAmount(),
+                        p.getPaymentMethod(),
+                        p.getPaymentDate(),
+                        p.getLoggedBy() != null ? p.getLoggedBy().getUsername() : null
+                ))
+                .toList();
+
         return new TransactionResponse(
                 tx.getId(),
                 tx.getUser().getId(),
@@ -224,7 +236,8 @@ public class TransactionService {
                 tx.getCustomer() != null ? tx.getCustomer().getName() : null,
                 tx.getCustomer() != null ? tx.getCustomer().getAddress() : null,
                 tx.getDeliveryStatus(),
-                tx.getDeliveryLocation()
+                tx.getDeliveryLocation(),
+                payments
         );
     }
 

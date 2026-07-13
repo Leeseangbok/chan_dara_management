@@ -127,159 +127,249 @@ export default function PurchasesPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="overflow-x-auto"
+          className="overflow-hidden"
         >
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200/60 dark:border-white/[0.06]">
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.poNumber}</th>
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.supplier}</th>
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.date}</th>
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.totalAmount}</th>
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.status}</th>
-                <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">{t.actions}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100/60 dark:divide-white/[0.04] text-slate-700 dark:text-slate-300">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
-                    Loading purchase orders...
-                  </td>
+          {/* Desktop Table View */}
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200/60 dark:border-white/[0.06]">
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.poNumber}</th>
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.supplier}</th>
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.date}</th>
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.totalAmount}</th>
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.status}</th>
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">{t.actions}</th>
                 </tr>
-              ) : filteredPurchases.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                    <PackageSearch className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p>No purchase orders found.</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredPurchases.map((po) => (
-                  <React.Fragment key={po.id}>
-                    <tr className="hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors group cursor-pointer" onClick={() => toggleExpand(po.id)}>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 font-semibold text-slate-900 dark:text-slate-100">
-                          {expandedPo === po.id ? <ChevronUp className="w-4 h-4 text-indigo-500" /> : <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors" />}
-                          <span className="font-mono text-sm">{po.poNumber}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="font-medium">{po.supplier.name}</div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400">{po.supplier.phone}</div>
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        {new Date(po.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">
-                        {formatCurrency(po.totalAmount)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${
+              </thead>
+              <tbody className="divide-y divide-slate-100/60 dark:divide-white/[0.04] text-slate-700 dark:text-slate-300">
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                      <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
+                      Loading purchase orders...
+                    </td>
+                  </tr>
+                ) : filteredPurchases.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                      <PackageSearch className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                      <p>No purchase orders found.</p>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredPurchases.map((po) => (
+                    <React.Fragment key={po.id}>
+                      <tr className="hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors group cursor-pointer" onClick={() => toggleExpand(po.id)}>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2 font-semibold text-slate-900 dark:text-slate-100">
+                            {expandedPo === po.id ? <ChevronUp className="w-4 h-4 text-indigo-500" /> : <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors" />}
+                            <span className="font-mono text-sm">{po.poNumber}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-medium">{po.supplier.name}</div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400">{po.supplier.phone}</div>
+                        </td>
+                        <td className="px-6 py-4 text-sm">
+                          {new Date(po.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">
+                          {formatCurrency(po.totalAmount)}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${
+                            po.status === 'RECEIVED' ? 'bg-emerald-100 dark:bg-emerald-500/[0.12] text-emerald-700 dark:text-emerald-400' :
+                            po.status === 'PENDING'  ? 'bg-amber-100 dark:bg-amber-500/[0.12] text-amber-700 dark:text-amber-400' :
+                                                       'bg-rose-100 dark:bg-rose-500/[0.12] text-rose-700 dark:text-rose-400'
+                          }`}>{po.status}</span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {po.status === 'PENDING' && (
+                            <div className="flex justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+                              <button onClick={() => handleReceive(po.id)} disabled={actionLoading === po.id}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/[0.1] text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/[0.18] rounded-lg text-xs font-semibold transition-colors border border-emerald-200 dark:border-emerald-500/[0.2]">
+                                {actionLoading === po.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />}
+                                Receive
+                              </button>
+                              <button onClick={() => handleCancel(po.id)} disabled={actionLoading === po.id}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 dark:bg-rose-500/[0.1] text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/[0.18] rounded-lg text-xs font-semibold transition-colors border border-rose-200 dark:border-rose-500/[0.2]">
+                                <XCircle className="w-3.5 h-3.5" /> Cancel
+                              </button>
+                            </div>
+                          )}
+                          {po.status === 'RECEIVED' && <span className="text-xs text-slate-400 dark:text-slate-500 italic">Added to Inventory</span>}
+                        </td>
+                      </tr>
+
+                      {expandedPo === po.id && (
+                        <tr>
+                          <td colSpan={6} className="px-6 py-4 bg-slate-50/50 dark:bg-white/[0.01]">
+                            <div className="p-4 rounded-xl border border-slate-200/60 dark:border-white/[0.07] bg-white dark:bg-[#13161f]">
+                              <h4 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center justify-between">
+                                <span>Order Details</span>
+                                <div className="flex items-center gap-4">
+                                  {po.createdBy && <span className="text-xs font-normal text-slate-500 dark:text-slate-400">Created by: {po.createdBy}</span>}
+                                  <button
+                                    onClick={() => handleExportImage(po)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 hover:bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-medium transition-colors shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none"
+                                  >
+                                    <ImageIcon className="w-4 h-4" />
+                                    Export List
+                                  </button>
+                                </div>
+                              </h4>
+                              {po.notes && (
+                                <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800/60">
+                                  <span className="font-medium text-slate-900 dark:text-white mr-2">Notes:</span> {po.notes}
+                                </p>
+                              )}
+                                <div className="overflow-x-auto rounded-xl border border-slate-200/60 dark:border-white/[0.07]">
+                                  <table className="w-full text-left text-sm">
+                                    <thead>
+                                      <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-100 dark:border-white/[0.05] text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                                        <th className="px-4 py-2.5">Product</th>
+                                        <th className="px-4 py-2.5 text-right">Quantity</th>
+                                        <th className="px-4 py-2.5 text-right">Unit Cost</th>
+                                        <th className="px-4 py-2.5 text-right">Delivery</th>
+                                        <th className="px-4 py-2.5 text-right">Subtotal</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100/60 dark:divide-white/[0.04]">
+                                      {po.items.map((item, idx) => (
+                                        <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-white/[0.02]">
+                                          <td className="px-4 py-2.5 font-medium text-slate-900 dark:text-slate-100">{item.productName}</td>
+                                          <td className="px-4 py-2.5 text-right tabular-nums">{item.quantity}</td>
+                                          <td className="px-4 py-2.5 text-right tabular-nums">{formatCurrency(item.unitCost)}</td>
+                                          <td className="px-4 py-2.5 text-right tabular-nums">{formatCurrency(item.deliveryCost || 0)}</td>
+                                          <td className="px-4 py-2.5 text-right font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{formatCurrency(item.subtotal)}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                </table>
+                              </div>
+                              {/* Hidden Div for Image Export */}
+                              <div className="absolute -left-[9999px] top-0">
+                                <div ref={(el) => { poImageRefs.current[po.id] = el; }} className="bg-white dark:bg-slate-900 p-8 w-[600px] border border-slate-100 dark:border-slate-800/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none">
+                                  <div className="text-center mb-6">
+                                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Purchase List</h2>
+                                    <p className="text-slate-500 dark:text-slate-400 text-sm">{po.supplier.name} - {new Date(po.createdAt).toLocaleDateString()}</p>
+                                  </div>
+                                  <table className="w-full text-left text-sm border-collapse">
+                                    <thead>
+                                      <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 font-medium">
+                                        <th className="px-4 py-3">Item Name</th>
+                                        <th className="px-4 py-3 text-right">Quantity</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                      {po.items.map((item, idx) => (
+                                        <tr key={idx}>
+                                          <td className="px-4 py-3 text-slate-900 dark:text-white text-lg">{item.productName}</td>
+                                          <td className="px-4 py-3 text-right text-slate-900 dark:text-white font-bold text-lg">{item.quantity}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="sm:hidden flex flex-col divide-y divide-slate-100/60 dark:divide-white/[0.04]">
+            {loading ? (
+              <div className="p-8 text-center text-slate-400">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
+                Loading purchase orders...
+              </div>
+            ) : filteredPurchases.length === 0 ? (
+              <div className="p-8 text-center text-slate-400">
+                <PackageSearch className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>No purchase orders found.</p>
+              </div>
+            ) : (
+              filteredPurchases.map((po) => (
+                <div key={po.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors">
+                  <div className="flex justify-between items-start cursor-pointer" onClick={() => toggleExpand(po.id)}>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-sm font-semibold text-slate-900 dark:text-white">{po.poNumber}</span>
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
                           po.status === 'RECEIVED' ? 'bg-emerald-100 dark:bg-emerald-500/[0.12] text-emerald-700 dark:text-emerald-400' :
                           po.status === 'PENDING'  ? 'bg-amber-100 dark:bg-amber-500/[0.12] text-amber-700 dark:text-amber-400' :
                                                      'bg-rose-100 dark:bg-rose-500/[0.12] text-rose-700 dark:text-rose-400'
                         }`}>{po.status}</span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        {po.status === 'PENDING' && (
-                          <div className="flex justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
-                            <button onClick={() => handleReceive(po.id)} disabled={actionLoading === po.id}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/[0.1] text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/[0.18] rounded-lg text-xs font-semibold transition-colors border border-emerald-200 dark:border-emerald-500/[0.2]">
-                              {actionLoading === po.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />}
-                              Receive
-                            </button>
-                            <button onClick={() => handleCancel(po.id)} disabled={actionLoading === po.id}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 dark:bg-rose-500/[0.1] text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/[0.18] rounded-lg text-xs font-semibold transition-colors border border-rose-200 dark:border-rose-500/[0.2]">
-                              <XCircle className="w-3.5 h-3.5" /> Cancel
-                            </button>
-                          </div>
-                        )}
-                        {po.status === 'RECEIVED' && <span className="text-xs text-slate-400 dark:text-slate-500 italic">Added to Inventory</span>}
-                      </td>
-                    </tr>
+                      </div>
+                      <div className="font-medium mt-1">{po.supplier.name}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">{new Date(po.createdAt).toLocaleDateString()}</div>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className="font-bold text-slate-900 dark:text-white">{formatCurrency(po.totalAmount)}</span>
+                      <div className="mt-2 text-slate-400">
+                        {expandedPo === po.id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      </div>
+                    </div>
+                  </div>
 
-                    {expandedPo === po.id && (
-                      <tr>
-                        <td colSpan={6} className="px-6 py-4 bg-slate-50/50 dark:bg-white/[0.01]">
-                          <div className="p-4 rounded-xl border border-slate-200/60 dark:border-white/[0.07] bg-white dark:bg-[#13161f]">
-                            <h4 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center justify-between">
-                              <span>Order Details</span>
-                              <div className="flex items-center gap-4">
-                                {po.createdBy && <span className="text-xs font-normal text-slate-500 dark:text-slate-400">Created by: {po.createdBy}</span>}
-                                <button
-                                  onClick={() => handleExportImage(po)}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/60 hover:bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-medium transition-colors shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none"
-                                >
-                                  <ImageIcon className="w-4 h-4" />
-                                  Export List
-                                </button>
+                  {po.status === 'PENDING' && (
+                    <div className="flex gap-2 justify-end mt-2">
+                      <button onClick={() => handleReceive(po.id)} disabled={actionLoading === po.id}
+                        className="inline-flex flex-1 justify-center items-center gap-1.5 px-3 py-2 bg-emerald-50 dark:bg-emerald-500/[0.1] text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/[0.18] rounded-lg text-sm font-semibold transition-colors border border-emerald-200 dark:border-emerald-500/[0.2]">
+                        {actionLoading === po.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+                        Receive
+                      </button>
+                      <button onClick={() => handleCancel(po.id)} disabled={actionLoading === po.id}
+                        className="inline-flex flex-1 justify-center items-center gap-1.5 px-3 py-2 bg-rose-50 dark:bg-rose-500/[0.1] text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/[0.18] rounded-lg text-sm font-semibold transition-colors border border-rose-200 dark:border-rose-500/[0.2]">
+                        <XCircle className="w-4 h-4" /> Cancel
+                      </button>
+                    </div>
+                  )}
+
+                  {expandedPo === po.id && (
+                    <div className="mt-2 pt-3 border-t border-slate-100 dark:border-white/[0.05]">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">Items</span>
+                        <button onClick={() => handleExportImage(po)}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg">
+                          <ImageIcon className="w-3 h-3" /> Export
+                        </button>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        {po.items.map((item, idx) => (
+                          <div key={idx} className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg flex justify-between items-start">
+                            <div>
+                              <div className="font-medium text-slate-900 dark:text-white text-sm">{item.productName}</div>
+                              <div className="text-xs text-slate-500 mt-0.5">
+                                {formatCurrency(item.unitCost)} × {item.quantity}
+                                {item.deliveryCost ? ` (+${formatCurrency(item.deliveryCost)} del.)` : ''}
                               </div>
-                            </h4>
-                            {po.notes && (
-                              <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800/60">
-                                <span className="font-medium text-slate-900 dark:text-white mr-2">Notes:</span> {po.notes}
-                              </p>
-                            )}
-                              <div className="overflow-x-auto rounded-xl border border-slate-200/60 dark:border-white/[0.07]">
-                                <table className="w-full text-left text-sm">
-                                  <thead>
-                                    <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-100 dark:border-white/[0.05] text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                                      <th className="px-4 py-2.5">Product</th>
-                                      <th className="px-4 py-2.5 text-right">Quantity</th>
-                                      <th className="px-4 py-2.5 text-right">Unit Cost</th>
-                                      <th className="px-4 py-2.5 text-right">Delivery</th>
-                                      <th className="px-4 py-2.5 text-right">Subtotal</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody className="divide-y divide-slate-100/60 dark:divide-white/[0.04]">
-                                    {po.items.map((item, idx) => (
-                                      <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-white/[0.02]">
-                                        <td className="px-4 py-2.5 font-medium text-slate-900 dark:text-slate-100">{item.productName}</td>
-                                        <td className="px-4 py-2.5 text-right tabular-nums">{item.quantity}</td>
-                                        <td className="px-4 py-2.5 text-right tabular-nums">{formatCurrency(item.unitCost)}</td>
-                                        <td className="px-4 py-2.5 text-right tabular-nums">{formatCurrency(item.deliveryCost || 0)}</td>
-                                        <td className="px-4 py-2.5 text-right font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{formatCurrency(item.subtotal)}</td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                              </table>
                             </div>
-                            {/* Hidden Div for Image Export */}
-                            <div className="absolute -left-[9999px] top-0">
-                              <div ref={(el) => { poImageRefs.current[po.id] = el; }} className="bg-white dark:bg-slate-900 p-8 w-[600px] border border-slate-100 dark:border-slate-800/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] dark:shadow-none">
-                                <div className="text-center mb-6">
-                                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Purchase List</h2>
-                                  <p className="text-slate-500 dark:text-slate-400 text-sm">{po.supplier.name} - {new Date(po.createdAt).toLocaleDateString()}</p>
-                                </div>
-                                <table className="w-full text-left text-sm border-collapse">
-                                  <thead>
-                                    <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/60 text-slate-500 dark:text-slate-400 font-medium">
-                                      <th className="px-4 py-3">Item Name</th>
-                                      <th className="px-4 py-3 text-right">Quantity</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody className="divide-y divide-slate-100">
-                                    {po.items.map((item, idx) => (
-                                      <tr key={idx}>
-                                        <td className="px-4 py-3 text-slate-900 dark:text-white text-lg">{item.productName}</td>
-                                        <td className="px-4 py-3 text-right text-slate-900 dark:text-white font-bold text-lg">{item.quantity}</td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
+                            <div className="font-semibold text-slate-900 dark:text-white text-sm">
+                              {formatCurrency(item.subtotal)}
                             </div>
                           </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))
-              )}
-            </tbody>
-          </table>
+                        ))}
+                      </div>
+                      {po.notes && (
+                        <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/10 rounded-lg text-xs text-slate-700 dark:text-slate-300">
+                          <span className="font-semibold">Notes:</span> {po.notes}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
         </motion.div>
       </div>
     </div>

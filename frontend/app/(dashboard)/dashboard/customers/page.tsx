@@ -104,7 +104,8 @@ export default function CustomersPage() {
 
       {/* Table */}
       <div className="rounded-2xl bg-white dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.07] overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/80 dark:bg-white/[0.03] border-b border-slate-200/60 dark:border-white/[0.06]">
@@ -165,6 +166,73 @@ export default function CustomersPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="sm:hidden flex flex-col divide-y divide-slate-100/60 dark:divide-white/[0.04]">
+          {isLoading ? (
+            <div className="py-16 text-center">
+              <Loader2 className="w-7 h-7 animate-spin mx-auto text-indigo-500" />
+            </div>
+          ) : filteredCustomers.length === 0 ? (
+            <div className="py-16 text-center text-slate-400 dark:text-slate-600">
+              <User className="w-10 h-10 mx-auto mb-2 opacity-30" />
+              <p className="text-sm">{t.noCustomersYet}</p>
+            </div>
+          ) : (
+            <AnimatePresence mode="popLayout">
+              {filteredCustomers.map((c) => (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  key={c.id}
+                  className="p-4 flex flex-col gap-3 hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors"
+                >
+                  <div className="flex justify-between items-start gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-500/[0.12] flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-sm shrink-0">
+                        {c.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{c.name}</h4>
+                        {c.phone && <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{c.phone}</p>}
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-[10px] text-slate-500 uppercase font-medium">{t.totalUnpaid}</div>
+                      {c.totalUnpaid > 0
+                        ? <div className="text-sm font-bold text-rose-600 dark:text-rose-400 tabular-nums">{formatCurrency(c.totalUnpaid)}</div>
+                        : <div className="text-sm text-slate-300 dark:text-slate-600">—</div>}
+                    </div>
+                  </div>
+
+                  {c.address && (
+                    <div className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-1">
+                      {c.address}
+                    </div>
+                  )}
+
+                  <div className="flex justify-end gap-2 pt-3 mt-1 border-t border-slate-100 dark:border-white/[0.04]">
+                    <button onClick={() => openHistoryModal(c)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 bg-slate-100 dark:bg-white/[0.05] hover:bg-violet-50 dark:hover:bg-violet-500/[0.1] transition-all">
+                      <Clock className="w-3.5 h-3.5" />
+                      History
+                    </button>
+                    <button onClick={() => openEditModal(c)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 dark:bg-white/[0.05] hover:bg-indigo-50 dark:hover:bg-indigo-500/[0.1] transition-all">
+                      <Edit2 className="w-3.5 h-3.5" />
+                      Edit
+                    </button>
+                    <button onClick={() => handleDelete(c.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-white/[0.05] hover:bg-rose-50 dark:hover:bg-rose-500/[0.1] transition-all">
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Delete
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          )}
         </div>
       </div>
 

@@ -22,5 +22,6 @@ public record TransactionResponse (
         String customerName,
         String customerAddress,
         DeliveryStatus deliveryStatus,
-        String deliveryLocation
-){}
+        String deliveryLocation,
+        List<TransactionPaymentResponse> payments
+) {}

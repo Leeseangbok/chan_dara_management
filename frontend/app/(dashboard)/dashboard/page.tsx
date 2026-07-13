@@ -15,6 +15,8 @@ import {
   XCircle,
   Banknote,
   Smartphone,
+  Sparkles,
+  Calendar,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { transactionsApi } from "@/lib/api/transactions";
@@ -23,6 +25,7 @@ import { DashboardMetricsResponse } from "@/lib/api/types";
 import { formatCurrency } from "@/lib/utils/currency";
 import { ExportReportModal } from "@/components/ExportReportModal";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useAuth } from "@/lib/auth/AuthContext";
 import { DeliveryBoard } from "@/components/ui/DeliveryBoard";
 import { TransactionResponse } from "@/lib/api/types";
 import Link from "next/link";
@@ -88,6 +91,7 @@ function StatCard({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function DashboardOverview() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [metrics, setMetrics] = useState<DashboardMetricsResponse | null>(null);
   const [pendingDeliveries, setPendingDeliveries] = useState<TransactionResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -163,13 +167,72 @@ export default function DashboardOverview() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
-      {/* ── Page Header ─────────────────────────────────────────────────── */}
+      {/* ── Welcome Banner ──────────────────────────────────────────────── */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 p-6 sm:p-8 overflow-hidden shadow-lg shadow-brand-500/20"
+      >
+        {/* Decorative background elements */}
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="w-4 h-4 text-brand-200" />
+              <span className="text-sm font-medium text-brand-100 uppercase tracking-wider">Welcome back</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2 flex items-center flex-wrap gap-2">
+              Hello, 
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-200 to-white capitalize">
+                {user?.username || 'Admin'}
+              </span>
+              !
+              <motion.span 
+                animate={{ rotate: [0, 14, -8, 14, -4, 10, 0, 0] }}
+                transition={{ repeat: Infinity, duration: 2.5, repeatDelay: 1, ease: "easeInOut" }}
+                className="inline-block origin-[70%_70%] ml-1"
+              >
+                👋
+              </motion.span>
+            </h1>
+            <p className="text-brand-100 max-w-xl text-sm sm:text-base leading-relaxed">
+              {t.dashboardSub || "Here's what's happening with your store today. Keep up the great work!"}
+            </p>
+          </motion.div>
+          
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="hidden sm:flex items-center gap-4 bg-white/10 backdrop-blur-md px-5 py-4 rounded-xl border border-white/20 shadow-inner"
+          >
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+              <Calendar className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-sm">
+              <p className="font-semibold text-white">
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+              </p>
+              <p className="text-brand-100 font-medium mt-0.5">
+                {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* ── Page Header Controls ────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
             {t.dashboardOverview}
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{t.dashboardSub}</p>
+          </h2>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
