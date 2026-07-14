@@ -456,7 +456,12 @@ export default function DashboardOverview() {
                       <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                         {tx.customerName || t.walkInCustomer}
                       </p>
-                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                      {(tx.deliveryLocation || tx.customerAddress) && (
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[200px] mt-0.5">
+                          📍 {tx.deliveryLocation || tx.customerAddress}
+                        </p>
+                      )}
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                         {new Date(tx.transactionDate).toLocaleString()} · #{tx.id.substring(0, 8).toUpperCase()}
                       </p>
                     </div>
