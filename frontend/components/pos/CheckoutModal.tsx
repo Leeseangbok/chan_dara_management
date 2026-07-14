@@ -14,7 +14,7 @@ interface CheckoutModalProps {
     totalAmount: number;
     isSubmitting: boolean;
     onClose: () => void;
-    onConfirm: (payload: { paymentMethod: "CASH"|"QR_CODE", paymentStatus: "PAID"|"UNPAID", customerId: string | null, deliveryStatus: "NONE"|"PENDING", deliveryLocation: string }) => void;
+    onConfirm: (payload: { paymentMethod: "CASH"|"QR_CODE", paymentStatus: "PAID"|"UNPAID", customerId: string | null, deliveryStatus: "NONE"|"PENDING", deliveryLocation: string, transactionDate?: string }) => void;
 }
 
 export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onConfirm }: CheckoutModalProps) {
@@ -30,6 +30,7 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
 
     const [requiresDelivery, setRequiresDelivery] = useState(false);
     const [deliveryLocation, setDeliveryLocation] = useState("");
+    const [transactionDate, setTransactionDate] = useState<string>("");
 
     const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
     const [newCustomerForm, setNewCustomerForm] = useState({ name: "", phone: "", address: "", notes: "" });
@@ -54,6 +55,7 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
             setNewCustomerForm({ name: "", phone: "", address: "", notes: "" });
             setRequiresDelivery(false);
             setDeliveryLocation("");
+            setTransactionDate("");
             
             loadCustomers();
         }
@@ -173,6 +175,18 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                 ) : (
                     <>
                         <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
+                    {/* Transaction Date */}
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t.date || "Transaction Date"} (Optional)</label>
+                        <input
+                            type="datetime-local"
+                            value={transactionDate}
+                            onChange={(e) => setTransactionDate(e.target.value)}
+                            className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-800/60 rounded-2xl focus:bg-white dark:bg-slate-900 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none"
+                        />
+                        <p className="text-xs text-slate-500 mt-1">Leave empty to use current time.</p>
+                    </div>
+
                     {/* Amount Due */}
                     <div className="bg-brand-50 dark:bg-brand-900/30 rounded-2xl p-4 flex items-center justify-between border border-brand-100">
                         <span className="text-brand-900 font-medium">{t.amountDue}</span>
@@ -380,13 +394,24 @@ export function CheckoutModal({ isOpen, totalAmount, isSubmitting, onClose, onCo
                         {t.cancel}
                     </button>
                     <button
-                        onClick={() => onConfirm({ 
-                            paymentMethod, 
-                            paymentStatus, 
-                            customerId,
-                            deliveryStatus: requiresDelivery ? "PENDING" : "NONE",
-                            deliveryLocation
-                        })}
+                        onClick={() => {
+                            let formattedDate: string | undefined = undefined;
+                            if (transactionDate) {
+                                // Convert to ISO-8601 string assuming local timezone for the datetime-local input
+                                const dateObj = new Date(transactionDate);
+                                if (!isNaN(dateObj.getTime())) {
+                                    formattedDate = dateObj.toISOString();
+                                }
+                            }
+                            onConfirm({ 
+                                paymentMethod, 
+                                paymentStatus, 
+                                customerId,
+                                deliveryStatus: requiresDelivery ? "PENDING" : "NONE",
+                                deliveryLocation,
+                                transactionDate: formattedDate
+                            });
+                        }}
                         disabled={isSubmitting || !isValid}
                         className="flex-[2] py-3 px-4 rounded-2xl text-white font-semibold flex items-center justify-center gap-2 bg-brand-600 dark:bg-brand-500 hover:bg-brand-700 dark:bg-brand-600 shadow-[0_4px_20px_rgb(0,0,0,0.04)] dark:shadow-none hover:shadow-lg transition-all disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed"
                     >

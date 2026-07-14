@@ -87,7 +87,8 @@ public class TransactionService {
             }
         }
 
-        Transaction transaction = Transaction.createFinalized(cashier, items, Instant.now(), method, status, customer, deliveryStatus, deliveryLoc);
+        java.time.Instant txDate = request.transactionDate() != null ? request.transactionDate() : Instant.now();
+        Transaction transaction = Transaction.createFinalized(cashier, items, txDate, method, status, customer, deliveryStatus, deliveryLoc);
         Transaction saved = transactionRepository.save(transaction);
         
         activityLogService.logActivity(cashier, "CREATE", "TRANSACTION", saved.getId().toString(), "Created sale of " + formatCurrency(saved.getTotalAmount()) + (deliveryStatus != DeliveryStatus.NONE ? " (Delivery)" : ""));

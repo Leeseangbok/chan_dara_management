@@ -52,6 +52,7 @@ export interface CreateTransactionRequest {
   customerId?: string;
   deliveryStatus?: "NONE" | "PENDING" | "PREPARING" | "READY" | "IN_TRANSIT" | "DELIVERED" | "CANCELLED";
   deliveryLocation?: string;
+  transactionDate?: string;
 }
 
 export interface TransactionItemResponse {

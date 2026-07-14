@@ -144,7 +144,7 @@ export default function PosPage() {
         return cart.reduce((sum, line) => sum + line.quantity, 0);
     }, [cart]);
 
-    async function handleConfirmCheckout(payload: { paymentMethod: "CASH"|"QR_CODE", paymentStatus: "PAID"|"UNPAID", customerId: string | null, deliveryStatus?: "NONE"|"PENDING", deliveryLocation?: string }) {
+    async function handleConfirmCheckout(payload: { paymentMethod: "CASH"|"QR_CODE", paymentStatus: "PAID"|"UNPAID", customerId: string | null, deliveryStatus?: "NONE"|"PENDING", deliveryLocation?: string, transactionDate?: string }) {
         if (cart.length === 0) return;
 
         setIsSubmitting(true);
@@ -162,7 +162,8 @@ export default function PosPage() {
                 paymentStatus: payload.paymentStatus,
                 customerId: payload.customerId || undefined,
                 deliveryStatus: payload.deliveryStatus,
-                deliveryLocation: payload.deliveryLocation
+                deliveryLocation: payload.deliveryLocation,
+                transactionDate: payload.transactionDate
             });
 
             setSuccessMessage(`Sale completed successfully! (ID: ${response.id.substring(0, 8)})`);

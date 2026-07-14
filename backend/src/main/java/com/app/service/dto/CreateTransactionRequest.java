@@ -16,5 +16,6 @@ public record CreateTransactionRequest (
         PaymentStatus paymentStatus,
         UUID customerId,
         DeliveryStatus deliveryStatus,
-        String deliveryLocation
+        String deliveryLocation,
+        java.time.Instant transactionDate
 ){}
