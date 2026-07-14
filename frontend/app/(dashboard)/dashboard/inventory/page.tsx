@@ -170,6 +170,7 @@ function ProductModal({
 
   // Auto-calculate costPrice in Riel
   useEffect(() => {
+    if (form.parentProductId) return; // Don't auto-calculate for small packs
     const cpDollar = Number(form.costPriceDollar.replace(/,/g, "")) || 0;
     const exchRate = Number(form.exchangeRate.replace(/,/g, "")) || 0;
     const delPrice = Number(form.deliveryPrice.replace(/,/g, "")) || 0;
@@ -178,7 +179,7 @@ function ProductModal({
       const calculated = Math.round(rawCalculated / 100) * 100;
       setForm(prev => ({ ...prev, costPrice: calculated.toLocaleString("en-US") }));
     }
-  }, [form.costPriceDollar, form.exchangeRate, form.deliveryPrice]);
+  }, [form.costPriceDollar, form.exchangeRate, form.deliveryPrice, form.parentProductId]);
 
   function validate(): boolean {
     const e: Partial<FormState> = {};
@@ -343,94 +344,6 @@ function ProductModal({
               />
             </div>
 
-            {/* Price + Cost Breakdown */}
-            <div className="bg-slate-50 dark:bg-slate-950 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 dark:border-slate-700/50 space-y-4">
-              <h3 className="text-sm font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800/60 dark:border-slate-700 pb-2">Pricing & Cost Breakdown</h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t.sellingPrice} <span className="text-red-500">*</span></label>
-                  <CurrencyInput
-                    value={form.price}
-                    onChangeValue={(val) => setForm({ ...form, price: val.toString() })}
-                    placeholder="e.g. 50000"
-                    className={`w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 ${errors.price ? "border-red-400" : "border-slate-100 dark:border-slate-800/60"}`}
-                  />
-                  {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cost Price ($) <span className="text-red-500">*</span></label>
-                  <CurrencyInput
-                    value={form.costPriceDollar}
-                    onChangeValue={(val) => setForm({ ...form, costPriceDollar: val.toString() })}
-                    placeholder="e.g. 5.50"
-                    className={`w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 border-slate-100 dark:border-slate-800/60`}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Exchange Rate (៛/$)</label>
-                    <button
-                      type="button"
-                      onClick={handleFetchRate}
-                      disabled={isFetchingRate}
-                      className="text-xs text-brand-600 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 disabled:opacity-50 font-medium"
-                    >
-                      {isFetchingRate ? (
-                        <span className="flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Fetching...</span>
-                      ) : (
-                        "Fetch NBC Rate"
-                      )}
-                    </button>
-                  </div>
-                  <CurrencyInput
-                    value={form.exchangeRate}
-                    onChangeValue={(val) => setForm({ ...form, exchangeRate: val.toString() })}
-                    placeholder="Enter rate..."
-                    className="w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 border-slate-100 dark:border-slate-800/60"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Delivery Price (៛)</label>
-                  <CurrencyInput
-                    value={form.deliveryPrice}
-                    onChangeValue={(val) => setForm({ ...form, deliveryPrice: val.toString() })}
-                    placeholder="0"
-                    className={`w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 border-slate-100 dark:border-slate-800/60`}
-                  />
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Final Cost (៛)</label>
-                <CurrencyInput
-                  value={form.costPrice}
-                  onChangeValue={(val) => setForm({ ...form, costPrice: val.toString() })}
-                  disabled={true}
-                  placeholder="0"
-                  className={`w-full px-3 py-2 rounded-xl border text-sm font-semibold text-slate-900 dark:text-white focus:outline-none bg-slate-100 dark:bg-slate-800/80 border-slate-100 dark:border-slate-800/60 cursor-not-allowed`}
-                />
-                {exactCostPrice > 0 && exactCostPrice !== Number(form.costPrice.replace(/,/g, "")) && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Exact: {exactCostPrice.toLocaleString("en-US")} ៛
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Stock */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t.stockQuantity} <span className="text-red-500">*</span></label>
-              <input type="text" value={form.stockQuantity}
-                onChange={(e) => setForm({ ...form, stockQuantity: handleNumberInput(e.target.value) })}
-                className={`w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-900 dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 ${errors.stockQuantity ? "border-red-400" : "border-slate-100 dark:border-slate-800/60"}`}
-              />
-              {errors.stockQuantity && <p className="text-red-500 text-xs mt-1">{errors.stockQuantity}</p>}
-            </div>
-
             {/* Product Linking */}
             <div className="bg-indigo-50 dark:bg-indigo-900/10 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-500/20 space-y-4">
               <h3 className="text-sm font-semibold text-indigo-900 dark:text-indigo-300 border-b border-indigo-200/50 dark:border-indigo-500/20 pb-2">Parent Product Linking (Optional)</h3>
@@ -460,6 +373,123 @@ function ProductModal({
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Price + Cost Breakdown */}
+            <div className="bg-slate-50 dark:bg-slate-950 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 dark:border-slate-700/50 space-y-4">
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800/60 dark:border-slate-700 pb-2">Pricing & Cost Breakdown</h3>
+
+              {form.parentProductId ? (
+                // Simplified Pricing for Small Packs
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t.sellingPrice} (៛) <span className="text-red-500">*</span></label>
+                    <CurrencyInput
+                      value={form.price}
+                      onChangeValue={(val) => setForm({ ...form, price: val.toString() })}
+                      placeholder="e.g. 50000"
+                      className={`w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 ${errors.price ? "border-red-400" : "border-slate-100 dark:border-slate-800/60"}`}
+                    />
+                    {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cost Price (៛) <span className="text-red-500">*</span></label>
+                    <CurrencyInput
+                      value={form.costPrice}
+                      onChangeValue={(val) => setForm({ ...form, costPrice: val.toString() })}
+                      placeholder="e.g. 45000"
+                      className={`w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 ${errors.costPrice ? "border-red-400" : "border-slate-100 dark:border-slate-800/60"}`}
+                    />
+                    {errors.costPrice && <p className="text-red-500 text-xs mt-1">{errors.costPrice}</p>}
+                  </div>
+                </div>
+              ) : (
+                // Complex Pricing with Cost Calculation
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t.sellingPrice} <span className="text-red-500">*</span></label>
+                      <CurrencyInput
+                        value={form.price}
+                        onChangeValue={(val) => setForm({ ...form, price: val.toString() })}
+                        placeholder="e.g. 50000"
+                        className={`w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 ${errors.price ? "border-red-400" : "border-slate-100 dark:border-slate-800/60"}`}
+                      />
+                      {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cost Price ($) <span className="text-red-500">*</span></label>
+                      <CurrencyInput
+                        value={form.costPriceDollar}
+                        onChangeValue={(val) => setForm({ ...form, costPriceDollar: val.toString() })}
+                        placeholder="e.g. 5.50"
+                        className={`w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 border-slate-100 dark:border-slate-800/60`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Exchange Rate (៛/$)</label>
+                        <button
+                          type="button"
+                          onClick={handleFetchRate}
+                          disabled={isFetchingRate}
+                          className="text-xs text-brand-600 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 disabled:opacity-50 font-medium"
+                        >
+                          {isFetchingRate ? (
+                            <span className="flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Fetching...</span>
+                          ) : (
+                            "Fetch NBC Rate"
+                          )}
+                        </button>
+                      </div>
+                      <CurrencyInput
+                        value={form.exchangeRate}
+                        onChangeValue={(val) => setForm({ ...form, exchangeRate: val.toString() })}
+                        placeholder="Enter rate..."
+                        className="w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 border-slate-100 dark:border-slate-800/60"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Delivery Price (៛)</label>
+                      <CurrencyInput
+                        value={form.deliveryPrice}
+                        onChangeValue={(val) => setForm({ ...form, deliveryPrice: val.toString() })}
+                        placeholder="0"
+                        className={`w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 border-slate-100 dark:border-slate-800/60`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Final Cost (៛)</label>
+                    <CurrencyInput
+                      value={form.costPrice}
+                      onChangeValue={(val) => setForm({ ...form, costPrice: val.toString() })}
+                      disabled={true}
+                      placeholder="0"
+                      className={`w-full px-3 py-2 rounded-xl border text-sm font-semibold text-slate-900 dark:text-white focus:outline-none bg-slate-100 dark:bg-slate-800/80 border-slate-100 dark:border-slate-800/60 cursor-not-allowed`}
+                    />
+                    {exactCostPrice > 0 && exactCostPrice !== Number(form.costPrice.replace(/,/g, "")) && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Exact: {exactCostPrice.toLocaleString("en-US")} ៛
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Stock */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t.stockQuantity} <span className="text-red-500">*</span></label>
+              <input type="text" value={form.stockQuantity}
+                onChange={(e) => setForm({ ...form, stockQuantity: handleNumberInput(e.target.value) })}
+                className={`w-full px-3 py-2 rounded-xl border text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-900 dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:focus:ring-brand-500/30 ${errors.stockQuantity ? "border-red-400" : "border-slate-100 dark:border-slate-800/60"}`}
+              />
+              {errors.stockQuantity && <p className="text-red-500 text-xs mt-1">{errors.stockQuantity}</p>}
             </div>
 
             {/* Actions */}
