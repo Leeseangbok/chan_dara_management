@@ -29,5 +29,8 @@ public record UpdateProductRequest(
         BigDecimal deliveryPrice,
 
         @Min(value = 0, message = "Stock quantity must be >= 0")
-        int stockQuantity
+        int stockQuantity,
+
+        UUID parentProductId,
+        Integer piecesPerParent
 ) {}

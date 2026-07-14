@@ -38,6 +38,8 @@ export interface Product {
   exchangeRate?: number;
   deliveryPrice?: number;
   stockQuantity: number;
+  parentProductId?: string | null;
+  piecesPerParent?: number | null;
 }
 
 export interface SaleLineItemRequest {

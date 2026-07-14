@@ -16,5 +16,7 @@ public record ProductResponse(
         BigDecimal costPriceDollar,
         BigDecimal exchangeRate,
         BigDecimal deliveryPrice,
-        int stockQuantity
+        int stockQuantity,
+        UUID parentProductId,
+        Integer piecesPerParent
 ) {}

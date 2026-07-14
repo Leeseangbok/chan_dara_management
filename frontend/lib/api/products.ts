@@ -13,6 +13,8 @@ export interface CreateProductPayload {
   exchangeRate?: number;
   deliveryPrice?: number;
   stockQuantity: number;
+  parentProductId?: string | null;
+  piecesPerParent?: number | null;
 }
 
 export type UpdateProductPayload = Omit<CreateProductPayload, "sku">;
@@ -55,5 +57,9 @@ export const productsApi = {
 
   async delete(id: string): Promise<void> {
     await apiClient.delete(`/api/v1/products/${id}`);
+  },
+
+  async unpack(id: string, amount: number): Promise<void> {
+    await apiClient.post(`/api/v1/products/${id}/unpack?amount=${amount}`);
   },
 };

@@ -61,6 +61,13 @@ public class Product {
     @Builder.Default
     private int stockQuantity = 0;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_product_id")
+    private Product parentProduct;
+
+    @Column(name = "pieces_per_parent")
+    private Integer piecesPerParent;
+
     @Version
     private Long version;
 

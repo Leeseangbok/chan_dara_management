@@ -5,5 +5,6 @@ public enum MovementType {
     RESTOCK,
     RETURN,
     DAMAGE,
-    THIEF
+    THIEF,
+    UNPACK
 }

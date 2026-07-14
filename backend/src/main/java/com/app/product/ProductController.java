@@ -66,4 +66,14 @@ public class ProductController {
         productService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/unpack")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<Void> unpack(
+            @PathVariable UUID id,
+            @RequestParam int amount,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.app.domain.entity.User actor) {
+        productService.unpack(id, amount, actor);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -52,4 +52,25 @@ public class InventoryService {
         }
         return applyMovement(product, actor, type, -quantity);
     }
+
+    @Transactional
+    public void unpack(Product childProduct, User actor, int parentQuantityToUnpack) {
+        if (parentQuantityToUnpack <= 0) {
+            throw new IllegalArgumentException("Unpack quantity must be greater than zero");
+        }
+        Product parentProduct = childProduct.getParentProduct();
+        if (parentProduct == null) {
+            throw new IllegalArgumentException("Product is not a child product");
+        }
+        Integer pieces = childProduct.getPiecesPerParent();
+        if (pieces == null || pieces <= 0) {
+            throw new IllegalArgumentException("Pieces per parent must be defined and greater than zero");
+        }
+
+        // 1. Deduct from parent
+        applyMovement(parentProduct, actor, MovementType.UNPACK, -parentQuantityToUnpack);
+        
+        // 2. Add to child
+        applyMovement(childProduct, actor, MovementType.UNPACK, parentQuantityToUnpack * pieces);
+    }
 }

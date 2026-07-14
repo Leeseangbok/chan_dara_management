@@ -30,6 +30,7 @@ public class ProductService {
     private final ActivityLogService activityLogService;
     private final CategoryService categoryService;
     private final FileStorageService fileStorageService;
+    private final com.app.service.InventoryService inventoryService;
 
     @Transactional(readOnly = true)
     public List<ProductResponse> findAll() {
@@ -82,6 +83,11 @@ public class ProductService {
             throw new DataIntegrityViolationException("SKU already exists: " + req.sku());
         }
         Category category = resolveCategory(req.categoryId());
+        Product parent = null;
+        if (req.parentProductId() != null) {
+            parent = productRepository.findById(req.parentProductId()).orElse(null);
+        }
+
         Product product = Product.builder()
                 .sku(req.sku())
                 .name(req.name())
@@ -94,6 +100,8 @@ public class ProductService {
                 .exchangeRate(req.exchangeRate())
                 .deliveryPrice(req.deliveryPrice())
                 .stockQuantity(req.stockQuantity())
+                .parentProduct(parent)
+                .piecesPerParent(req.piecesPerParent())
                 .build();
         
         Product saved = productRepository.save(product);
@@ -117,6 +125,14 @@ public class ProductService {
         product.setExchangeRate(req.exchangeRate());
         product.setDeliveryPrice(req.deliveryPrice());
         product.setStockQuantity(req.stockQuantity());
+        
+        if (req.parentProductId() != null) {
+            Product parent = productRepository.findById(req.parentProductId()).orElse(null);
+            product.setParentProduct(parent);
+        } else {
+            product.setParentProduct(null);
+        }
+        product.setPiecesPerParent(req.piecesPerParent());
         
         Product saved = productRepository.save(product);
         
@@ -144,6 +160,14 @@ public class ProductService {
         activityLogService.logActivity(null, "DELETE", "PRODUCT", id.toString(), "Deleted product");
     }
 
+    @Transactional
+    public void unpack(UUID childProductId, int amountToUnpack, com.app.domain.entity.User actor) {
+        Product childProduct = productRepository.findById(childProductId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + childProductId));
+        inventoryService.unpack(childProduct, actor, amountToUnpack);
+        activityLogService.logActivity(actor, "UNPACK", "PRODUCT", childProductId.toString(), "Unpacked " + amountToUnpack + " parent bags into smaller bags");
+    }
+
     private Category resolveCategory(UUID categoryId) {
         if (categoryId == null) return null;
         return categoryRepository.findById(categoryId)
@@ -157,7 +181,9 @@ public class ProductService {
                 p.getCategory() != null ? categoryService.toResponse(p.getCategory()) : null,
                 p.getPrice(), p.getCostPrice(),
                 p.getCostPriceDollar(), p.getExchangeRate(), p.getDeliveryPrice(),
-                p.getStockQuantity()
+                p.getStockQuantity(),
+                p.getParentProduct() != null ? p.getParentProduct().getId() : null,
+                p.getPiecesPerParent()
         );
     }
 }
